@@ -21,8 +21,19 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepositorio usuarioRepositorio;
 
+    public Usuario autenticarUsuario(Usuario usuario) throws Exception {
+        Usuario u = listarUsuarioPorLogin(usuario.getLogin());
+        String senhaHash = senhaService.gerarSenhaHash(usuario.getSenha(), u.getSalt());
+        if(u.getSenha().equals(senhaHash)) {
+            return u;
+        }
+        else {
+            throw new SenhaIncorretaException("Senha incorreta");
+        }
+    }
+
     public Usuario criarUsuario(Usuario usuario) {
-        if (usuarioRepositorio.findByCpf(usuario.getCpf()).isPresent()) {
+        if (usuarioRepositorio.findByCpf(usuario.getCpf()).isPresent() || usuarioRepositorio.findByLogin(usuario.getLogin()).isPresent()) {
             throw new UsuarioJaCadastradoException("Usuario ja esta cadastrado no banco");
         }
         if (usuario.getSenha() == null || usuario.getSenha().isEmpty()) {
@@ -55,8 +66,8 @@ public class UsuarioService {
         return usuarioRepositorio.findByLogin(login).orElseThrow(() -> new UsuarioNaoEncontradoException("Usuario com este LOGIN nao encontrado"));
     }
 
-    public Usuario atualizarUsuario(Usuario usuario) {
-        Usuario u = listarUsuarioPorCpf(usuario.getCpf());
+    public Usuario atualizarUsuario(String cpf, Usuario usuario) {
+        Usuario u = listarUsuarioPorCpf(cpf);
         try {
             u.setLogin(usuario.getLogin());
             if (usuario.getSenha() != null && !usuario.getSenha().isEmpty()) {
@@ -72,35 +83,23 @@ public class UsuarioService {
     }
 
     public void excluirUsuarioPorId(String id) {
+        @SuppressWarnings("unused")
         Usuario usuario = listarUsuarioPorId(id);
         usuarioRepositorio.deleteById(id);
     }
 
     public void excluirUsuarioPorCpf(String cpf) {
+        @SuppressWarnings("unused")
         Usuario usuario = listarUsuarioPorCpf(cpf);
         usuarioRepositorio.deleteByCpf(cpf);
     }
 
     public void excluirUsuarioPorLogin(String login) {
+        @SuppressWarnings("unused")
         Usuario usuario = listarUsuarioPorLogin(login);
         usuarioRepositorio.deleteByLogin(login);
     }
-
-    public Usuario autenticarUsuario(Usuario usuario) {
-        Usuario u = listarUsuarioPorLogin(usuario.getLogin());
-        try {
-            String senhaHash = senhaService.gerarSenhaHash(usuario.getSenha(), u.getSalt());
-            if(u.getSenha().equals(senhaHash)) {
-                return u;
-            }
-            else {
-                throw new SenhaIncorretaException("Senha incorreta");
-            }
-        } catch(Exception e) {
-            throw new RuntimeException("Erro ao autenticar o usuario", e);
-        }
-    }
-
+    
     public Usuario converterDtoModel(UsuarioDTO usuarioDTO) {
         Usuario usuario = new Usuario();
         usuario.setId(usuarioDTO.getId());
