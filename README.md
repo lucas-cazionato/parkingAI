@@ -9,10 +9,10 @@ Seguir os padrões do repositório: https://github.com/iuricode/padroes-de-commi
 * 1 Commit por Pull Request, para facilitar eventuais reverts que se façam necessários
 
 # Padrões de nomeação:
-Classes/Componentes: PascalCase (Ex: UsuarioRepositorio)
-Métodos, Funções e Variáveis: camelCase (Ex: criarUsuario, usuarioAtualizado)
-Constantes: UPPER_SNAKE (Ex: API_URL, VALOR_MAXIMO)
-Tabelas e Colunas de Bancos de Dados: snake_case (Não é necessário colocar "t_" para indicar que é uma tabela) - (Ex: usuarios, enderecos_entrega)
+* Classes/Componentes: PascalCase (Ex: UsuarioRepositorio)
+* Métodos, Funções e Variáveis: camelCase (Ex: criarUsuario, usuarioAtualizado)
+* Constantes: UPPER_SNAKE (Ex: API_URL, VALOR_MAXIMO)
+* Tabelas e Colunas de Bancos de Dados: snake_case (Não é necessário colocar "t_" para indicar que é uma tabela) - (Ex: usuarios, enderecos_entrega)
 
 # Idioma:
 Português, exceto para termos específicos como Get, Set, Service, Model, Dto, Controller (Termos relacionados à programação e nomenclatura técnica, reconhecidamente com origem na língua inglesa)
