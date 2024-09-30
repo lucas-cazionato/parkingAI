@@ -70,6 +70,8 @@ public class UsuarioService {
         Usuario u = listarUsuarioPorCpf(cpf);
         try {
             u.setLogin(usuario.getLogin());
+            u.setDataNascimento(usuario.getDataNascimento());
+            u.setTelefone(usuario.getTelefone());
             if (usuario.getSenha() != null && !usuario.getSenha().isEmpty()) {
                 u.setSenha(usuario.getSenha());
                 u.setSalt(senhaService.gerarSalt());
