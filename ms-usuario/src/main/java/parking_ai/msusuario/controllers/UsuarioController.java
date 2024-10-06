@@ -42,6 +42,7 @@ public class UsuarioController {
             usuDTO.setId(usuario.getId());
             usuDTO.setCpf(usuario.getCpf());
             usuDTO.setLogin(usuario.getLogin());
+            usuDTO.setNome(usuario.getNome());
             usuDTO.setDataNascimento(usuario.getDataNascimento());
             usuDTO.setTelefone(usuario.getTelefone());
             return new ResponseEntity<>(usuDTO, HttpStatus.OK);
@@ -65,6 +66,7 @@ public class UsuarioController {
             usuDTO.setId(usuarioCriado.getId());
             usuDTO.setCpf(usuarioCriado.getCpf());
             usuDTO.setLogin(usuarioCriado.getLogin());
+            usuDTO.setNome(usuarioCriado.getNome());
             usuDTO.setDataNascimento(usuarioCriado.getDataNascimento());
             usuDTO.setTelefone(usuarioCriado.getTelefone());
             return new ResponseEntity<>(usuDTO, HttpStatus.CREATED);
@@ -88,6 +90,7 @@ public class UsuarioController {
             usuDTO.setId(usuario.getId());
             usuDTO.setCpf(usuario.getCpf());
             usuDTO.setLogin(usuario.getLogin());
+            usuDTO.setNome(usuario.getNome());
             usuDTO.setDataNascimento(usuario.getDataNascimento());
             usuDTO.setTelefone(usuario.getTelefone());
             return new ResponseEntity<>(usuDTO, HttpStatus.OK);
@@ -108,6 +111,7 @@ public class UsuarioController {
             usuDTO.setId(usuario.getId());
             usuDTO.setCpf(usuario.getCpf());
             usuDTO.setLogin(usuario.getLogin());
+            usuDTO.setNome(usuario.getNome());
             usuDTO.setDataNascimento(usuario.getDataNascimento());
             usuDTO.setTelefone(usuario.getTelefone());
             return new ResponseEntity<>(usuDTO, HttpStatus.OK);
@@ -128,6 +132,7 @@ public class UsuarioController {
             usuDTO.setId(usuario.getId());
             usuDTO.setCpf(usuario.getCpf());
             usuDTO.setLogin(usuario.getLogin());
+            usuDTO.setNome(usuario.getNome());
             usuDTO.setDataNascimento(usuario.getDataNascimento());
             usuDTO.setTelefone(usuario.getTelefone());
             return new ResponseEntity<>(usuDTO, HttpStatus.OK);
@@ -148,6 +153,7 @@ public class UsuarioController {
             usuDTO.setId(usuarioAtualizado.getId());
             usuDTO.setCpf(usuarioAtualizado.getCpf());
             usuDTO.setLogin(usuarioAtualizado.getLogin());
+            usuDTO.setNome(usuarioAtualizado.getNome());
             usuDTO.setDataNascimento(usuarioAtualizado.getDataNascimento());
             usuDTO.setTelefone(usuarioAtualizado.getTelefone());
             return new ResponseEntity<>(usuDTO, HttpStatus.OK);

@@ -70,6 +70,7 @@ public class UsuarioService {
         Usuario u = listarUsuarioPorCpf(cpf);
         try {
             u.setLogin(usuario.getLogin());
+            u.setNome(usuario.getNome());
             u.setDataNascimento(usuario.getDataNascimento());
             u.setTelefone(usuario.getTelefone());
             if (usuario.getSenha() != null && !usuario.getSenha().isEmpty()) {
@@ -107,6 +108,7 @@ public class UsuarioService {
         usuario.setId(usuarioDTO.getId());
         usuario.setCpf(usuarioDTO.getCpf());
         usuario.setLogin(usuarioDTO.getLogin());
+        usuario.setNome(usuarioDTO.getNome());
         usuario.setDataNascimento(usuarioDTO.getDataNascimento());
         usuario.setTelefone(usuarioDTO.getTelefone());
         usuario.setSenha(usuarioDTO.getSenha());
@@ -118,6 +120,7 @@ public class UsuarioService {
         usuarioDTO.setId(usuario.getId());
         usuarioDTO.setCpf(usuario.getCpf());
         usuarioDTO.setLogin(usuario.getLogin());
+        usuarioDTO.setNome(usuario.getNome());
         usuarioDTO.setDataNascimento(usuario.getDataNascimento());
         usuarioDTO.setTelefone(usuario.getTelefone());
         return usuarioDTO;

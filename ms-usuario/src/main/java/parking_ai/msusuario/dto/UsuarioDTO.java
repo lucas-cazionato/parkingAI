@@ -18,6 +18,7 @@ public class UsuarioDTO implements Serializable {
     private String id;
     private String cpf;
     private String login;
+    private String nome;
     private LocalDate dataNascimento;
     private String telefone;
     private String senha;    
