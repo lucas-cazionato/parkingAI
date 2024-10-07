@@ -9,6 +9,16 @@
             "projectName": "ms-usuario",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-MsMensagensApplication<ms-mensagens>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "parking_ai.msmensagens.MsMensagensApplication",
+            "projectName": "ms-mensagens",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }

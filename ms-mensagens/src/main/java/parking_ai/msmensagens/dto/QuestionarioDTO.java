@@ -1,7 +1,7 @@
 package parking_ai.msmensagens.dto;
 
 import java.io.Serializable;
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,5 +26,5 @@ public class QuestionarioDTO implements Serializable {
     
     private String comentario;
 
-    private Instant dataRegistro;
+    private LocalDateTime dataRegistro;
 }
