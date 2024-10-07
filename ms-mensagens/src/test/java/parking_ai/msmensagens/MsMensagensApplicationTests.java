@@ -1,4 +1,4 @@
-package parking_ai.ms_mensagens;
+package parking_ai.msmensagens;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

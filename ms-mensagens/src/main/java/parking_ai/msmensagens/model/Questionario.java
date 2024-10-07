@@ -1,9 +1,11 @@
 package parking_ai.msmensagens.model;
 
 import java.io.Serializable;
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
@@ -19,6 +21,7 @@ import parking_ai.msmensagens.enums.AchouVagaEnum;
 @NoArgsConstructor
 @Setter
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class Questionario implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -30,6 +33,7 @@ public class Questionario implements Serializable {
     @Column(name = "cpf_usuario")
     private String cpfUsuario;
 
+    @Enumerated(EnumType.STRING)
     @Column (name = "achou_vaga")
     private AchouVagaEnum achouVaga;
 
@@ -42,6 +46,7 @@ public class Questionario implements Serializable {
     private String comentario;
 
     @CreatedDate
+    @LastModifiedDate
     @Column (name = "data_registro")
-    private Instant dataRegistro;
+    private LocalDateTime dataRegistro;
 }
