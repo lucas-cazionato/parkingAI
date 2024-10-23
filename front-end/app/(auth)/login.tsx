@@ -1,70 +1,65 @@
-/*
-import React, {useState} from 'react';
-import { View, Text, TextInput, Image, Pressable, Alert} from 'react-native';
-import { CheckBox } from 'react-native-elements';
-import { Styles, Images, Colors } from '@/constants';
-import { Link, useRouter } from 'expo-router';
-import { login } from '../api/login';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { TextInput, Button } from 'react-native-paper';
+import {Styles} from '../../constants/Styles';
+import Register from './register';
 
-
-const Login: React.FC = () => {
-
+export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(false);
-  //const router = useRouter();
-  /*
-  const handleLogin = async () =>{
-    try {
-      await login({"email": email,"password": password});
-      router.replace('/home')
-    } catch (error: any) {
-      Alert.alert('Login Error' + error.message);
-    }
-  };
-/
+  const [isRegistering, setIsRegistering] = useState(false);
+
+  if (isRegistering) {
+    return <Register onBack={() => setIsRegistering(false)} />;
+  }
+
   return (
     <View style={Styles.container}>
-    <Image source={Images.logo} style={Styles.image} />
-    <View style={Styles.inputContainer}>
+      <View style={Styles.logoContainer}>
+        <Image
+          source={require('../../assets/images/ParkingAi.png')}
+          style={Styles.logo}
+        />
+      </View>
+
       <TextInput
-        placeholder="Email"
+        label="Email"
         value={email}
+        activeUnderlineColor='#ec6408'
         onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
         style={Styles.input}
       />
-      <Text></Text>
+
       <TextInput
-        placeholder="Password"
+        label="Senha"
         value={password}
+        activeUnderlineColor='#ec6408'
         onChangeText={setPassword}
         secureTextEntry
         style={Styles.input}
       />
-      <View style={Styles.rememberMeContainer}>
-        <CheckBox
-          title={"Remember Me"}
-          checked={rememberMe}
-          onPress={() => setRememberMe(!rememberMe)}
-        />
-      </View>
-      <Pressable 
-        style={Styles.mainButton}
-        onPress={handleLogin}>
-        <Text style={Styles.largeWhiteText}>Login</Text>
-      </Pressable>
+
+      <TouchableOpacity>
+      <Text style={Styles.forgetText}>Esqueci minha senha</Text>
+      </TouchableOpacity>
+
+      <Button
+        mode="contained"
+        onPress={() => console.log('Login pressionado')}
+        style={Styles.defaultButton}
+      >
+        Entrar
+      </Button>
+
+      <TouchableOpacity onPress={() => setIsRegistering(true)} style={Styles.registerContainer}>
+        <Text style={Styles.registerText}>
+          Não tem uma conta? <Text style={Styles.highlightText}>Cadastre-se</Text>
+        </Text>
+      </TouchableOpacity>
     </View>
-    <View style={Styles.registerContainer}>
-      <Text style={Styles.whiteText}>Don't have an account? </Text>
-      {/* <TouchableOpacity onPress={() => console.log('Navigate to Register screen')}>
-        <Text style={Styles.registerText}>Register</Text>
-      </TouchableOpacity>}
-      <Link href="/register" style={{color: Colors.primary}}>Register</Link>
-    </View>
-  </View>      
   );
 }
 
-export default Login;
 
-*/

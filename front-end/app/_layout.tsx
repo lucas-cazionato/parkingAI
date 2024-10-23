@@ -27,11 +27,10 @@ export default function RootLayout() {
   }
 
   return (
-    <PaperProvider> {/* Envolve o Stack no PaperProvider */}
+    <PaperProvider>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
+          <Stack.Screen name="(auth)/Login" options={{ headerShown: false }} />
         </Stack>
       </ThemeProvider>
     </PaperProvider>
