@@ -71,7 +71,7 @@ export const Styles = StyleSheet.create({
       },
 
       header: {
-        fontSize: 20,
+        fontSize: 22,
         color: '#11181C',
         padding: 10,
         textAlign: 'center',
@@ -118,6 +118,35 @@ export const Styles = StyleSheet.create({
       highlightText: {
         color: '#ec6408', // Texto laranja
       },
+
+      helperText: {
+        marginTop: -8,
+        marginBottom: 8,
+      },
+
+      question: {
+        fontSize: 18,
+        marginVertical: 10,
+      },
+      radioButtonContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginVertical: 5,
+        color: '#ec6408'
+      },
+      radioButtonLabel: {
+        fontSize: 16,
+      },
+      textInput: {
+        marginVertical: 10,
+        marginBottom: 20,
+        backgroundColor: '#ffffff'
+      },
+
+      separator: {
+        height: 20, 
+      },
+    
     
 
     });
