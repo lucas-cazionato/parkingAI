@@ -1,132 +1,148 @@
-
-/*
-//import { register } from '../api/login';
-//import { useForm, Controller } from 'react-hook-form';
-//import * as yup from 'yup';
-//import { yupResolver } from '@hookform/resolvers/yup';
-//import { TextInputMask } from 'react-native-masked-text';
-//import { Link, useRouter } from 'expo-router';
-
-import { TextInput, Image, Pressable, View, Text, StyleSheet, Alert} from 'react-native';
-import { IconButton, Appbar, IconButtonProps, Button  } from 'react-native-paper';
-import { Styles, Images, Colors, Icons } from '@/constants';
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation
-import { User } from '../models/user';
-
 import React, { useState } from 'react';
+import { View, Text, Alert } from 'react-native';
+import { TextInput, Button } from 'react-native-paper';
+import {Styles} from '../../constants/Styles'; 
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { User } from '../models/User';
 
-export default function Registern() {
-  const [email, setEmail] = useState('');
-  const [fullName, setFullName] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [birthDate, setBirthDate] = useState('');
-  const [cpf, setCpf] = useState('');
+interface RegisterProps {
+    onBack: () => void;
+  }
 
-  const handleRegister = () => {
-    if (password !== confirmPassword) {
-      Alert.alert('Erro', 'As senhas não coincidem.');
-      return;
-    }
-    Alert.alert('Sucesso', 'Registro efetuado com sucesso!');
-    // Lógica de registro aqui
-  };
 
-  const handleCancel = () => {
-    navigation.navigate('Login');
-  };
+const Register: React.FC<RegisterProps> = ({ onBack }) => {
 
-  const [showPassword, setShowPassword] = useState(false)
-  const handleState = () => {
-    setShowPassword((showState) => {
-      return !showState
-    })
-}
-  return (
-    <View style={{ flex: 1, backgroundColor: Colors.backgroundMain }}>
-    <Appbar
-      title="Criar sua conta"
-      style={Styles.appBar}
-      leading={props => (
-        <IconButton
-          icon={(iconProps) => <Icons name="arrow-left" {...iconProps} />}
-          //onPress={()=> router.back()}
-          {...props}
-        />
-      )}
-    />
-    <Image source={Images.parkAIlogo} style={Styles.image} />
-        <Text style={Styles.title}>Registro</Text>
-        <Input
-          variant="rounded"
-          size="md"
-          isDisabled={false}
-          isInvalid={false}
-          isReadOnly={false}
-        >
-          <InputField placeholder="E-mail" />
-        </Input>
-        <TextInput
-          style={Styles.input}
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-        />
+    const [user, setUser] = useState<Partial<User>>({
+        email: '',
+        cpf: '',
+        name: '',
+        phone: '',
+        password: '',
+      });
+    const [confirmPassword, setConfirmPassword] = useState('');
 
-        <TextInput
-          style={Styles.input}
-          placeholder="Nome Completo"
-          value={fullName}
-          onChangeText={setFullName}
-        />
+    const handleRegister = async () => {
 
-        <TextInput
-          style={Styles.input}
-          placeholder="Senha"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
+        console.log('handleRegister called');
+        console.log('User state:', user);
+    console.log('Confirm Password:', confirmPassword);
 
-        <TextInput
-          style={Styles.input}
-          placeholder="Confirmar Senha"
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-          secureTextEntry
-        />
+        if (!user.email || !user.cpf || !user.name || !user.phone || !user.password || !confirmPassword) {
+            Alert.alert('Erro', 'Todos os campos são obrigatórios.');
+            return;
+          }
+      
+          if (user.password !== confirmPassword) {
+            Alert.alert('Erro', 'As senhas não coincidem.');
+            return;
+          }
+    
 
-        <TextInput
-          style={Styles.input}
-          placeholder="Data de Nascimento (DD/MM/AAAA)"
-          value={birthDate}
-          onChangeText={setBirthDate}
-          keyboardType="numeric"
-        />
+        /*try {
+            const response = await fetch('', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(user),
+            });
+    
+            const data = await response.json();
+    
+            if (response.ok) {
+            Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
+            // Redirecionar ou limpar o formulário
+            } else {
+            Alert.alert('Erro', data.message || 'Ocorreu um erro ao realizar o cadastro.');
+            }
+        } catch (error) {
+            Alert.alert('Erro', 'Ocorreu um erro ao conectar com o servidor.');
+        }
+            */
+    };
+  
+        
+    return (
+            <View style={Styles.container}>
+                <View style={Styles.inputContainer}>
+                <View style={Styles.headerContainer}>
+                <Icon name="person-add" size={100} color="#ec6408" />
+                <Text style={Styles.header}>Crie sua conta</Text>
+                <Text style={Styles.subText}>Preencha os campos com suas informações</Text>
+                </View>
+                <TextInput
+                    label="Nome Completo"
+                    value={user.name}
+                    onChangeText={(text) => setUser({ ...user, name: text })}
+                    activeUnderlineColor='#ec6408'
+                    style={Styles.input}
+                />
 
-        <TextInput
-          style={Styles.input}
-          placeholder="CPF"
-          value={cpf}
-          onChangeText={setCpf}
-          keyboardType="numeric"
-        />
-        <HStack>
-        <View style={Styles.cancelButton}>
-          <Button title="Cancelar" 
-            style={Styles.}
-            onPress={handleRegister} />
+                <TextInput
+                        label="Email"
+                        value={user.email}
+                        onChangeText={(text) => setUser({ ...user, email: text })}
+                        keyboardType="email-address"
+                        autoCapitalize="none"
+                        activeUnderlineColor='#ec6408'
+                        style={Styles.input}
+                    />
+
+                <TextInput
+                    label="CPF"
+                    value={user.cpf}
+                    onChangeText={(text) => setUser({ ...user, cpf: text })}
+                    keyboardType="numeric"
+                    activeUnderlineColor='#ec6408'                    
+                    style={Styles.input}
+                />
+
+                <TextInput
+                    label="Telefone"
+                    value={user.phone}
+                    onChangeText={(text) => setUser({ ...user, phone: text })}
+                    activeUnderlineColor='#ec6408'
+                    keyboardType="numeric"
+                    style={Styles.input}
+                />
+
+                <TextInput
+                    label="Senha"
+                    value={user.password}
+                    activeUnderlineColor='#ec6408'
+                    onChangeText={(text) => setUser({ ...user, password: text })}
+                    secureTextEntry
+                    style={Styles.input}
+                />
+
+                <TextInput
+                    label="Confirmar Senha"
+                    value={confirmPassword}
+                    onChangeText={setConfirmPassword}
+                    activeUnderlineColor='#ec6408'
+                    secureTextEntry
+                    style={Styles.input}
+                />
+
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+
+                    <Button 
+                    mode='contained'
+                    onPress={onBack} 
+                    style={Styles.cancelButton}>
+                    <Text>Voltar</Text>
+                    </Button>
+
+                    <Button 
+                    mode='contained'
+                    onPress={handleRegister}
+                    style={Styles.defaultButton}>
+                    <Text>Cadastrar</Text>
+                    </Button>
+                </View>
+            </View>
         </View>
-        <View style={Styles.defaultButton}>  
-          <Button title="Cadastrar" 
-            onPress={handleRegister} />
-        </View>
-        </HStack>
-  );
-}
-  </View>      
-  );
-}
+    );
+};
 
-*/
+export default Register;
