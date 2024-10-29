@@ -18,7 +18,7 @@ npm install
 ## Passo 2:
 * Atualizar/Criar o arquivo `.env` de acordo com o formato do arquivo `.env.example`
 
-# Passo 3:
+## Passo 3:
 * Digitar o comando:
 ```bash
 node server.js
