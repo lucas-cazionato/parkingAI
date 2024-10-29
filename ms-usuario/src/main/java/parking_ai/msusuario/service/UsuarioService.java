@@ -118,7 +118,7 @@ public class UsuarioService {
             u.setSenha(senhaHash);
             return usuarioRepositorio.save(u);
         } catch(Exception e) {
-            throw new RuntimeException("Erro ao atualizar o usuario", e);
+            throw new RuntimeException("Erro ao recuperar senha", e);
         }
     }
 
