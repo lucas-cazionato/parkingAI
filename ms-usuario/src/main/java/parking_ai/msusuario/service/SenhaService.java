@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class SenhaService {
 
+    private static final String CARACTERES = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+[]{}|;:',.<>?/`~";
+
     public String gerarSalt() {
         SecureRandom random = new SecureRandom();
         byte[] salt = new byte[16];
@@ -24,4 +26,13 @@ public class SenhaService {
         return Base64.getEncoder().encodeToString(hash);
     }
 
+    public String gerarSenhaAleatoria() {
+        SecureRandom secureRandom = new SecureRandom();
+        StringBuilder senhaAleatoria = new StringBuilder(10);
+        for (int i = 0; i < 16; i++) {
+            int index = secureRandom.nextInt(CARACTERES.length());
+            senhaAleatoria.append(CARACTERES.charAt(index));
+        }
+        return senhaAleatoria.toString();
+    }
 }
