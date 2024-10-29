@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import parking_ai.msusuario.dto.UsuarioDTO;
+import parking_ai.msusuario.dto.RecSenhaDTO;
 import parking_ai.msusuario.exception.SenhaIncorretaException;
 import parking_ai.msusuario.exception.SenhaVaziaException;
 import parking_ai.msusuario.exception.UsuarioJaCadastradoException;
@@ -157,6 +158,20 @@ public class UsuarioController {
             usuDTO.setDataNascimento(usuarioAtualizado.getDataNascimento());
             usuDTO.setTelefone(usuarioAtualizado.getTelefone());
             return new ResponseEntity<>(usuDTO, HttpStatus.OK);
+        } catch(UsuarioNaoEncontradoException e) {
+            logger.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch(Exception e) {
+            logger.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PostMapping("/recuperar")
+    public ResponseEntity<Void> recuperarSenha(@RequestBody RecSenhaDTO recSenha) {
+        try {
+            usuarioService.recuperarSenha(recSenha.getLogin());
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } catch(UsuarioNaoEncontradoException e) {
             logger.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
