@@ -1,16 +1,29 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
-import {Styles} from '../../constants/Styles';
+import { Styles } from '../../constants/Styles';
 import Register from './register';
+import { login } from '../../apiService';
+import { useNavigation } from '@react-navigation/native';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isRegistering, setIsRegistering] = useState(false);
+  const [message, setMessage] = useState('');
+  const navigation = useNavigation(); // Utiliza useNavigation para acessar o objeto de navegação
+
+  const handleLogin = async () => {
+    try {
+      const userData = await login(email, password);
+      setMessage(`Bem-vindo, ${userData.login}`);
+    } catch (error) {
+      setMessage('Erro no login. Verifique suas credenciais.');
+    }
+  };
 
   if (isRegistering) {
-    return <Register onBack={() => setIsRegistering(false)} />;
+    return <Register navigation={navigation} />;
   }
 
   return (
@@ -42,16 +55,18 @@ export default function Login() {
       />
 
       <TouchableOpacity>
-      <Text style={Styles.forgetText}>Esqueci minha senha</Text>
+        <Text style={Styles.forgetText}>Esqueci minha senha</Text>
       </TouchableOpacity>
 
       <Button
         mode="contained"
-        onPress={() => console.log('Login pressionado')}
+        onPress={handleLogin}
         style={Styles.defaultButton}
       >
         Entrar
       </Button>
+
+      {message ? <Text style={Styles.messageText}>{message}</Text> : null}
 
       <TouchableOpacity onPress={() => setIsRegistering(true)} style={Styles.registerContainer}>
         <Text style={Styles.registerText}>
