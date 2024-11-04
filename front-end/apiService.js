@@ -26,3 +26,22 @@ export async function fetchUserData(endpoint) {
         },
     });
 }
+
+
+// Register (Cadastro de usuário)
+export const register = async (userData) => {
+    const response = await fetch(`${apiGatewayUrl}/auth`, { // Usando a constante apiGatewayUrl
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Erro ao cadastrar');
+    }
+
+    return response.json();
+};
