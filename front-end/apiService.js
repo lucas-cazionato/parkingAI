@@ -1,11 +1,20 @@
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const apiGatewayUrl = 'http://localhost:3000';
+
+// Instância do axios para configurar a base URL
+const api = axios.create({
+    baseURL: apiGatewayUrl,
+    headers: {
+        'Content-Type': 'application/json',
+    },
+});
 
 // Fazer login e receber token JWT
 export async function login(login, senha) {
     try {
-        const response = await axios.post(`${apiGatewayUrl}/auth/login`, { login, senha });
+        const response = await api.post('/auth/login', { login, senha });
         if (response.data.auth) {
             // Salvar token JWT no AsyncStorage para reutilização
             await AsyncStorage.setItem('token', response.data.token);
@@ -20,7 +29,7 @@ export async function login(login, senha) {
 // Realizar requisições autenticadas
 export async function fetchUserData(endpoint) {
     const token = await AsyncStorage.getItem('token');
-    return axios.get(`${apiGatewayUrl}${endpoint}`, {
+    return api.get(endpoint, {
         headers: {
             Authorization: `Bearer ${token}`,
         },
@@ -30,18 +39,15 @@ export async function fetchUserData(endpoint) {
 
 // Register (Cadastro de usuário)
 export const register = async (userData) => {
-    const response = await fetch(`${apiGatewayUrl}/auth`, { // Usando a constante apiGatewayUrl
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userData),
-    });
-
-    if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Erro ao cadastrar');
+    try {
+        const response = await api.post('/auth', userData);
+        return response.data;
+    } catch (error) {
+        console.error('Erro ao cadastrar usuário:', error);
+        if (error.response && error.response.data) {
+            throw new Error(error.response.data.message || 'Erro ao cadastrar');
+        } else {
+            throw new Error('Erro ao cadastrar');
+        }
     }
-
-    return response.json();
 };
