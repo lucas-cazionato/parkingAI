@@ -24,9 +24,14 @@ export default function Login() {
     }
   };
 
+  const onBack = () => {
+    setIsRegistering(false);
+  };
+
   if (isRegistering) {
-    return <Register navigation={navigation} />;
+    return <Register navigation={navigation} onBack={onBack} />;
   }
+
 
   return (
     <View style={Styles.container}>

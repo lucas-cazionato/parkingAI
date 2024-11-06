@@ -4,7 +4,7 @@ import { TextInput, Button, HelperText } from 'react-native-paper';
 import { TextInputMask } from 'react-native-masked-text';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, NavigationProp, RouteProp, CompositeNavigationProp } from '@react-navigation/native';
 import { Styles } from '../../constants/Styles';
 import { User } from '../models/User';
 
@@ -12,12 +12,20 @@ interface FormData extends Omit<User, 'confirmPassword'> {
   confirmPassword: string;
 }
 
+type RootStackParamList = {
+  Register: undefined;
+  Login: undefined;
+};
+
+type RegisterScreenNavigationProp = NavigationProp<RootStackParamList, 'Register'>;
+
 interface RegisterProps {
+  navigation: RegisterScreenNavigationProp;
+  route: RouteProp<RootStackParamList, 'Register'>;
   onBack: () => void;
 }
 
-const Register: React.FC<RegisterProps> = ({ onBack }) => {
-  const navigation = useNavigation();
+const Register: React.FC<RegisterProps> = ({ navigation, route, onBack}) => {
   const { control, handleSubmit, formState: { errors }, setError, clearErrors } = useForm<FormData>();
   const [user, setUser] = useState<Partial<User>>({});
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -35,7 +43,6 @@ const Register: React.FC<RegisterProps> = ({ onBack }) => {
     const onSubmit: SubmitHandler<FormData> = async (data) => {
       console.log('handleRegister called');
       console.log('Form data:', data);
-      console.log('Confirm Password:', confirmPassword);
 
       if (data.password !== confirmPassword) {
         setError('confirmPassword', {

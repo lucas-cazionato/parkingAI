@@ -1,4 +1,4 @@
-import { Stack } from 'expo-router';
+/*import { Stack } from 'expo-router';
 
 const AuthLayout = () => {
   return (
@@ -10,3 +10,4 @@ const AuthLayout = () => {
 };
 
 export default AuthLayout;
+*/
