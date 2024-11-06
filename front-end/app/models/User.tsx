@@ -3,5 +3,7 @@ export interface User {
     email: string;
     password: string;
     phone: string;
+    dateOfBirth: string;
     cpf: string;
+    confirmPassword?: string;
   }

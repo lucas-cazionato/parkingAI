@@ -3,35 +3,51 @@ import { View, Text, Alert } from 'react-native';
 import { TextInput, Button, HelperText } from 'react-native-paper';
 import { TextInputMask } from 'react-native-masked-text';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, SubmitHandler } from 'react-hook-form';
+import { useNavigation } from '@react-navigation/native';
 import { Styles } from '../../constants/Styles';
 import { User } from '../models/User';
 
+interface FormData extends Omit<User, 'confirmPassword'> {
+  confirmPassword: string;
+}
 
-const Register = ({ navigation }) => {
-  const { control, handleSubmit, formState: { errors }, setError, clearErrors } = useForm<User>({
-    defaultValues: {
-      email: '',
-      cpf: '',
-      name: '',
-      phone: '',
-      password: '',
-    },
-  });
+interface RegisterProps {
+  onBack: () => void;
+}
+
+const Register: React.FC<RegisterProps> = ({ onBack }) => {
+  const navigation = useNavigation();
+  const { control, handleSubmit, formState: { errors }, setError, clearErrors } = useForm<FormData>();
+  const [user, setUser] = useState<Partial<User>>({});
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const phoneInputRef = useRef<TextInputMask>(null);
+  const dateInputRef = useRef<TextInputMask>(null);
 
+/*
   const onSubmit = async (data: User) => {
     console.log('handleRegister called');
     console.log('Form data:', data);
     console.log('Confirm Password:', confirmPassword);
+*/
+    const onSubmit: SubmitHandler<FormData> = async (data) => {
+      console.log('handleRegister called');
+      console.log('Form data:', data);
+      console.log('Confirm Password:', confirmPassword);
 
-    if (data.password !== confirmPassword) {
-      Alert.alert('Erro', 'As senhas não coincidem.');
-      return;
-    }
+      if (data.password !== confirmPassword) {
+        setError('confirmPassword', {
+          type: 'manual',
+          message: 'As senhas não coincidem.',
+        });
+        return;
+      } else {
+        clearErrors('confirmPassword');
+      }
+    
+      const { confirmPassword, ...userData } = data;
 
     try {
       const response = await fetch('api/register', {
@@ -46,7 +62,7 @@ const Register = ({ navigation }) => {
 
       if (response.ok) {
         Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
-        navigation.navigate('login'); // Navegar para a tela de login após o registro bem-sucedido
+        navigation.navigate('login');
       } else {
         Alert.alert('Erro', responseData.message || 'Ocorreu um erro ao realizar o cadastro.');
       }
@@ -88,6 +104,44 @@ const Register = ({ navigation }) => {
             </>
           )}
         />
+
+        <Controller
+          control={control}
+          name="dateOfBirth"
+          rules={{ required: 'Data de nascimento é obrigatória' }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <>
+              <TextInput
+                label="Data de Nascimento"
+                value={value}
+                onBlur={onBlur}
+                onChangeText={(dateOfBirth) => {
+                  onChange(dateOfBirth);
+                  setUser({ ...user, dateOfBirth });
+                }}
+                activeUnderlineColor='#ec6408'
+                style={Styles.input}
+                error={!!errors.name}
+                render={props => (
+                  <TextInputMask
+                    {...props}
+                    type={'datetime'}
+                    options={{
+                      format: 'DD/MM/YYYY'
+                    }}
+                    value={value}
+                    onChangeText={onChange}
+                    ref={dateInputRef}
+                  />
+                )}
+              />
+              <HelperText type="error" visible={!!errors.dateOfBirth} style={Styles.helperText}>
+                {errors.dateOfBirth?.message}
+              </HelperText>
+            </>
+          )}
+        />
+
 
         <Controller
           control={control}
@@ -232,12 +286,12 @@ const Register = ({ navigation }) => {
         </HelperText>
 
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <Button
-            mode='contained'
-            onPress={() => navigation.navigate('login')}
-            style={Styles.cancelButton}>
-            <Text>Voltar</Text>
-          </Button>
+        <Button
+          mode='contained'
+          onPress={onBack}
+          style={Styles.cancelButton}>
+          <Text>Voltar</Text>
+        </Button>
 
           <Button
             mode='contained'

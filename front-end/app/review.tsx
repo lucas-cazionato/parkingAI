@@ -11,12 +11,11 @@ type ReviewProps = {
 };
 
 export default function Review({ navigation }: ReviewProps) {
-  const [foundSpot, setFoundSpot] = useState('');
-  const [rating, setRating] = useState(0);
-  const [comments, setComments] = useState('');
+  const [foundSpot, setFoundSpot] = useState<string>('');
+  const [rating, setRating] = useState<number | null>(null);;
 
   const handleSubmit = () => {
-    console.log('Avaliação enviada:', { foundSpot, rating, comments });
+    console.log('Avaliação enviada:', { foundSpot, rating });
     // implementar logica de envio da avaliação
     navigation.goBack();
   };
@@ -48,29 +47,22 @@ export default function Review({ navigation }: ReviewProps) {
         <View style={Styles.inputContainer}>
         <Text style={Styles.question}>Como você avalia sua experiência com o ParkingAI?</Text>
 
-        <RadioButton.Group onValueChange={value => setRating(value)} value={rating}>
+        <RadioButton.Group onValueChange={value => setRating(parseInt(value))} value={rating?.toString() || ''}>
         <View style={Styles.radioButtonContainer}>
-        <RadioButton value="muitoBoa" color="#ec6408" />
-        <Text style={Styles.radioButtonLabel}>Muito boa</Text>
-        <RadioButton value="boa" color="#ec6408" />
-        <Text style={Styles.radioButtonLabel}>Boa</Text>
+        <RadioButton value="5" color="#ec6408" />
+        <Text style={Styles.radioButtonLabel}>5</Text>
+        <RadioButton value="4" color="#ec6408" />
+        <Text style={Styles.radioButtonLabel}>4</Text>
         </View>
         <View style={Styles.radioButtonContainer}>
-        <RadioButton value="ruim" color="#ec6408" />
-        <Text style={Styles.radioButtonLabel}>Ruim</Text>
+        <RadioButton value="3" color="#ec6408" />
+        <Text style={Styles.radioButtonLabel}>3</Text>
+        <RadioButton value="2" color="#ec6408" />
+        <Text style={Styles.radioButtonLabel}>2</Text>
+        <RadioButton value="1" color="#ec6408" />
+        <Text style={Styles.radioButtonLabel}>1</Text>
         </View> 
         </RadioButton.Group>
-
-        <TextInput
-            label="Comentários"
-            value={comments}
-            onChangeText={setComments}
-            multiline
-            numberOfLines={4}
-            style={Styles.textInput}
-            mode='outlined'
-            activeOutlineColor='#ec6408'
-        />
         </View>
 
         <View style={Styles.separator} />

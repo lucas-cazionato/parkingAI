@@ -10,7 +10,9 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isRegistering, setIsRegistering] = useState(false);
+  const [forgotPassword, setForgotPassword] = useState(false);
   const [message, setMessage] = useState('');
+  
   const navigation = useNavigation(); // Utiliza useNavigation para acessar o objeto de navegação
 
   const handleLogin = async () => {
@@ -54,8 +56,9 @@ export default function Login() {
         style={Styles.input}
       />
 
-      <TouchableOpacity>
-        <Text style={Styles.forgetText}>Esqueci minha senha</Text>
+
+      <TouchableOpacity onPress={() => setForgotPassword(true)}>
+      <Text style={Styles.forgetText}>Esqueci minha senha</Text>
       </TouchableOpacity>
 
       <Button
