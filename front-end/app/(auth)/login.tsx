@@ -8,6 +8,7 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isRegistering, setIsRegistering] = useState(false);
+  const [forgotPassword, setForgotPassword] = useState(false);
 
   if (isRegistering) {
     return <Register onBack={() => setIsRegistering(false)} />;
@@ -41,7 +42,7 @@ export default function Login() {
         style={Styles.input}
       />
 
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => setForgotPassword(true)}>
       <Text style={Styles.forgetText}>Esqueci minha senha</Text>
       </TouchableOpacity>
 
