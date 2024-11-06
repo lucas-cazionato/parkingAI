@@ -2,6 +2,8 @@ package parking_ai.msusuario.service;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import parking_ai.msusuario.dto.UsuarioDTO;
@@ -20,6 +22,16 @@ public class UsuarioService {
 
     @Autowired
     private UsuarioRepositorio usuarioRepositorio;
+
+    @Autowired
+    private JavaMailSender emailSender;
+
+    private SimpleMailMessage gerarTemplateEmail() {
+        SimpleMailMessage email = new SimpleMailMessage();
+        email.setFrom("naoresponda@parkingai.com");
+        email.setSubject("PARKING AI - Recuperação de Senha");
+        return email;
+    }
 
     public Usuario autenticarUsuario(Usuario usuario) throws Exception {
         Usuario u = listarUsuarioPorLogin(usuario.getLogin());
@@ -82,6 +94,31 @@ public class UsuarioService {
             return usuarioRepositorio.save(u);
         } catch(Exception e) {
             throw new RuntimeException("Erro ao atualizar o usuario", e);
+        }
+    }
+
+    public Usuario recuperarSenha(String login) {
+        Usuario u = listarUsuarioPorLogin(login);
+        try {
+            String senhaAleatoria = senhaService.gerarSenhaAleatoria();
+            
+            /* Envio do e-mail de recuperação de senha */
+            SimpleMailMessage msg = gerarTemplateEmail();
+            msg.setTo(u.getLogin());
+            msg.setText("Prezado(a) Cliente,\n\n" +
+            "Solicitação de recuperação de senha recebida.\n\n" +
+            "Nova senha de acesso: " + senhaAleatoria + "\n\n" +
+            "Atualizar a senha imediatamente após o primeiro acesso.\n\n" +
+            "Atenciosamente,\n\n" +
+            "Equipe Parking AI");
+            this.emailSender.send(msg);
+
+            u.setSalt(senhaService.gerarSalt());
+            String senhaHash = senhaService.gerarSenhaHash(senhaAleatoria, u.getSalt());
+            u.setSenha(senhaHash);
+            return usuarioRepositorio.save(u);
+        } catch(Exception e) {
+            throw new RuntimeException("Erro ao recuperar senha", e);
         }
     }
 
