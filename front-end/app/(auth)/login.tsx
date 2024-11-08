@@ -13,7 +13,7 @@ export default function Login() {
   const [forgotPassword, setForgotPassword] = useState(false);
   const [message, setMessage] = useState('');
   
-  const navigation = useNavigation(); // Utiliza useNavigation para acessar o objeto de navegação
+  const navigation = useNavigation(); 
 
   const handleLogin = async () => {
     try {

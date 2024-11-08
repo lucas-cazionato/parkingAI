@@ -30,10 +30,12 @@ function DrawerNavigator() {
 
   const AppNavigator = () => {
     return (
+      <NavigationContainer>
         <Stack.Navigator initialRouteName="Auth">
           <Stack.Screen name="Auth" component={AuthStackNavigator} options={{ headerShown: false }} />
           <Stack.Screen name="Main" component={DrawerNavigator} options={{ headerShown: false }} />
         </Stack.Navigator>
+      </NavigationContainer>
     );
   };
 
