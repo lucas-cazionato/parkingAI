@@ -20,18 +20,14 @@ type RootStackParamList = {
 
 type RegisterScreenNavigationProp = NavigationProp<RootStackParamList, 'Register'>;
 
-interface RegisterProps {
-  navigation: RegisterScreenNavigationProp;
-  route: RouteProp<RootStackParamList, 'Register'>;
-  onBack: () => void;
-}
 
-const Register: React.FC<RegisterProps> = ({ navigation, route, onBack}) => {
+const Register: React.FC = () => {
   const { control, handleSubmit, formState: { errors }, setError, clearErrors } = useForm<FormData>();
   const [user, setUser] = useState<Partial<User>>({});
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
+  const navigation = useNavigation<RegisterScreenNavigationProp>();
 
   const phoneInputRef = useRef<TextInputMask>(null);
   const dateInputRef = useRef<TextInputMask>(null);
@@ -288,11 +284,11 @@ const Register: React.FC<RegisterProps> = ({ navigation, route, onBack}) => {
         </HelperText>
 
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-        <Button
-          mode='contained'
-          onPress={onBack}
-          style={Styles.cancelButton}>
-          <Text>Voltar</Text>
+        <Button 
+        mode="contained" 
+        onPress={() => navigation.navigate('Login')} 
+        style={Styles.cancelButton}>
+          Voltar
         </Button>
 
           <Button
