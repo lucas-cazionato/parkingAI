@@ -4,7 +4,15 @@ import { TextInput, Button } from 'react-native-paper';
 import { Styles } from '../../constants/Styles';
 import Register from './register';
 import { login } from '../../apiService';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
+
+type RootStackParamList = {
+  Login: undefined;
+  Register: undefined;
+  ForgotPassword: undefined;
+};
+
+type LoginScreenNavigationProp = NavigationProp<RootStackParamList, 'Login'>;
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -13,7 +21,7 @@ export default function Login() {
   const [forgotPassword, setForgotPassword] = useState(false);
   const [message, setMessage] = useState('');
   
-  const navigation = useNavigation(); 
+  const navigation = useNavigation<LoginScreenNavigationProp>();
 
   const handleLogin = async () => {
     try {
@@ -24,13 +32,6 @@ export default function Login() {
     }
   };
 
-  const onBack = () => {
-    setIsRegistering(false);
-  };
-
-  if (isRegistering) {
-    return <Register navigation={navigation} onBack={onBack} />;
-  }
 
 
   return (
@@ -62,7 +63,7 @@ export default function Login() {
       />
 
 
-      <TouchableOpacity onPress={() => setForgotPassword(true)}>
+      <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
       <Text style={Styles.forgetText}>Esqueci minha senha</Text>
       </TouchableOpacity>
 
@@ -76,7 +77,8 @@ export default function Login() {
 
       {message ? <Text style={Styles.messageText}>{message}</Text> : null}
 
-      <TouchableOpacity onPress={() => setIsRegistering(true)} style={Styles.registerContainer}>
+      <TouchableOpacity onPress={() => navigation.navigate('Register')} 
+      style={Styles.registerContainer}>
         <Text style={Styles.registerText}>
           Não tem uma conta? <Text style={Styles.highlightText}>Cadastre-se</Text>
         </Text>
