@@ -4,70 +4,72 @@ import { TextInput, Button, HelperText } from 'react-native-paper';
 import { TextInputMask } from 'react-native-masked-text';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, NavigationProp, RouteProp, CompositeNavigationProp } from '@react-navigation/native';
 import { Styles } from '../../constants/Styles';
 import { User } from '../models/User';
+import { register } from '../../apiService';
 
 interface FormData extends Omit<User, 'confirmPassword'> {
   confirmPassword: string;
 }
 
+type RootStackParamList = {
+  Register: undefined;
+  Login: undefined;
+};
+
+type RegisterScreenNavigationProp = NavigationProp<RootStackParamList, 'Register'>;
+
 interface RegisterProps {
+  navigation: RegisterScreenNavigationProp;
+  route: RouteProp<RootStackParamList, 'Register'>;
   onBack: () => void;
 }
 
-const Register: React.FC<RegisterProps> = ({ onBack }) => {
-  const navigation = useNavigation();
+const Register: React.FC<RegisterProps> = ({ navigation, route, onBack}) => {
   const { control, handleSubmit, formState: { errors }, setError, clearErrors } = useForm<FormData>();
   const [user, setUser] = useState<Partial<User>>({});
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
 
   const phoneInputRef = useRef<TextInputMask>(null);
   const dateInputRef = useRef<TextInputMask>(null);
 
-/*
-  const onSubmit = async (data: User) => {
+  const validatePasswords = () => {
+    if (user.password !== confirmPassword) {
+      setError('confirmPassword', {
+        type: 'manual',
+        message: 'As senhas não coincidem.',
+      });
+      return false;
+    } else {
+      clearErrors('confirmPassword');
+      return true;
+    }
+  };
+
+  const onSubmit: SubmitHandler<FormData> = async (data) => {
     console.log('handleRegister called');
     console.log('Form data:', data);
     console.log('Confirm Password:', confirmPassword);
-*/
-    const onSubmit: SubmitHandler<FormData> = async (data) => {
-      console.log('handleRegister called');
-      console.log('Form data:', data);
-      console.log('Confirm Password:', confirmPassword);
 
-      if (data.password !== confirmPassword) {
-        setError('confirmPassword', {
-          type: 'manual',
-          message: 'As senhas não coincidem.',
-        });
-        return;
-      } else {
-        clearErrors('confirmPassword');
-      }
+    if (!validatePasswords()) {
+      return;
+    }
     
-      const { confirmPassword, ...userData } = data;
-
     try {
-      const response = await fetch('api/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
+      const responseData = await register(user); // Chame a função register
+  
+      Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
+      navigation.navigate('Login');
 
-      const responseData = await response.json();
-
-      if (response.ok) {
-        Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
-        navigation.navigate('login');
-      } else {
-        Alert.alert('Erro', responseData.message || 'Ocorreu um erro ao realizar o cadastro.');
-      }
     } catch (error) {
-      Alert.alert('Erro', 'Ocorreu um erro ao conectar com o servidor.');
+      if (error instanceof Error) {
+        Alert.alert('Erro', error.message || 'Ocorreu um erro ao realizar o cadastro.');
+      } else {
+        Alert.alert('Erro', 'Ocorreu um erro desconhecido ao realizar o cadastro.');
+      }
     }
   };
 
@@ -88,7 +90,7 @@ const Register: React.FC<RegisterProps> = ({ onBack }) => {
             <>
               <TextInput
                 label="Nome Completo"
-                value={value}
+                value={value || ''}
                 onBlur={onBlur}
                 onChangeText={(name) => {
                   onChange(name);
@@ -113,7 +115,7 @@ const Register: React.FC<RegisterProps> = ({ onBack }) => {
             <>
               <TextInput
                 label="Data de Nascimento"
-                value={value}
+                value={value || ''}
                 onBlur={onBlur}
                 onChangeText={(dateOfBirth) => {
                   onChange(dateOfBirth);
@@ -121,7 +123,7 @@ const Register: React.FC<RegisterProps> = ({ onBack }) => {
                 }}
                 activeUnderlineColor='#ec6408'
                 style={Styles.input}
-                error={!!errors.name}
+                error={!!errors.dateOfBirth}
                 render={props => (
                   <TextInputMask
                     {...props}
@@ -151,7 +153,7 @@ const Register: React.FC<RegisterProps> = ({ onBack }) => {
             <>
               <TextInput
                 label="Email"
-                value={value}
+                value={value || ''}
                 onBlur={onBlur}
                 onChangeText={(email) => {
                   onChange(email);
@@ -178,7 +180,7 @@ const Register: React.FC<RegisterProps> = ({ onBack }) => {
             <>
               <TextInput
                 label="CPF"
-                value={value}
+                value={value || ''}
                 onBlur={onBlur}
                 onChangeText={(cpf) => {
                   onChange(cpf);
@@ -212,7 +214,7 @@ const Register: React.FC<RegisterProps> = ({ onBack }) => {
             <>
               <TextInput
                 label="Telefone"
-                value={value}
+                value={value || ''}
                 onBlur={onBlur}
                 onChangeText={(phone) => {
                   onChange(phone);
@@ -252,7 +254,7 @@ const Register: React.FC<RegisterProps> = ({ onBack }) => {
             <>
               <TextInput
                 label="Senha"
-                value={value}
+                value={value || ''}
                 onBlur={onBlur}
                 onChangeText={(password) => {
                   onChange(password);
@@ -277,7 +279,7 @@ const Register: React.FC<RegisterProps> = ({ onBack }) => {
           onChangeText={setConfirmPassword}
           activeUnderlineColor='#ec6408'
           secureTextEntry
-          right={<TextInput.Icon icon="eye" />}
+          right={<TextInput.Icon icon={passwordVisible ? "eye-off" : "eye"} onPress={() => setConfirmPasswordVisible(!confirmPasswordVisible)} />}
           style={Styles.input}
           error={!!errors.confirmPassword}
         />

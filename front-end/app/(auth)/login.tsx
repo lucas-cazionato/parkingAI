@@ -13,7 +13,7 @@ export default function Login() {
   const [forgotPassword, setForgotPassword] = useState(false);
   const [message, setMessage] = useState('');
   
-  const navigation = useNavigation(); // Utiliza useNavigation para acessar o objeto de navegação
+  const navigation = useNavigation(); 
 
   const handleLogin = async () => {
     try {
@@ -24,9 +24,14 @@ export default function Login() {
     }
   };
 
+  const onBack = () => {
+    setIsRegistering(false);
+  };
+
   if (isRegistering) {
-    return <Register navigation={navigation} />;
+    return <Register navigation={navigation} onBack={onBack} />;
   }
+
 
   return (
     <View style={Styles.container}>

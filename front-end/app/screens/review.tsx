@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Button, RadioButton, TextInput } from 'react-native-paper';
-import { Styles } from '../constants/Styles';
+import { Styles } from '../../constants/Styles';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import { NavigationProp } from '@react-navigation/native';
