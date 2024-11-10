@@ -1,8 +1,10 @@
-# Serviço de Avaliação
+# Serviço de Avaliação e Favoritos
 Tecnologias empregadas: Spring Boot + MySQL
 
 # API REST:
-Trata-se de uma aplicação Spring Boot com métodos acessíveis através de uma API REST para Registro, Busca e Atualização de Avaliações do Aplicativo
+Trata-se de uma aplicação Spring Boot com métodos acessíveis através de uma API REST:
+- Registro, Busca e Atualização de Avaliações do Aplicativo.
+- Salvar, Consultar, Atualizar e Excluir Endereços Favoritos do Usuário do aplicativo.
 
 # Passos para execução:
 
@@ -15,7 +17,8 @@ sudo mysql
 ```
 
 ## Passo 2:
-* Atualizar USUÁRIO, SENHA e BANCO DE DADOS, parâmetros presentes no arquivo `ms-mensagens/src/main/resources/application.properties`.
+* Criar um arquivo denominado `.env` no diretorio raiz `ms-mensagens/` do projeto.
+Nele, devem ser inseridas as configurações do Banco de Dados, conforme formato do arquivo `.env.example`
 
 * Exemplo para criação de USUÁRIO e BANCO DE DADOS no MySQL (Ubuntu):
 ```bash

@@ -6,12 +6,15 @@ import java.security.SecureRandom;
 import java.util.Base64;
 
 import org.springframework.stereotype.Service;
-
+/*
+ * Declaracao de classe Service de Senha
+ */
 @Service
 public class SenhaService {
 
     private static final String CARACTERES = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+[]{}|;:',.<>?/`~";
 
+    // Metodo para geracao de Salt
     public String gerarSalt() {
         SecureRandom random = new SecureRandom();
         byte[] salt = new byte[16];
@@ -19,6 +22,7 @@ public class SenhaService {
         return Base64.getEncoder().encodeToString(salt);
     }
 
+    // Metodo para geracao de Senha Hash
     public String gerarSenhaHash(String senha, String salt) throws Exception {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         String saltedSenha = senha + salt;
@@ -26,6 +30,7 @@ public class SenhaService {
         return Base64.getEncoder().encodeToString(hash);
     }
 
+    // Metodo para geracao de Senha Aleatoria
     public String gerarSenhaAleatoria() {
         SecureRandom secureRandom = new SecureRandom();
         StringBuilder senhaAleatoria = new StringBuilder(10);

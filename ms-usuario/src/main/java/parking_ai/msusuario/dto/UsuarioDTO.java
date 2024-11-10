@@ -8,6 +8,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/*
+ * Classe DTO (Data Transfer Object) de Usuario com seus atributos (POJO)
+ */
 @AllArgsConstructor
 @Getter
 @NoArgsConstructor

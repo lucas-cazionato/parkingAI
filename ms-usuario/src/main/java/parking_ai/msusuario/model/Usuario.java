@@ -8,6 +8,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/*
+ * Classe Model (ORM) de Usuario com seus atributos (POJO)
+ */
 @AllArgsConstructor
 @Getter
 @NoArgsConstructor

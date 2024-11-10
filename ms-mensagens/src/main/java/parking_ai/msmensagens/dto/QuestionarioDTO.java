@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import parking_ai.msmensagens.enums.AchouVagaEnum;
 
+/*
+ * Classe DTO (Data Transfer Object) de Questionario/Avaliacao com seus atributos (POJO)
+ */
 @AllArgsConstructor
 @Getter
 @NoArgsConstructor
