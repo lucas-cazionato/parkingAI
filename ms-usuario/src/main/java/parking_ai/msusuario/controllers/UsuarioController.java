@@ -25,16 +25,21 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+/*
+ * Classe Controller do MS-USUARIO
+ * API REST com os metodos HTTP disponiveis
+ */
 @CrossOrigin
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/auth") // Endpoint para todos os metodos da API
 public class UsuarioController {
-
+    // Declaracao do logger - interface de biblioteca de logging
     private static final Logger logger = LoggerFactory.getLogger(UsuarioController.class);
 
     @Autowired
     private UsuarioService usuarioService;
 
+    // Metodo POST no endpoint /auth/login para autenticar Usuario (Login)
     @PostMapping("/login")
     public ResponseEntity<UsuarioDTO> autenticarUsuario(@RequestBody UsuarioDTO usuarioDTO) {
         try {
@@ -59,6 +64,7 @@ public class UsuarioController {
         }
     }
 
+    // Metodo POST no endpoint /auth para criar Usuario
     @PostMapping
     public ResponseEntity<UsuarioDTO> cadastrarUsuario(@RequestBody UsuarioDTO usuarioDTO) {
         try {
@@ -83,6 +89,7 @@ public class UsuarioController {
         }
     }
 
+    // Metodo GET no endpoint /auth/id/{id} para consultar Usuario por ID
     @GetMapping("/id/{id}")
     public ResponseEntity<UsuarioDTO> buscarUsuarioPorId(@PathVariable("id") String id) {
         try {
@@ -104,6 +111,7 @@ public class UsuarioController {
         }
     }
 
+    // Metodo GET no endpoint /auth/login/{login} para consultar Usuario por Login
     @GetMapping("/login/{login}")
     public ResponseEntity<UsuarioDTO> buscarUsuarioPorLogin(@PathVariable("login") String login) {
         try {
@@ -125,6 +133,7 @@ public class UsuarioController {
         }
     }
 
+    // Metodo GET no endpoint /auth/cpf/{cpf} para consultar Usuario por CPF
     @GetMapping("/cpf/{cpf}")
     public ResponseEntity<UsuarioDTO> buscarUsuarioPorCpf(@PathVariable("cpf") String cpf) {
         try {
@@ -146,6 +155,7 @@ public class UsuarioController {
         }
     }
 
+    // Metodo PUT no endpoint /auth/{cpf} para atualizar Usuario por CPF
     @PutMapping("/{cpf}")
     public ResponseEntity<UsuarioDTO> atualizarUsuario(@PathVariable("cpf") String cpf, @RequestBody UsuarioDTO usuarioDTO) {
         try {
@@ -167,6 +177,7 @@ public class UsuarioController {
         }
     }
 
+    // Metodo POST no endpoint /auth/recuperar para recuperar senha de Usuario atraves de e-mail
     @PostMapping("/recuperar")
     public ResponseEntity<Void> recuperarSenha(@RequestBody RecSenhaDTO recSenha) {
         try {
@@ -181,6 +192,7 @@ public class UsuarioController {
         }
     }
 
+    // Metodo DELETE no endpoint /auth/id/{id} para excluir Usuario por ID
     @DeleteMapping("/id/{id}")
     public ResponseEntity<Void> deletarUsuarioPorId(@PathVariable("id") String id) {
         try {
@@ -195,6 +207,7 @@ public class UsuarioController {
         }
     }
 
+    // Metodo DELETE no endpoint /auth/login/{login} para excluir Usuario por Login
     @DeleteMapping("/login/{login}")
     public ResponseEntity<Void> deletarUsuarioPorLogin(@PathVariable("login") String login) {
         try {
@@ -209,6 +222,7 @@ public class UsuarioController {
         }
     }
 
+    // Metodo DELETE no endpoint /auth/cpf/{cpf} para excluir Usuario por CPF
     @DeleteMapping("/cpf/{cpf}")
     public ResponseEntity<Void> deletarUsuarioPorCpf(@PathVariable("cpf") String cpf) {
         try {

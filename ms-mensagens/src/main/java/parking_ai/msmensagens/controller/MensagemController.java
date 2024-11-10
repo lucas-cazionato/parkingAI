@@ -23,16 +23,21 @@ import parking_ai.msmensagens.exception.AvaliacaoNaoEncontradaException;
 import parking_ai.msmensagens.model.Questionario;
 import parking_ai.msmensagens.service.MensagemService;
 
+/*
+ * Classe Controller do MS-MENSAGENS
+ * API REST com os metodos HTTP disponiveis
+ */
 @CrossOrigin
 @RestController
-@RequestMapping("/quest")
+@RequestMapping("/quest") // Endpoint para todos os metodos da API
 public class MensagemController {
-
+    // Declaracao do logger - interface de biblioteca de logging
     private static final Logger logger = LoggerFactory.getLogger(MensagemController.class);
 
     @Autowired
     private MensagemService mensagemService;
 
+    // Metodo POST no endpoint /quest para registrar Questionario/Avaliacao
     @PostMapping
     public ResponseEntity<QuestionarioDTO> registrarAvaliacao(@RequestBody QuestionarioDTO questDTO) {
         try {
@@ -48,6 +53,7 @@ public class MensagemController {
         }
     }
 
+    // Metodo GET no endpoint /quest para listar todos Questionarios/Avaliacoes
     @GetMapping
     public ResponseEntity<List<QuestionarioDTO>> listarTodasAvaliacoes() {
         try {
@@ -64,6 +70,7 @@ public class MensagemController {
         }
     }
 
+    // Metodo GET no endpoint /quest/id/{id} para listar Questionario/Avaliacao por ID
     @GetMapping("/id/{id}")
     public ResponseEntity<QuestionarioDTO> buscarAvaliacaoPorId(@PathVariable("id") Long idQuest) {
         try {
@@ -78,11 +85,17 @@ public class MensagemController {
         }
     }
 
+    // Metodo GET no endpoint /quest/cpf/{cpf} para listar Questionario/Avaliacao por CPF do Usuario
     @GetMapping("/cpf/{cpf}")
-    public ResponseEntity<QuestionarioDTO> buscarAvaliacaoPorCpf(@PathVariable("cpf") String cpfUsuario) {
+    public ResponseEntity<List<QuestionarioDTO>> buscarAvaliacaoPorCpf(@PathVariable("cpf") String cpfUsuario) {
         try {
-            QuestionarioDTO questDTO = mensagemService.converterModelDto(mensagemService.listarQuestionarioPorCpf(cpfUsuario));
-            return new ResponseEntity<>(questDTO, HttpStatus.OK);
+            List<QuestionarioDTO> questDTOs = mensagemService
+                .listarQuestionarioPorCpf(cpfUsuario)
+                .stream()
+                .map(mensagemService::converterModelDto)
+                .collect(Collectors.toList());
+            
+            return new ResponseEntity<>(questDTOs, HttpStatus.OK);
         } catch(AvaliacaoNaoEncontradaException e) {
             logger.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -92,6 +105,7 @@ public class MensagemController {
         }
     }
 
+    // Metodo PUT no endpoint /quest/{id} para atualizar Questionario/Avaliacao por ID (do Questionario)
     @PutMapping("/{id}")
     public ResponseEntity<QuestionarioDTO> atualizarAvaliacao(@PathVariable("id") Long idQuest, @RequestBody QuestionarioDTO questDTO) {
         try {

@@ -12,12 +12,16 @@ import parking_ai.msmensagens.exception.AvaliacaoNaoEncontradaException;
 import parking_ai.msmensagens.model.Questionario;
 import parking_ai.msmensagens.repository.QuestionarioRepositorio;
 
+/*
+ * Declaracao de classe Service de Questionario/Avaliacao, com metodos disponiveis
+ */
 @Service
 public class MensagemService {
 
     @Autowired
     private QuestionarioRepositorio questRepo;
 
+    // Metodo para registrar Questionario/Avaliacao no banco de dados
     public Questionario registrarQuestionario(Questionario quest) {
         if ((quest.getAchouVaga()!=AchouVagaEnum.SIM && quest.getAchouVaga()!=AchouVagaEnum.NÃO)
         || (quest.getNotaGeral()!=null && (!(quest.getNotaGeral() instanceof Integer) || quest.getNotaGeral()<1 || quest.getNotaGeral()>5))) {
@@ -30,18 +34,26 @@ public class MensagemService {
         }
     }
 
+    // Metodo para listar todos os Questionarios/Avaliacoes do banco de dados
     public List<Questionario> listarTodosQuestionarios() {
         return questRepo.findAll();
     }
 
+    // Metodo para listar Questionario/Avaliacao por ID (do Questionario)
     public Questionario listarQuestionarioPorId(Long idQuestionario) {
         return questRepo.findByIdQuestionario(idQuestionario).orElseThrow(() -> new AvaliacaoNaoEncontradaException("Avaliacao com este ID nao encontrada"));
     }
 
-    public Questionario listarQuestionarioPorCpf(String cpfUsuario) {
-        return questRepo.findByCpfUsuario(cpfUsuario).orElseThrow(() -> new AvaliacaoNaoEncontradaException("Avaliacao com este CPF de usuario nao encontrada"));
+    // Metodo para listar Questionario/Avaliacao por CPF do Usuario
+    public List<Questionario> listarQuestionarioPorCpf(String cpfUsuario) {
+        List<Questionario> questionarios = questRepo.findAllByCpfUsuario(cpfUsuario);
+        if (questionarios.isEmpty()) {
+            throw new AvaliacaoNaoEncontradaException("Avaliacao com este CPF de usuario nao encontrada");
+        }
+        return questionarios;
     }
 
+    // Metodo para atualizar Questionario por ID (do Questionario) e fazer UPDATE no BD
     public Questionario atualizarQuestionario(Long idQuestionario, Questionario quest) {
         Questionario q = listarQuestionarioPorId(idQuestionario);
         try {
@@ -58,6 +70,7 @@ public class MensagemService {
         }
     }
 
+    // Metodo para converter de Questionario DTO para Questionario Model
     public Questionario converterDtoModel(QuestionarioDTO questDTO) {
         Questionario quest = new Questionario();
         quest.setIdQuestionario(questDTO.getIdQuestionario());
@@ -69,6 +82,7 @@ public class MensagemService {
         return quest;
     }
 
+    // Metodo para converter de Questionario Model para Questionario DTO
     public QuestionarioDTO converterModelDto(Questionario quest) {
         QuestionarioDTO questDTO = new QuestionarioDTO();
         questDTO.setIdQuestionario(quest.getIdQuestionario());

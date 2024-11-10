@@ -1,3 +1,4 @@
+// Importação de bibliotecas e declaração de constantes necessárias
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
@@ -145,6 +146,7 @@ app.delete('/auth/cpf/:cpf', verifyJWT, (req, res, next) => {
 
 // 2 - Endpoints para ms-mensagens (CRUD Avaliação)
 const mensagemServiceProxy = httpProxy('http://localhost:3002');
+
 // 2.1 - Endpoint para registrar Avaliação
 app.post('/quest', verifyJWT, (req, res, next) => {
     mensagemServiceProxy(req, res, next);
@@ -163,6 +165,40 @@ app.get('/quest/cpf/:cpf', verifyJWT, (req, res, next) => {
 });
 // 2.5 - Endpoint para atualizar Avaliação por ID (da avaliação)
 app.put('/quest/:id', verifyJWT, (req, res, next) => {
+    mensagemServiceProxy(req, res, next);
+});
+
+// 3 - Endpoints para ms-mensagens (CRUD Favoritos)
+// 3.1 - Endpoint para cadastrar Endereço Favorito
+app.post('/favoritos', verifyJWT, (req, res, next) => {
+    mensagemServiceProxy(req, res, next);
+});
+// 3.2 - Endpoint para listar Endereço Favorito pelo seu ID
+app.get('/favoritos/id/:id', verifyJWT, (req, res, next) => {
+    mensagemServiceProxy(req, res, next);
+});
+// 3.3 - Endpoint para listar Endereços Favoritos pelo CPF do Usuario
+app.get('/favoritos/cpf/:cpf', verifyJWT, (req, res, next) => {
+    mensagemServiceProxy(req, res, next);
+});
+// 3.4 - Endpoint para listar Endereço Favorito pelo ID Google
+app.get('/favoritos/idGoogle/:idGoogle', verifyJWT, (req, res, next) => {
+    mensagemServiceProxy(req, res, next);
+});
+// 3.5 - Endpoint para atualizar Endereço Favorito pelo seu ID
+app.put('/favoritos/:id', verifyJWT, (req, res, next) => {
+    mensagemServiceProxy(req, res, next);
+});
+// 3.6 - Endpoint para excluir Endereço Favorito pelo seu ID
+app.delete('/favoritos/id/:id', verifyJWT, (req, res, next) => {
+    mensagemServiceProxy(req, res, next);
+});
+// 3.7 - Endpoint para excluir Endereços Favoritos pelo CPF do Usuario
+app.delete('/favoritos/cpf/:cpf', verifyJWT, (req, res, next) => {
+    mensagemServiceProxy(req, res, next);
+});
+// 3.8 - Endpoint para excluir Endereço Favorito pelo ID Google
+app.delete('/favoritos/idGoogle/:idGoogle', verifyJWT, (req, res, next) => {
     mensagemServiceProxy(req, res, next);
 });
 

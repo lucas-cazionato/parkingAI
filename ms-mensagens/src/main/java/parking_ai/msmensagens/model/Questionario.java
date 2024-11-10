@@ -16,6 +16,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import parking_ai.msmensagens.enums.AchouVagaEnum;
 
+/*
+ * Classe Model (ORM) de Questionario/Avaliacao com seus atributos
+ * @Column mapeia o atributo Java para uma coluna no BD
+ * Anotacoes definem restricoes das colunas, 
+ * assim como a auditoria da Data/Hora de criacao/atualizacao de um registro
+ */
 @AllArgsConstructor
 @Getter
 @NoArgsConstructor
