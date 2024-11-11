@@ -31,6 +31,7 @@ const Register: React.FC = () => {
 
   const phoneInputRef = useRef<TextInputMask>(null);
   const dateInputRef = useRef<TextInputMask>(null);
+  const cpfInputRef = useRef<TextInputMask>(null);
 
   const validatePasswords = () => {
     if (user.password !== confirmPassword) {
@@ -192,6 +193,7 @@ const Register: React.FC = () => {
                     type={'cpf'}
                     value={value}
                     onChangeText={onChange}
+                    ref={cpfInputRef}
                   />
                 )}
               />
