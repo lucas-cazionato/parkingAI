@@ -202,6 +202,14 @@ app.delete('/favoritos/idGoogle/:idGoogle', verifyJWT, (req, res, next) => {
     mensagemServiceProxy(req, res, next);
 });
 
+// 4  - Endpoint para ms-parking (Consultar Vagas de Estacionamento e suas Probabilidades)
+const parkingServiceProxy = httpProxy('http://localhost:5000');
+// 4.1 - Endpoint que envia um 'location(lng, lat)' no body e 
+// recebe um JSON com uma lista de poligonos/vagas mais proximos e suas informacoes
+app.post('/parking', verifyJWT, (req, res, next) => {
+    parkingServiceProxy(req, res, next);
+});
+
 // Cria o servidor na porta 3000
 const server = http.createServer(app);
 server.listen(3000, () => {
