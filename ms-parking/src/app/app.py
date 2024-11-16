@@ -64,6 +64,7 @@ def parking():
         tags = vaga[2]
         way = vaga[3]
         distancy = vaga[5]
+        way_geojson = vaga[6]
 
         # Verifica se o atributo tags é uma string e tenta convertê-la para dicionário
         if isinstance(tags, str):
@@ -83,8 +84,14 @@ def parking():
                 tags = tags_dict
             except Exception as e:
                 # Se ocorrer um erro, apenas atribui um dicionário vazio (fallback)
-                tags = {}    
-            
+                tags = {}
+
+        # Convertendo way_geojson de string para JSON
+        try:
+            way_geojson = json.loads(way_geojson)  # Converte a string GeoJSON para um objeto JSON
+        except json.JSONDecodeError as e:
+            way_geojson = {}  # Caso ocorra erro, atribui um dicionário vazio como fallback
+   
         # Processando a data para obter os parametros necessarios ao modelo
         date_info = processar_data.processDate(current_time)
 
@@ -108,7 +115,8 @@ def parking():
             "distancy": distancy,
             "tags": tags,
             "way_area": way_area,
-            "way": way
+            "way": way,
+            "way_geojson": way_geojson
         }
 
         # Adicionando as informacoes de cada poligono/vaga ao array de vagas
@@ -139,7 +147,8 @@ def parking():
             ('probability_occupancy', item['probability_occupancy']),
             ('tags', item['tags']),
             ('way_area', item['way_area']),
-            ('way', item['way'])
+            ('way', item['way']),
+            ('way_geojson', item['way_geojson'])
         ])    
         # Adicionando o final_result ao array de resultados finais
         final_results.append(final_result)
