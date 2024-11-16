@@ -26,7 +26,8 @@ class Repo:
       ST_Distance(
           p.way, 
           ST_Transform(ST_SetSRID(ST_Point(%s, %s), 4326), 3857)
-      ) AS distancy
+      ) AS distancy,
+      ST_AsGeoJSON(ST_Transform(p.way, 4326)) as way_geojson
     FROM planet_osm_polygon p
     WHERE tags->'capacity' IS NOT NULL
     ORDER BY distancy ASC
