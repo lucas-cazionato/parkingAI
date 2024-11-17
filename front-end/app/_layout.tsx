@@ -29,8 +29,8 @@ export default function RootLayout() {
   }
 
   return (
-      <ReduxProvider>
-    <PaperProvider>
+    <ReduxProvider children={undefined}>
+      <PaperProvider children={undefined}>
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
           <AppNavigator/>       
         </ThemeProvider>
