@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import 'react-native-reanimated';
 import { PaperProvider } from 'react-native-paper'; 
 import { useColorScheme } from '@/hooks/useColorScheme';
+import ReduxProvider from '@/components/ReduxProvider';
 import AppNavigator from './appNavigation/appNavigator';
 
 
@@ -28,10 +29,12 @@ export default function RootLayout() {
   }
 
   return (
-      <PaperProvider>
+      <ReduxProvider>
+    <PaperProvider>
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
           <AppNavigator/>       
         </ThemeProvider>
       </PaperProvider>
+    </ReduxProvider>
   );
 }

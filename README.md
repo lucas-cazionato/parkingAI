@@ -19,3 +19,21 @@ Português, exceto para termos específicos como Get, Set, Service, Model, Dto, 
 
 # Roadmap (O que cada um deve fazer até quando):
 https://docs.google.com/spreadsheets/d/1Z51pzLjw92eJ6kyFrIGz5zpwXeowaTRM/edit?gid=178778627#gid=178778627
+
+# Configuração:
+1. Instalar dependencias
+
+   ```bash
+   npm install
+   ```
+2. Adicionar chave da google em config.ts
+
+3. Iniciar o APP
+
+   ```bash
+    npm start
+   ```
+4. Caso faça update, ajustar alguns pacotes para versões mais antigas:
+    ```bash
+    npm install react-native-google-places-autocomplete@2.5.6 --save
+    ```
