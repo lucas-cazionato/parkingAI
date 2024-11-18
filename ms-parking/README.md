@@ -14,11 +14,12 @@ Trata-se de uma aplicação web Flask com API REST:
 - Necessário executar os comandos referentes apenas ao diretório `cwb_parking_data/data`
 
 ## Passo 2:
-* Ativar o ambiente virtual Python do projeto:
-- Navegar até o diretório `ms-parking/.venv`
-- Executar o comando abaixo
+* Criação de ambiente virtual Python:
+- Dentro do diretório raiz do projeto `ms-parking/`, executar os comandos abaixo:
 ```bash
-source bin/activate
+python -m venv .venv
+source .venv/bin/activate  # No Windows: .venv\Scripts\activate
+pip install -r requirements.txt
 ```
 
 ## Passo 3:
