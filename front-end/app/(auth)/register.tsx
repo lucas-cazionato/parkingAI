@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { View, Text, Alert } from 'react-native';
-import { TextInput, Button, HelperText } from 'react-native-paper';
+import { TextInput, Button, HelperText, Surface } from 'react-native-paper';
 import { TextInputMask } from 'react-native-masked-text';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
@@ -8,6 +8,7 @@ import { useNavigation, NavigationProp, RouteProp, CompositeNavigationProp } fro
 import { Styles } from '../../constants/Styles';
 import { User } from '../models/User';
 import { register } from '../../apiService';
+import { ScrollView } from 'react-native-gesture-handler';
 
 interface FormData extends Omit<User, 'confirmPassword'> {
   confirmPassword: string;
@@ -34,7 +35,7 @@ const Register: React.FC = () => {
   const cpfInputRef = useRef<TextInputMask>(null);
 
   const validatePasswords = () => {
-    if (user.password !== confirmPassword) {
+    if (user.senha !== confirmPassword) {
       setError('confirmPassword', {
         type: 'manual',
         message: 'As senhas não coincidem.',
@@ -72,16 +73,17 @@ const Register: React.FC = () => {
 
   return (
     <View style={Styles.container}>
+      <ScrollView>
       <View style={Styles.inputContainer}>
-        <View style={Styles.headerContainer}>
+        <Surface style={Styles.surface} elevation={4}>
           <Icon name="person-add" size={100} color="#ec6408" />
           <Text style={Styles.header}>Crie sua conta</Text>
           <Text style={Styles.subText}>Preencha os campos com suas informações</Text>
-        </View>
+        </Surface>
 
         <Controller
           control={control}
-          name="name"
+          name="nome"
           rules={{ required: 'Nome é obrigatório' }}
           render={({ field: { onChange, onBlur, value } }) => (
             <>
@@ -89,16 +91,16 @@ const Register: React.FC = () => {
                 label="Nome Completo"
                 value={value || ''}
                 onBlur={onBlur}
-                onChangeText={(name) => {
-                  onChange(name);
-                  setUser({ ...user, name });
+                onChangeText={(nome) => {
+                  onChange(nome);
+                  setUser({ ...user, nome });
                 }}
                 activeUnderlineColor='#ec6408'
                 style={Styles.input}
-                error={!!errors.name}
+                error={!!errors.nome}
               />
-              <HelperText type="error" visible={!!errors.name} style={Styles.helperText}>
-                {errors.name?.message}
+              <HelperText type="error" visible={!!errors.nome} style={Styles.helperText}>
+                {errors.nome?.message}
               </HelperText>
             </>
           )}
@@ -106,7 +108,7 @@ const Register: React.FC = () => {
 
         <Controller
           control={control}
-          name="dateOfBirth"
+          name="dataDeNascimento"
           rules={{ required: 'Data de nascimento é obrigatória' }}
           render={({ field: { onChange, onBlur, value } }) => (
             <>
@@ -114,13 +116,13 @@ const Register: React.FC = () => {
                 label="Data de Nascimento"
                 value={value || ''}
                 onBlur={onBlur}
-                onChangeText={(dateOfBirth) => {
-                  onChange(dateOfBirth);
-                  setUser({ ...user, dateOfBirth });
+                onChangeText={(dataDeNascimento) => {
+                  onChange(dataDeNascimento);
+                  setUser({ ...user, dataDeNascimento });
                 }}
                 activeUnderlineColor='#ec6408'
                 style={Styles.input}
-                error={!!errors.dateOfBirth}
+                error={!!errors.dataDeNascimento}
                 render={props => (
                   <TextInputMask
                     {...props}
@@ -134,8 +136,8 @@ const Register: React.FC = () => {
                   />
                 )}
               />
-              <HelperText type="error" visible={!!errors.dateOfBirth} style={Styles.helperText}>
-                {errors.dateOfBirth?.message}
+              <HelperText type="error" visible={!!errors.dataDeNascimento} style={Styles.helperText}>
+                {errors.dataDeNascimento?.message}
               </HelperText>
             </>
           )}
@@ -206,7 +208,7 @@ const Register: React.FC = () => {
 
         <Controller
           control={control}
-          name="phone"
+          name="telefone"
           rules={{ required: 'Telefone é obrigatório', pattern: { value: /^\(\d{2}\) \d{4,5}\-\d{4}$/, message: 'Telefone inválido' } }}
           render={({ field: { onChange, onBlur, value } }) => (
             <>
@@ -214,14 +216,14 @@ const Register: React.FC = () => {
                 label="Telefone"
                 value={value || ''}
                 onBlur={onBlur}
-                onChangeText={(phone) => {
-                  onChange(phone);
-                  setUser({ ...user, phone });
+                onChangeText={(telefone) => {
+                  onChange(telefone);
+                  setUser({ ...user, telefone });
                 }}
                 keyboardType="numeric"
                 activeUnderlineColor='#ec6408'
                 style={Styles.input}
-                error={!!errors.phone}
+                error={!!errors.telefone}
                 render={props => (
                   <TextInputMask
                     {...props}
@@ -237,8 +239,8 @@ const Register: React.FC = () => {
                   />
                 )}
               />
-              <HelperText type="error" visible={!!errors.phone} style={Styles.helperText}>
-                {errors.phone?.message}
+              <HelperText type="error" visible={!!errors.telefone} style={Styles.helperText}>
+                {errors.telefone?.message}
               </HelperText>
             </>
           )}
@@ -246,7 +248,7 @@ const Register: React.FC = () => {
 
         <Controller
           control={control}
-          name="password"
+          name="senha"
           rules={{ required: 'Senha é obrigatória' }}
           render={({ field: { onChange, onBlur, value } }) => (
             <>
@@ -254,18 +256,18 @@ const Register: React.FC = () => {
                 label="Senha"
                 value={value || ''}
                 onBlur={onBlur}
-                onChangeText={(password) => {
-                  onChange(password);
-                  setUser({ ...user, password });
+                onChangeText={(senha) => {
+                  onChange(senha);
+                  setUser({ ...user, senha });
                 }}
                 activeUnderlineColor='#ec6408'
                 secureTextEntry={!passwordVisible}
                 right={<TextInput.Icon icon={passwordVisible ? "eye-off" : "eye"} onPress={() => setPasswordVisible(!passwordVisible)} />}
                 style={Styles.input}
-                error={!!errors.password}
+                error={!!errors.senha}
               />
-              <HelperText type="error" visible={!!errors.password} style={Styles.helperText}>
-                {errors.password?.message}
+              <HelperText type="error" visible={!!errors.senha} style={Styles.helperText}>
+                {errors.senha?.message}
               </HelperText>
             </>
           )}
@@ -301,6 +303,7 @@ const Register: React.FC = () => {
           </Button>
         </View>
       </View>
+      </ScrollView>
     </View>
   );
 };
