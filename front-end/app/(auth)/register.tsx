@@ -108,7 +108,7 @@ const Register: React.FC = () => {
 
         <Controller
           control={control}
-          name="dataDeNascimento"
+          name="dataNascimento"
           rules={{ required: 'Data de nascimento é obrigatória' }}
           render={({ field: { onChange, onBlur, value } }) => (
             <>
@@ -116,13 +116,13 @@ const Register: React.FC = () => {
                 label="Data de Nascimento"
                 value={value || ''}
                 onBlur={onBlur}
-                onChangeText={(dataDeNascimento) => {
-                  onChange(dataDeNascimento);
-                  setUser({ ...user, dataDeNascimento });
+                onChangeText={(dataNascimento) => {
+                  onChange(dataNascimento);
+                  setUser({ ...user, dataNascimento });
                 }}
                 activeUnderlineColor='#ec6408'
                 style={Styles.input}
-                error={!!errors.dataDeNascimento}
+                error={!!errors.dataNascimento}
                 render={props => (
                   <TextInputMask
                     {...props}
@@ -136,8 +136,8 @@ const Register: React.FC = () => {
                   />
                 )}
               />
-              <HelperText type="error" visible={!!errors.dataDeNascimento} style={Styles.helperText}>
-                {errors.dataDeNascimento?.message}
+              <HelperText type="error" visible={!!errors.dataNascimento} style={Styles.helperText}>
+                {errors.dataNascimento?.message}
               </HelperText>
             </>
           )}
@@ -146,7 +146,7 @@ const Register: React.FC = () => {
 
         <Controller
           control={control}
-          name="email"
+          name="login"
           rules={{ required: 'Email é obrigatório', pattern: { value: /^\S+@\S+$/i, message: 'Email inválido' } }}
           render={({ field: { onChange, onBlur, value } }) => (
             <>
@@ -154,18 +154,18 @@ const Register: React.FC = () => {
                 label="Email"
                 value={value || ''}
                 onBlur={onBlur}
-                onChangeText={(email) => {
-                  onChange(email);
-                  setUser({ ...user, email });
+                onChangeText={(login) => {
+                  onChange(login);
+                  setUser({ ...user, login });
                 }}
                 keyboardType="email-address"
                 autoCapitalize="none"
                 activeUnderlineColor='#ec6408'
                 style={Styles.input}
-                error={!!errors.email}
+                error={!!errors.login}
               />
-              <HelperText type="error" visible={!!errors.email} style={Styles.helperText}>
-                {errors.email?.message}
+              <HelperText type="error" visible={!!errors.login} style={Styles.helperText}>
+                {errors.login?.message}
               </HelperText>
             </>
           )}
