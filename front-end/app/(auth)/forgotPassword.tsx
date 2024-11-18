@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, Alert } from 'react-native';
-import { TextInput, Button } from 'react-native-paper';
+import { TextInput, Button, Surface } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Controller, useForm } from 'react-hook-form';
 import { HelperText } from 'react-native-paper';
@@ -39,11 +39,11 @@ const ForgotPassword: React.FC = () => {
     return (
       <View style={Styles.container}>
         <View style={Styles.inputContainer}>
-          <View style={Styles.headerContainer}>
+          <Surface style={Styles.surface} elevation={4}>
             <Icon name="question-mark" size={100} color="#ec6408" />
             <Text style={Styles.header}>Recuperar Senha</Text>
             <Text style={Styles.subText}>Preencha o campo com seu e-mail de cadastro</Text>
-          </View>
+          </Surface>
           <Controller
             control={control}
             name="email"

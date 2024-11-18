@@ -78,14 +78,9 @@ export const Styles = StyleSheet.create({
     marginBottom: 20,
   },
 
-  headerContainer: {
+  surface: {
     marginBottom: 20,
     borderRadius: 8,
-    shadowColor: 'black',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-    elevation: 2,
     alignItems: 'center',
     justifyContent: 'center'
   },
