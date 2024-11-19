@@ -1,18 +1,29 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import Login from '../(auth)/login';
 import Register from '../(auth)/register';
 import ForgotPassword from '../(auth)/forgotPassword';
-import Home from '../screens/home';
 import UserAccount from '../screens/userAccount';
 import MapHome from '../screens/mapHome';
 import MapSimulate from '../screens/mapSimulate';
 import Review from '../screens/review';
+import { Styles } from '../../constants/Styles';
+import CustomDrawerContent from './CustomDrawerContent';
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
+
+const headerOptions = {
+  headerStyle: {
+    backgroundColor: '#05204b',
+  },
+  headerTintColor: '#fff',
+  headerTitleStyle: {
+    fontWeight: 'bold',
+  },
+};
 
 function AuthStackNavigator() {
   return (
@@ -24,13 +35,23 @@ function AuthStackNavigator() {
   );
 }
 
+
 function DrawerNavigator() {
     return (
-      <Drawer.Navigator initialRouteName="mapHome">
-        <Drawer.Screen name="mapHome" component={MapHome} />
-        <Drawer.Screen name="mapSimulate" component={MapSimulate} />
-        <Drawer.Screen name="review" component={Review} />
-      <Drawer.Screen name="UserAccount" component={UserAccount} />
+      <Drawer.Navigator initialRouteName="mapHome"
+        drawerContent={( props) => <CustomDrawerContent {...props} />}
+        drawerStyle={Styles.drawerContent}
+        screenOptions={{
+        headerShown: true,
+            drawerStyle: { backgroundColor: '#05204b' },
+            drawerActiveTintColor: '#FFF', // Cor do texto do item ativo
+            drawerInactiveTintColor: '#FFF', // Cor do texto dos itens inativos
+          }}
+      >
+        <Drawer.Screen name="mapHome" component={MapHome} options={headerOptions}/>
+        <Drawer.Screen name="mapSimulate" component={MapSimulate} options={headerOptions}/>
+        <Drawer.Screen name="review" component={Review} options={headerOptions}/>
+      <Drawer.Screen name="UserAccount" component={UserAccount} options={headerOptions}/>
       </Drawer.Navigator>
     );
   }
