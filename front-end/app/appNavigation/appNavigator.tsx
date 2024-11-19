@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
@@ -9,6 +9,7 @@ import UserAccount from '../screens/userAccount';
 import MapHome from '../screens/mapHome';
 import MapSimulate from '../screens/mapSimulate';
 import Review from '../screens/review';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Styles } from '../../constants/Styles';
 import CustomDrawerContent from './CustomDrawerContent';
 
@@ -31,12 +32,10 @@ function AuthStackNavigator() {
       <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
       <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
       <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ headerShown: false }} />
+
     </Stack.Navigator>
   );
 }
-
-
-function DrawerNavigator() {
     return (
       <Drawer.Navigator initialRouteName="mapHome"
         drawerContent={( props) => <CustomDrawerContent {...props} />}
@@ -57,6 +56,18 @@ function DrawerNavigator() {
   }
 
 const AppNavigator = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  // Verificar se o usuário está autenticado ao carregar o app
+  useEffect(() => {
+    const checkAuthentication = async () => {
+      const token = await AsyncStorage.getItem('token');
+      setIsAuthenticated(!!token); // Se houver token, o usuário está autenticado
+    };
+
+    checkAuthentication();
+  }, []);
+
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Auth">
