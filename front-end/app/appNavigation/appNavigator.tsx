@@ -6,7 +6,7 @@ import Login from '../(auth)/login';
 import Register from '../(auth)/register';
 import ForgotPassword from '../(auth)/forgotPassword';
 import Home from '../screens/home';
-import UserAccount from '../(auth)/userAccount';
+import UserAccount from '../screens/userAccount';
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -17,7 +17,6 @@ function AuthStackNavigator() {
       <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
       <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
       <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ headerShown: false }} />
-      <Stack.Screen name="UserAccount" component={UserAccount} options={{ headerShown: false }} />
     </Stack.Navigator>
   );
 }
@@ -26,6 +25,7 @@ function DrawerNavigator() {
   return (
     <Drawer.Navigator initialRouteName="Home">
       <Drawer.Screen name="Home" component={Home} />
+      <Drawer.Screen name="UserAccount" component={UserAccount} />
     </Drawer.Navigator>
   );
 }

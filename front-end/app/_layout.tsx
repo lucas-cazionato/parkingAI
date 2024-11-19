@@ -3,9 +3,10 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
-import { PaperProvider } from 'react-native-paper'; 
+import { Provider as ReduxProvider } from 'react-redux';
+import { Provider as PaperProvider } from 'react-native-paper';
+import { store } from '@/store/store';
 import { useColorScheme } from '@/hooks/useColorScheme';
-import ReduxProvider from '@/components/ReduxProvider';
 import AppNavigator from './appNavigation/appNavigator';
 
 
@@ -29,8 +30,8 @@ export default function RootLayout() {
   }
 
   return (
-    <ReduxProvider children={undefined}>
-      <PaperProvider children={undefined}>
+    <ReduxProvider store={store}>
+      <PaperProvider>
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
           <AppNavigator/>       
         </ThemeProvider>
