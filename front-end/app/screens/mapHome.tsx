@@ -23,6 +23,8 @@ import { useNavigation, NavigationProp } from "@react-navigation/native";
 import axios from "axios";
 import { interpolateColor } from "react-native-reanimated";
 import MapViewDirections from "react-native-maps-directions";
+import { Appbar } from 'react-native-paper';
+import { ParkingSpot } from "@/types";
 
 type RootStackParamList = {
   mapHome: undefined;
