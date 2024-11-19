@@ -2,14 +2,16 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
 import { Styles } from '../../constants/Styles';
-import Register from './register';
 import { login } from '../../apiService';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 type RootStackParamList = {
   Login: undefined;
   Register: undefined;
   ForgotPassword: undefined;
+  Main: undefined;
 };
 
 type LoginScreenNavigationProp = NavigationProp<RootStackParamList, 'Login'>;
@@ -20,18 +22,23 @@ export default function Login() {
   const [isRegistering, setIsRegistering] = useState(false);
   const [forgotPassword, setForgotPassword] = useState(false);
   const [message, setMessage] = useState('');
-  
+
   const navigation = useNavigation<LoginScreenNavigationProp>();
 
   const handleLogin = async () => {
     try {
       const userData = await login(email, password);
-      setMessage(`Bem-vindo, ${userData.login}`);
+      const token = await AsyncStorage.getItem('token');
+      if (token) {
+        setMessage(`Bem-vindo, ${userData.login}`);
+        navigation.navigate('Main');
+      } else {
+        setMessage('Erro ao obter o token. Tente novamente.');
+      }
     } catch (error) {
       setMessage('Erro no login. Verifique suas credenciais.');
     }
   };
-
 
 
   return (
@@ -64,7 +71,7 @@ export default function Login() {
 
 
       <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
-      <Text style={Styles.forgetText}>Esqueci minha senha</Text>
+        <Text style={Styles.forgetText}>Esqueci minha senha</Text>
       </TouchableOpacity>
 
       <Button
@@ -77,8 +84,8 @@ export default function Login() {
 
       {message ? <Text style={Styles.messageText}>{message}</Text> : null}
 
-      <TouchableOpacity onPress={() => navigation.navigate('Register')} 
-      style={Styles.registerContainer}>
+      <TouchableOpacity onPress={() => navigation.navigate('Register')}
+        style={Styles.registerContainer}>
         <Text style={Styles.registerText}>
           Não tem uma conta? <Text style={Styles.highlightText}>Cadastre-se</Text>
         </Text>
