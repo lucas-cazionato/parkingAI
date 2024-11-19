@@ -152,4 +152,17 @@ export const Styles = StyleSheet.create({
     marginTop: 8,
   },
 
+  drawerContent: {
+    flex: 1,
+    backgroundColor: '#05204b',
+  },
+
+  drawerItem: {
+    color: '#ffffff',
+  },
+
+  drawerLabel: {
+    color: '#ffffff',
+  },
+
 });
