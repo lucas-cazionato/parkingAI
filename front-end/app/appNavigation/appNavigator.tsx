@@ -41,6 +41,12 @@ function DrawerNavigator() {
       <Drawer.Navigator initialRouteName="mapHome"
         drawerContent={( props) => <CustomDrawerContent {...props} />}
         drawerStyle={Styles.drawerContent}
+        screenOptions={{
+        headerShown: true,
+            drawerStyle: { backgroundColor: '#05204b' },
+            drawerActiveTintColor: '#FFF', // Cor do texto do item ativo
+            drawerInactiveTintColor: '#FFF', // Cor do texto dos itens inativos
+          }}
       >
         <Drawer.Screen name="mapHome" component={MapHome} options={headerOptions}/>
         <Drawer.Screen name="mapSimulate" component={MapSimulate} options={headerOptions}/>
