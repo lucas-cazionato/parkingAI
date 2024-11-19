@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { View, Text, Alert } from 'react-native';
 import { TextInput, Button, Surface } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { HelperText } from 'react-native-paper';
 import { Styles } from '../../constants/Styles';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { newPassword } from '@/apiService';
 
 type RootStackParamList = {
   ForgotPassword: undefined;
@@ -19,13 +20,14 @@ const ForgotPassword: React.FC = () => {
   const { control, handleSubmit, formState: { errors } } = useForm<{ email: string }>();
   const navigation = useNavigation<ForgotPasswordScreenNavigationProp>();
 
-  const handleForgotPassword = () => {
-    /*
+  const onSubmit: SubmitHandler<{ email: string }> = async (data) => {
+    console.log('Email enviado:', data.email);
     try {
-      
-      await api(data.email);
-      Alert.alert('Recuperação de Senha', 'Instruções de recuperação de senha enviadas para o seu email.');
-      navigation.navigate('Login'); // Voltar para a tela de login
+      const responseData = await newPassword(data.email);
+
+      Alert.alert('Recuperação de Senha', 'Instruções de recuperação de senha foram enviadas para o seu email.');
+      navigation.navigate('Login'); 
+
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert('Erro', error.message || 'Ocorreu um erro ao enviar o email de recuperação de senha.');
@@ -33,7 +35,6 @@ const ForgotPassword: React.FC = () => {
         Alert.alert('Erro', 'Ocorreu um erro desconhecido ao enviar o email de recuperação de senha.');
       }
     }
-      */
   };
 
     return (
@@ -71,7 +72,7 @@ const ForgotPassword: React.FC = () => {
         <Button mode="contained" onPress={() => navigation.navigate('Login')} style={Styles.cancelButton}>
           Voltar para Login
         </Button>
-        <Button mode="contained" onPress={handleForgotPassword} style={Styles.defaultButton}>
+        <Button mode="contained" onPress={handleSubmit(onSubmit)} style={Styles.defaultButton}>
           Enviar Instruções
         </Button>
         </View>

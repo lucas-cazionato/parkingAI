@@ -61,7 +61,7 @@ const Register: React.FC = () => {
       nome: data.nome,
       dataNascimento: formatDate(data.dataNascimento),
       login: data.login, // Email
-      cpf: data.cpf,
+      cpf: formatCPF(data.cpf),
       telefone: data.telefone,
       senha: data.senha,
     };
@@ -86,6 +86,11 @@ const Register: React.FC = () => {
     const [day, month, year] = date.split('/');
     return `${year}-${month}-${day}`;
   };
+
+  const formatCPF = (cpf: string) => {
+    return cpf.replace(/[.\-]/g, '');
+  };
+  
 
   return (
     <View style={Styles.container}>
@@ -294,8 +299,8 @@ const Register: React.FC = () => {
             value={confirmPassword}
             onChangeText={setConfirmPassword}
             activeUnderlineColor='#ec6408'
-            secureTextEntry
-            right={<TextInput.Icon icon={passwordVisible ? "eye-off" : "eye"} onPress={() => setConfirmPasswordVisible(!confirmPasswordVisible)} />}
+            secureTextEntry={!confirmPasswordVisible}
+            right={<TextInput.Icon icon={confirmPasswordVisible ? "eye-off" : "eye"} onPress={() => setConfirmPasswordVisible(!confirmPasswordVisible)} />}
             style={Styles.input}
             error={!!errors.confirmPassword}
           />

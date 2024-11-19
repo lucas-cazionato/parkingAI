@@ -25,6 +25,7 @@ export const Styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
     elevation: 2,
+    marginVertical: 40,
   },
 
   image: {
@@ -80,9 +81,11 @@ export const Styles = StyleSheet.create({
 
   surface: {
     marginBottom: 20,
+    backgroundColor: '#ffffff',
     borderRadius: 8,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    marginVertical: 10,
   },
 
   subText: {
@@ -91,6 +94,7 @@ export const Styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 20,
+    marginHorizontal: 20,
   },
 
   input: {

@@ -92,3 +92,17 @@ export const deleteUserAccount = async () => {
         }
     }
 };
+
+export const newPassword = async (email) => {
+    try {
+        const response = await api.post('/auth/forgot', { email });
+        return response.data;
+    } catch (error) {
+        console.error('Erro ao solicitar nova senha:', error);
+        if (error.response && error.response.data) {
+            throw new Error(error.response.data.message || 'Erro ao solicitar nova senha');
+        } else {
+            throw new Error('Erro ao solicitar nova senha');
+        }
+    }
+};

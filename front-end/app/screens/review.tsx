@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Button, RadioButton, TextInput } from 'react-native-paper';
+import { Button, RadioButton, TextInput, Surface } from 'react-native-paper';
 import { Styles } from '../../constants/Styles';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
@@ -24,10 +24,10 @@ export default function Review({ navigation }: ReviewProps) {
     <View style={Styles.container}>
         
         <View style={Styles.inputContainer}>
-            <View style={Styles.headerContainer}>
+          <Surface style={Styles.surface} elevation={4}>
             <Icon name="star" size={100} color="#ec6408" />
             <Text style={Styles.header}>Avalie sua experiência</Text>
-            </View>
+          </Surface>
 
             <Text style={Styles.question}>Você encontrou uma vaga?</Text>
             <RadioButton.Group onValueChange={value => setFoundSpot(value)} value={foundSpot}>
