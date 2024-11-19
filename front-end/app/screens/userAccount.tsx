@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Alert, StyleSheet } from 'react-native';
 import { TextInput, Button, HelperText, Surface } from 'react-native-paper';
+import { TextInputMask } from 'react-native-masked-text';
 import { useForm, Controller } from 'react-hook-form';
 import { fetchUserData, updateUserData, deleteUserAccount } from '../../apiService';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
@@ -19,13 +20,14 @@ const UserAccount: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
     const navigation = useNavigation<UserAccountNavigationProp>();
 
+    const phoneInputRef = React.useRef<TextInputMask>(null);
+
     useEffect(() => {
         const loadUserData = async () => {
             try {
                 setIsLoading(true);
-                // Chama a função fetchUserData e pega apenas a propriedade data
-                const response = await fetchUserData('/auth/user'); // Ou o endpoint que você está usando
-                reset(response.data); // Passa apenas a propriedade 'data' para o reset
+                const response = await fetchUserData('/auth/user');
+                reset(response.data);
             } catch (error) {
                 Alert.alert('Erro', 'Não foi possível carregar os dados do usuário.');
             } finally {
@@ -88,7 +90,7 @@ const UserAccount: React.FC = () => {
                     render={({ field: { onChange, onBlur, value } }) => (
                         <>
                             <TextInput
-                                label="Nome"
+                                label="Nome Completo"
                                 value={value || ''}
                                 onBlur={onBlur}
                                 onChangeText={onChange}
@@ -96,7 +98,7 @@ const UserAccount: React.FC = () => {
                                 style={Styles.input}
                                 error={!!errors.nome}
                             />
-                            <HelperText type="error" visible={!!errors.nome}>
+                            <HelperText type="error" visible={!!errors.nome} style={Styles.helperText}>
                                 {errors.nome?.message}
                             </HelperText>
                         </>
@@ -118,10 +120,12 @@ const UserAccount: React.FC = () => {
                                 onBlur={onBlur}
                                 onChangeText={onChange}
                                 activeUnderlineColor="#ec6408"
+                                keyboardType="email-address"
                                 style={Styles.input}
+                                autoCapitalize="none"
                                 error={!!errors.email}
                             />
-                            <HelperText type="error" visible={!!errors.email}>
+                            <HelperText type="error" visible={!!errors.email} style={Styles.helperText}>
                                 {errors.email?.message}
                             </HelperText>
                         </>
@@ -133,7 +137,7 @@ const UserAccount: React.FC = () => {
                     name="telefone"
                     rules={{
                         required: 'Telefone é obrigatório',
-                        pattern: { value: /^\(\d{2}\) \d{4,5}\-\d{4}$/, message: 'Telefone inválido' },
+                        pattern: { value: /^\(\d{2}\) \d{4,5}-\d{4}$/, message: 'Telefone inválido' },
                     }}
                     render={({ field: { onChange, onBlur, value } }) => (
                         <>
@@ -145,8 +149,22 @@ const UserAccount: React.FC = () => {
                                 activeUnderlineColor="#ec6408"
                                 style={Styles.input}
                                 error={!!errors.telefone}
+                                render={props => (
+                                    <TextInputMask
+                                        {...props}
+                                        type={'cel-phone'}
+                                        options={{
+                                            maskType: 'BRL',
+                                            withDDD: true,
+                                            dddMask: '(99) ',
+                                        }}
+                                        value={value}
+                                        onChangeText={onChange}
+                                        ref={phoneInputRef}
+                                    />
+                                )}
                             />
-                            <HelperText type="error" visible={!!errors.telefone}>
+                            <HelperText type="error" visible={!!errors.telefone} style={Styles.helperText}>
                                 {errors.telefone?.message}
                             </HelperText>
                         </>
