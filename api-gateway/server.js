@@ -130,29 +130,30 @@ app.get('/auth/cpf/:cpf', verifyJWT, (req, res, next) => {
 
 // 1.6 - Endpoint para atualizar Usuário por CPF
 app.put('/auth/:cpf', verifyJWT, async (req, res, next) => {
-    try {
-        // Extrair o CPF do parâmetro de rota
-        const { cpf } = req.params;
+    usuarioServiceProxy(req, res, next);
+    //     try {
+    //         // Extrair o CPF do parâmetro de rota
+    //         const { cpf } = req.params;
 
-        // Os dados a serem atualizados vêm no corpo da requisição
-        const updatedData = req.body;
+    //         // Os dados a serem atualizados vêm no corpo da requisição
+    //         const updatedData = req.body;
 
-        // Realizar a atualização através do seu serviço de dados
-        const updatedUser = await usuarioServiceProxy.updateUserByCpf(cpf, updatedData);
+    //         // Realizar a atualização através do seu serviço de dados
+    //         const updatedUser = await usuarioServiceProxy.updateUserByCpf(cpf, updatedData);
 
-        // Se a atualização for bem-sucedida
-        if (updatedUser) {
-            return res.status(200).json({
-                message: 'Usuário atualizado com sucesso!',
-                user: updatedUser
-            });
-        } else {
-            return res.status(404).json({ message: 'Usuário não encontrado.' });
-        }
-    } catch (error) {
-        console.error('Erro ao atualizar usuário:', error);
-        return res.status(500).json({ message: 'Erro ao atualizar o usuário.' });
-    }
+    //         // Se a atualização for bem-sucedida
+    //         if (updatedUser) {
+    //             return res.status(200).json({
+    //                 message: 'Usuário atualizado com sucesso!',
+    //                 user: updatedUser
+    //             });
+    //         } else {
+    //             return res.status(404).json({ message: 'Usuário não encontrado.' });
+    //         }
+    //     } catch (error) {
+    //         console.error('Erro ao atualizar usuário:', error);
+    //         return res.status(500).json({ message: 'Erro ao atualizar o usuário.' });
+    //     }
 });
 
 // 1.7 - Endpoint para deletar Usuário por ID

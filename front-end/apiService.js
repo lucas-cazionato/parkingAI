@@ -1,11 +1,11 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { URL_APIGATEWAY } from './config';
 
-const apiGatewayUrl = 'http://192.168.0.5:3000';
 
 // Instância do axios para configurar a base URL
 const api = axios.create({
-    baseURL: apiGatewayUrl,
+    baseURL: URL_APIGATEWAY,
     headers: {
         'Content-Type': 'application/json',
     },

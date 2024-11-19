@@ -1,10 +1,10 @@
 import React from 'react';
-import { DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer';
+import { DrawerContentScrollView, DrawerItemList, DrawerItem, DrawerContentComponentProps } from '@react-navigation/drawer';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Styles } from '../../constants/Styles';
 import { MaterialIcons } from '@expo/vector-icons';
 
-function CustomDrawerContent(props) {
+function CustomDrawerContent(props: DrawerContentComponentProps) {
   return (
     <DrawerContentScrollView {...props} contentContainerStyle={styles.drawerContent}>
       <View style={styles.header}>
@@ -20,15 +20,14 @@ function CustomDrawerContent(props) {
 
 
       <View style={styles.menu}>
-        <DrawerItemList {...props} labelStyle={styles.drawerLabel} />
+        {/* DrawerItemList não suporta labelStyle diretamente */}
+        <DrawerItemList {...props} />
         <DrawerItem
           label="Ajuda"
           icon={({ color }) => <MaterialIcons name="help-outline" size={24} color={color} />}
           onPress={() => props.navigation.navigate('Ajuda')}
-          labelStyle={styles.drawerLabel}
         />
       </View>
-
       <View style={styles.footer}>
         <TouchableOpacity
           style={styles.logoutButton}

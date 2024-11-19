@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerContentComponentProps } from '@react-navigation/drawer';
 import Login from '../(auth)/login';
 import Register from '../(auth)/register';
 import ForgotPassword from '../(auth)/forgotPassword';
@@ -22,7 +22,7 @@ const headerOptions = {
   },
   headerTintColor: '#fff',
   headerTitleStyle: {
-    fontWeight: 'bold',
+    fontWeight: 'bold' as 'bold',
   },
 };
 
@@ -36,24 +36,25 @@ function AuthStackNavigator() {
     </Stack.Navigator>
   );
 }
-    return (
-      <Drawer.Navigator initialRouteName="mapHome"
-        drawerContent={( props) => <CustomDrawerContent {...props} />}
-        drawerStyle={Styles.drawerContent}
-        screenOptions={{
+
+
+function DrawerNavigator() {
+  return (
+    <Drawer.Navigator initialRouteName="mapHome"
+      drawerContent={(props: DrawerContentComponentProps) => <CustomDrawerContent {...props} />} screenOptions={{
         headerShown: true,
-            drawerStyle: { backgroundColor: '#05204b' },
-            drawerActiveTintColor: '#FFF', // Cor do texto do item ativo
-            drawerInactiveTintColor: '#FFF', // Cor do texto dos itens inativos
-          }}
-      >
-        <Drawer.Screen name="mapHome" component={MapHome} options={headerOptions}/>
-        <Drawer.Screen name="mapSimulate" component={MapSimulate} options={headerOptions}/>
-        <Drawer.Screen name="review" component={Review} options={headerOptions}/>
-      <Drawer.Screen name="UserAccount" component={UserAccount} options={headerOptions}/>
-      </Drawer.Navigator>
-    );
-  }
+        drawerStyle: { backgroundColor: '#05204b' },
+        drawerActiveTintColor: '#FFF', // Cor do texto do item ativo
+        drawerInactiveTintColor: '#FFF', // Cor do texto dos itens inativos
+      }}
+    >
+      <Drawer.Screen name="mapHome" component={MapHome} options={headerOptions} />
+      <Drawer.Screen name="mapSimulate" component={MapSimulate} options={headerOptions} />
+      <Drawer.Screen name="review" component={Review} options={headerOptions} />
+      <Drawer.Screen name="UserAccount" component={UserAccount} options={headerOptions} />
+    </Drawer.Navigator>
+  );
+}
 
 const AppNavigator = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
