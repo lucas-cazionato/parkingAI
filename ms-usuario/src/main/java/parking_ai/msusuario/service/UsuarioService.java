@@ -53,13 +53,12 @@ public class UsuarioService {
 
     // Metodo para criar Usuario no banco de dados
     public Usuario criarUsuario(Usuario usuario) {
-        /*
-         * if (usuarioRepositorio.findByCpf(usuario.getCpf()).isPresent() ||
-         * usuarioRepositorio.findByLogin(usuario.getLogin()).isPresent()) {
-         * throw new
-         * UsuarioJaCadastradoException("Usuario ja esta cadastrado no banco");
-         * }
-         */
+
+        if (usuarioRepositorio.findByCpf(usuario.getCpf()).isPresent() ||
+                usuarioRepositorio.findByLogin(usuario.getLogin()).isPresent()) {
+            throw new UsuarioJaCadastradoException("Usuario ja esta cadastrado no banco");
+        }
+
         if (usuario.getSenha() == null || usuario.getSenha().isEmpty()) {
             throw new SenhaVaziaException("Campo de senha nulo/vazio");
         }
