@@ -4,3 +4,5 @@
 __pycache__/
 # Ignorar arquivos .pyc
 *.pyc
+# URLS
+config.ts

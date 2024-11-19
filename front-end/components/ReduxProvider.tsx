@@ -5,7 +5,7 @@ import { Provider } from 'react-redux';
 
 const ReduxProvider = ({children}: {children: React.ReactNode}) => {
   return (
-    <Provider store={store} children={undefined}>
+    <Provider store={store}>
         <KeyboardAvoidingView
             style={{ flex: 1}}
         >

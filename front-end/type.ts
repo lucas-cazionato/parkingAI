@@ -27,6 +27,10 @@ export interface TravelState {
                 text: string;
                 value: number;
             };
-        }
+        };
+        routeWaypoints: Array<{
+            latitude: number;
+            longitude: number;
+        }> | null;
     }
 }
