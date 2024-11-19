@@ -51,3 +51,44 @@ export const register = async (formattedUser) => {
         }
     }
 };
+
+
+// Função para atualizar os dados do usuário
+export const updateUserData = async (formattedUser) => {
+    try {
+        const token = await AsyncStorage.getItem('token');
+        const response = await api.put('/user', formattedUser, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Erro ao atualizar dados do usuário:', error);
+        if (error.response && error.response.data) {
+            throw new Error(error.response.data.message || 'Erro ao atualizar');
+        } else {
+            throw new Error('Erro ao atualizar');
+        }
+    }
+};
+
+// Função para excluir a conta do usuário
+export const deleteUserAccount = async () => {
+    try {
+        const token = await AsyncStorage.getItem('token');
+        const response = await api.delete('/user', {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Erro ao excluir a conta do usuário:', error);
+        if (error.response && error.response.data) {
+            throw new Error(error.response.data.message || 'Erro ao excluir a conta');
+        } else {
+            throw new Error('Erro ao excluir a conta');
+        }
+    }
+};
