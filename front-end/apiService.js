@@ -1,7 +1,7 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const apiGatewayUrl = 'http://localhost:3000';
+const apiGatewayUrl = 'http://192.168.0.5:3000';
 
 // Instância do axios para configurar a base URL
 const api = axios.create({
@@ -38,9 +38,9 @@ export async function fetchUserData(endpoint) {
 
 
 // Register (Cadastro de usuário)
-export const register = async (userData) => {
+export const register = async (formattedUser) => {
     try {
-        const response = await api.post('/auth', userData);
+        const response = await api.post('/auth', formattedUser);
         return response.data;
     } catch (error) {
         console.error('Erro ao cadastrar usuário:', error);
