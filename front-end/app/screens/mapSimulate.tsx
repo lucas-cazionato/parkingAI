@@ -19,15 +19,17 @@ import {
 import MapViewDirections from "react-native-maps-directions";
 import { Button } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { useNavigation, NavigationProp } from "@react-navigation/native";
 
 type RootStackParamList = {
-  Home: undefined;
+  mapHome: undefined;
+  mapNavigation: undefined;
+  mapSimulate: undefined;
 };
 
-type HomeScreenNavigationProp = NavigationProp<RootStackParamList, 'Home'>;
+type HomeScreenNavigationProp = NavigationProp<RootStackParamList, "mapSimulate">;
 
-export default function Home() {
+export default function MapSimulate() {
   const navigation = useNavigation<HomeScreenNavigationProp>();
   const poligono = [
     {
@@ -64,13 +66,17 @@ export default function Home() {
   const [inputValue, setInputValue] = useState("");
   const [userLocation, setUserLocation] =
     useState<Location.LocationObject | null>(null);
+    
   const goToMyLocation = async () => {
-    mapRef?.current?.animateCamera({
-      center: {
-        latitude: userLocation?.coords?.latitude!,
-        longitude: userLocation?.coords?.longitude!,
-      },
-    });
+    if (mapRef.current && userLocation) {
+      mapRef.current.animateCamera({
+        center: {
+          latitude: userLocation.coords.latitude,
+          longitude: userLocation.coords.longitude,
+        },
+        zoom: 15, // Define um nível de zoom adequado
+      });
+    }
   };
 
   async function LocalPermissions() {
@@ -79,42 +85,53 @@ export default function Home() {
     if (granted) {
       const currentPosition = await Location.getCurrentPositionAsync();
       setUserLocation(currentPosition);
-      //console.log("LOCALIZAÇÃO ATUAL:", currentPosition);
     } else {
       console.log(
         "É necessário habilitar a permissão de localização para utilizar este serviço."
       );
     }
   }
+
   useEffect(() => {
     LocalPermissions();
-    goToMyLocation();
   }, []);
 
-  //  useEffect(() => {
-  //    Location.watchPositionAsync({
-  //      accuracy:Location.LocationAccuracy.Balanced,
-  //      timeInterval: 10000,
-  //      distanceInterval: 1
-  //    }, (response) => {
-  //      console.log("Localização atualizada");
-  //      setUserLocation(response);
-  //      //goToMyLocation();
-  //      mapRef.current?.animateCamera({
-  //        pitch: 70,
-  //        center: response.coords
-  //      })
-  //    });
-  //  }, []);
+  useEffect(() => {
+    if (userLocation) {
+      goToMyLocation();
+      console.log("USERLOCATION", userLocation);
+      dispatch(
+        setOrigin({
+          location: {
+            latitude: userLocation?.coords?.latitude,
+            longitude: userLocation?.coords?.longitude,
+          },
+          description: "Localização Atual",
+        })
+      );
+    }
+  }, [userLocation]);
 
   useEffect(() => {
     if (!origin?.location || !destination?.location || !mapRef.current) return;
-
-    // Zoom & fit to markers
-    mapRef.current.fitToSuppliedMarkers(["origin", "destination"], {
-      edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
-      animated: true,
-    });
+  
+    // Zoom & fit to coordinates (origin and destination)
+    mapRef.current.fitToCoordinates(
+      [
+        {
+          latitude: origin.location.lat,
+          longitude: origin.location.lng,
+        },
+        {
+          latitude: destination.location.lat,
+          longitude: destination.location.lng,
+        },
+      ],
+      {
+        edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
+        animated: true,
+      }
+    );
   }, [origin, destination]);
 
   const handleConfirm = () => {
@@ -133,6 +150,7 @@ export default function Home() {
       }
     };
     getTravelTime();
+    navigation.navigate("mapNavigation");
   };
 
   return (
@@ -140,14 +158,13 @@ export default function Home() {
       <MapView
         ref={mapRef}
         style={{ flex: 1 }}
-        mapType="mutedStandard"
-        showsUserLocation={true}
-        scrollEnabled={true}
-        zoomEnabled={true}
-        pitchEnabled={true}
-        rotateEnabled={true}
-        scrollDuringRotateOrZoomEnabled={true}
-        showsTraffic={true}
+        showsUserLocation
+        scrollEnabled
+        zoomEnabled
+        pitchEnabled
+        rotateEnabled
+        scrollDuringRotateOrZoomEnabled
+        showsTraffic
         initialRegion={{
           latitude: userLocation?.coords?.latitude! || -25.441105,
           longitude: userLocation?.coords?.longitude! || -49.276855,
@@ -155,38 +172,45 @@ export default function Home() {
           longitudeDelta: 0.005,
         }}
       >
-        {origin &&
-          destination && ( // caso tenha origem e destino, carrega rota
-            <MapViewDirections
-              origin={origin?.description}
-              destination={destination?.description}
-              apikey={GOOGLE_MAPS_API_KEY}
-              strokeWidth={4}
-              strokeColor="#05204b"
-            />
-          )}
-        {origin?.location && (
-          <Marker
-            coordinate={{
-              latitude: origin?.location?.lat,
-              longitude: origin?.location?.lng,
-            }}
-            title="Origin"
-            description={origin?.description}
-            identifier="origin"
-          />
-        )}
-        {destination?.location && (
-          <Marker
-            coordinate={{
-              latitude: destination?.location?.lat,
-              longitude: destination?.location?.lng,
-            }}
-            title="Destination"
-            description={destination?.description}
-            identifier="destination"
-          />
-        )}
+{origin?.location && destination?.location && (
+  <MapViewDirections
+    origin={
+      origin.location.lat !== undefined && origin.location.lng !== undefined
+        ? { latitude: origin.location.lat, longitude: origin.location.lng }
+        : undefined
+    }
+    destination={
+      destination.location.lat !== undefined && destination.location.lng !== undefined
+        ? { latitude: destination.location.lat, longitude: destination.location.lng }
+        : undefined
+    }
+    apikey={GOOGLE_MAPS_API_KEY}
+    strokeWidth={4}
+    strokeColor="#05204b"
+  />
+)}
+{origin?.location && origin?.location.lat !== undefined && origin?.location.lng !== undefined && (
+  <Marker
+    coordinate={{
+      latitude: origin.location.lat,
+      longitude: origin.location.lng,
+    }}
+    title="Origin"
+    description={origin.description}
+    identifier="origin"
+  />
+)}
+{destination?.location && destination?.location.lat !== undefined && destination?.location.lng !== undefined && (
+  <Marker
+    coordinate={{
+      latitude: destination.location.lat,
+      longitude: destination.location.lng,
+    }}
+    title="Destination"
+    description={destination.description}
+    identifier="destination"
+  />
+)}
         <Polygon
           coordinates={poligono}
           strokeWidth={1}
@@ -210,12 +234,12 @@ export default function Home() {
                 color: "#1faadb",
               },
             }}
-            placeholder="Origem:"
+            placeholder="Origem: localização atual"
             nearbyPlacesAPI="GooglePlacesSearch"
             debounce={400}
             query={{
               key: GOOGLE_MAPS_API_KEY,
-              language: "en",
+              language: "pt-BR",
             }}
             fetchDetails={true}
             minLength={2}
@@ -226,7 +250,8 @@ export default function Home() {
                 setOrigin({
                   location: details?.geometry?.location,
                   description: data?.description,
-                })
+                }),
+                console.log("originFROMpress", origin)
               );
             }}
           />
@@ -255,8 +280,7 @@ export default function Home() {
             debounce={400}
             query={{
               key: GOOGLE_MAPS_API_KEY,
-              language: "pt-br",
-              components: "country:br",
+              language: "pt-BR",
             }}
             fetchDetails={true}
             minLength={2}

@@ -5,7 +5,9 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import Login from '../(auth)/login';
 import Register from '../(auth)/register';
 import ForgotPassword from '../(auth)/forgotPassword';
-import Home from '../screens/home';
+import MapHome from '../screens/mapHome';
+import MapSimulate from '../screens/mapSimulate';
+import Review from '../screens/review';
 import UserAccount from '../(auth)/userAccount';
 
 const Drawer = createDrawerNavigator();
@@ -23,12 +25,14 @@ function AuthStackNavigator() {
 }
 
 function DrawerNavigator() {
-  return (
-    <Drawer.Navigator initialRouteName="Home">
-      <Drawer.Screen name="Home" component={Home} />
-    </Drawer.Navigator>
-  );
-}
+    return (
+      <Drawer.Navigator initialRouteName="mapHome">
+        <Drawer.Screen name="mapHome" component={MapHome} />
+        <Drawer.Screen name="mapSimulate" component={MapSimulate} />
+        <Drawer.Screen name="review" component={Review} />
+      </Drawer.Navigator>
+    );
+  }
 
 const AppNavigator = () => {
   return (
