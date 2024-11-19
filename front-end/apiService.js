@@ -1,7 +1,7 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const apiGatewayUrl = 'http://localhost:3000';
+const apiGatewayUrl = 'http://192.168.0.5:3000';
 
 // Instância do axios para configurar a base URL
 const api = axios.create({
@@ -38,9 +38,9 @@ export async function fetchUserData(endpoint) {
 
 
 // Register (Cadastro de usuário)
-export const register = async (userData) => {
+export const register = async (formattedUser) => {
     try {
-        const response = await api.post('/auth', userData);
+        const response = await api.post('/auth', formattedUser);
         return response.data;
     } catch (error) {
         console.error('Erro ao cadastrar usuário:', error);
@@ -48,6 +48,47 @@ export const register = async (userData) => {
             throw new Error(error.response.data.message || 'Erro ao cadastrar');
         } else {
             throw new Error('Erro ao cadastrar');
+        }
+    }
+};
+
+
+// Função para atualizar os dados do usuário
+export const updateUserData = async (formattedUser) => {
+    try {
+        const token = await AsyncStorage.getItem('token');
+        const response = await api.put('/user', formattedUser, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Erro ao atualizar dados do usuário:', error);
+        if (error.response && error.response.data) {
+            throw new Error(error.response.data.message || 'Erro ao atualizar');
+        } else {
+            throw new Error('Erro ao atualizar');
+        }
+    }
+};
+
+// Função para excluir a conta do usuário
+export const deleteUserAccount = async () => {
+    try {
+        const token = await AsyncStorage.getItem('token');
+        const response = await api.delete('/user', {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Erro ao excluir a conta do usuário:', error);
+        if (error.response && error.response.data) {
+            throw new Error(error.response.data.message || 'Erro ao excluir a conta');
+        } else {
+            throw new Error('Erro ao excluir a conta');
         }
     }
 };

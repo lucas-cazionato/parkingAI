@@ -32,24 +32,24 @@ app.use(logger('dev'));
 
 // Função para autenticação no aplicativo
 const authServiceProxy = httpProxy('http://localhost:3001', {
-    proxyReqBodyDecorator: function(bodyContent, srcReq) {
+    proxyReqBodyDecorator: function (bodyContent, srcReq) {
         try {
             retBody = {};
             retBody.login = bodyContent.login;
             retBody.senha = bodyContent.senha;
             bodyContent = retBody;
         }
-        catch(e) {
+        catch (e) {
             console.log('- ERRO: ' + e);
         }
         return bodyContent;
     },
-    proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
+    proxyReqOptDecorator: function (proxyReqOpts, srcReq) {
         proxyReqOpts.headers['Content-Type'] = 'application/json';
         proxyReqOpts.method = 'POST';
         return proxyReqOpts;
     },
-    userResDecorator: function(proxyRes, proxyResData, userReq, userRes) {
+    userResDecorator: function (proxyRes, proxyResData, userReq, userRes) {
         if (proxyRes.statusCode == 200) {
             var str = Buffer.from(proxyResData).toString('utf-8');
             var objBody = JSON.parse(str);
@@ -86,7 +86,7 @@ function verifyJWT(req, res, next) {
             console.error('Erro ao verificar token:', err);
             return res.status(500).json({ auth: false, message: 'Falha ao autenticar o token.' });
         }
-        
+
         req.id = decoded.id;
         req.cpf = decoded.cpf;
         req.login = decoded.login;
@@ -127,10 +127,34 @@ app.get('/auth/login/:login', verifyJWT, (req, res, next) => {
 app.get('/auth/cpf/:cpf', verifyJWT, (req, res, next) => {
     usuarioServiceProxy(req, res, next);
 });
+
 // 1.6 - Endpoint para atualizar Usuário por CPF
-app.put('/auth/:cpf', verifyJWT, (req, res, next) => {
-    usuarioServiceProxy(req, res, next);
+app.put('/auth/:cpf', verifyJWT, async (req, res, next) => {
+    try {
+        // Extrair o CPF do parâmetro de rota
+        const { cpf } = req.params;
+
+        // Os dados a serem atualizados vêm no corpo da requisição
+        const updatedData = req.body;
+
+        // Realizar a atualização através do seu serviço de dados
+        const updatedUser = await usuarioServiceProxy.updateUserByCpf(cpf, updatedData);
+
+        // Se a atualização for bem-sucedida
+        if (updatedUser) {
+            return res.status(200).json({
+                message: 'Usuário atualizado com sucesso!',
+                user: updatedUser
+            });
+        } else {
+            return res.status(404).json({ message: 'Usuário não encontrado.' });
+        }
+    } catch (error) {
+        console.error('Erro ao atualizar usuário:', error);
+        return res.status(500).json({ message: 'Erro ao atualizar o usuário.' });
+    }
 });
+
 // 1.7 - Endpoint para deletar Usuário por ID
 app.delete('/auth/id/:id', verifyJWT, (req, res, next) => {
     usuarioServiceProxy(req, res, next);

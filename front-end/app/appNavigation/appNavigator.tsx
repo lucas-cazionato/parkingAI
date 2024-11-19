@@ -6,37 +6,39 @@ import Login from '../(auth)/login';
 import Register from '../(auth)/register';
 import ForgotPassword from '../(auth)/forgotPassword';
 import Home from '../screens/home';
+import UserAccount from '../(auth)/userAccount';
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 
 function AuthStackNavigator() {
-    return (
-      <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
-        <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
-        <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ headerShown: false }} />
-      </Stack.Navigator>
-    );
+  return (
+    <Stack.Navigator initialRouteName="UserAccount">
+      <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+      <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
+      <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ headerShown: false }} />
+      <Stack.Screen name="UserAccount" component={UserAccount} options={{ headerShown: false }} />
+    </Stack.Navigator>
+  );
 }
 
 function DrawerNavigator() {
-    return (
-      <Drawer.Navigator initialRouteName="Home">
-        <Drawer.Screen name="Home" component={Home} />
-      </Drawer.Navigator>
-    );
-  }
+  return (
+    <Drawer.Navigator initialRouteName="Home">
+      <Drawer.Screen name="Home" component={Home} />
+    </Drawer.Navigator>
+  );
+}
 
-  const AppNavigator = () => {
-    return (
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="Auth">
-          <Stack.Screen name="Auth" component={AuthStackNavigator} options={{ headerShown: false }} />
-          <Stack.Screen name="Main" component={DrawerNavigator} options={{ headerShown: false }} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    );
-  };
+const AppNavigator = () => {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Auth">
+        <Stack.Screen name="Auth" component={AuthStackNavigator} options={{ headerShown: false }} />
+        <Stack.Screen name="Main" component={DrawerNavigator} options={{ headerShown: false }} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
 
 export default AppNavigator;
