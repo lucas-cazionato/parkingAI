@@ -17,7 +17,7 @@ Trata-se de uma aplicação web Flask com API REST:
 * Criação de ambiente virtual Python:
 - Dentro do diretório raiz do projeto `ms-parking/`, executar os comandos abaixo:
 ```bash
-python -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate  # No Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
