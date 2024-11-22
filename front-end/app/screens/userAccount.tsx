@@ -3,9 +3,12 @@ import { View, Text, Alert, StyleSheet } from 'react-native';
 import { TextInput, Button, HelperText, Surface } from 'react-native-paper';
 import { TextInputMask } from 'react-native-masked-text';
 import { useForm, Controller } from 'react-hook-form';
-import { fetchUserData, updateUserData, deleteUserAccount } from '../../apiService';
+import { fetchUserData, updateUserData, deleteUserAccount, login } from '../../apiService';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { Styles } from '../../constants/Styles';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
 
 type UserAccountNavigationProp = NavigationProp<any, 'UserAccount'>;
 
@@ -22,21 +25,31 @@ const UserAccount: React.FC = () => {
 
     const phoneInputRef = React.useRef<TextInputMask>(null);
 
-    useEffect(() => {
-        const loadUserData = async () => {
-            try {
-                setIsLoading(true);
-                const response = await fetchUserData('/auth/user');
-                reset(response.data);
-            } catch (error) {
-                Alert.alert('Erro', 'Não foi possível carregar os dados do usuário.');
-            } finally {
-                setIsLoading(false);
-            }
-        };
+    // useEffect(() => {
+    //     const loadUserData = async () => {
+    //         try {
+    //             setIsLoading(true);
+    //             const token = await AsyncStorage.getItem('token');
+    //             console.log("Token JWT:", token);
+    //             if (!token) {
+    //                 throw new Error('Token não encontrado');
+    //             }
 
-        loadUserData();
-    }, [reset]);
+    //             const response = await fetchUserData(`/auth/cpf/${cpf}`);
+    //             if (response) {
+    //                 console.log(response.data);
+    //             } else {
+    //                 throw new Error('Dados não encontrados');
+    //             }
+    //         } catch (error) {
+    //             Alert.alert('Erro', 'Não foi possível carregar os dados do usuário.');
+    //             console.error(error);
+    //         } finally {
+    //             setIsLoading(false);
+    //         }
+    //     };
+    //     loadUserData();
+    // }, []);
 
     const handleUpdate = async (data: FormData) => {
         try {

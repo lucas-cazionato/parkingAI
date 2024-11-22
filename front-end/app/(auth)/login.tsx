@@ -19,8 +19,8 @@ type LoginScreenNavigationProp = NavigationProp<RootStackParamList, 'Login'>;
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isRegistering, setIsRegistering] = useState(false);
-  const [forgotPassword, setForgotPassword] = useState(false);
+  // const [isRegistering, setIsRegistering] = useState(false);
+  // const [forgotPassword, setForgotPassword] = useState(false);
   const [message, setMessage] = useState('');
 
   const navigation = useNavigation<LoginScreenNavigationProp>();
@@ -29,9 +29,18 @@ export default function Login() {
     try {
       const userData = await login(email, password);
       const token = await AsyncStorage.getItem('token');
+      console.log('TOKEN JWT:', token);
       if (token) {
         setMessage(`Bem-vindo, ${userData.login}`);
         navigation.navigate('Main');
+        const storedData = await AsyncStorage.getItem('loginData') as string;
+        const loginData = JSON.parse(storedData); // Converte o JSON em um objeto
+        console.log('Dados de login recuperados:', loginData);
+        console.log('CPF:', loginData.data.cpf);
+        console.log('Login (E-mail):', loginData.data.login);
+        console.log('Nome:', loginData.data.nome);
+        console.log('Data de Nascimento:', loginData.data.dataNascimento);
+        console.log('Telefone:', loginData.data.telefone);
       } else {
         setMessage('Erro ao obter o token. Tente novamente.');
       }
