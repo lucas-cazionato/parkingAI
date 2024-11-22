@@ -16,8 +16,8 @@ export async function login(login, senha) {
     try {
         const response = await api.post('/auth/login', { login, senha });
         if (response.data.auth) {
-            // Salvar token JWT no AsyncStorage para reutilização
             await AsyncStorage.setItem('token', response.data.token);
+            console.log('Dados de login armazenados com sucesso!');
             return response.data.data;
         }
     } catch (error) {
@@ -28,12 +28,23 @@ export async function login(login, senha) {
 
 // Realizar requisições autenticadas
 export async function fetchUserData(endpoint) {
-    const token = await AsyncStorage.getItem('token');
-    return api.get(endpoint, {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    });
+    try {
+        const token = await AsyncStorage.getItem('token');
+        if (!token) {
+            throw new Error('Token não encontrado');
+        }
+        // Fazendo a requisição com o token no header Authorization
+        const response = await api.get(endpoint, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data; // Retorna os dados da resposta
+
+    } catch (error) {
+        console.error('Erro ao buscar dados do usuário:', error);
+        throw error; // Lança o erro para ser tratado na função que chamou
+    }
 }
 
 
