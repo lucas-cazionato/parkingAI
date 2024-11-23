@@ -56,7 +56,7 @@ const Register: React.FC = () => {
       return;
     }
 
-    // Formata os dados conforme necessário para ajustar com o backend
+    // Formata os dados conforme backend
     const formattedUser = {
       nome: data.nome,
       dataNascimento: formatDate(data.dataNascimento),
@@ -67,7 +67,7 @@ const Register: React.FC = () => {
     };
 
     try {
-      const responseData = await register(formattedUser); // Chama a função com os dados formatados
+      const responseData = await register(formattedUser);
 
       Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
       navigation.navigate('Login');
@@ -81,7 +81,7 @@ const Register: React.FC = () => {
     }
   };
 
-  // Função para formatar a data no padrão ISO (yyyy-MM-dd)
+  // Formata a data no padrão ISO (yyyy-MM-dd)
   const formatDate = (date: string) => {
     const [day, month, year] = date.split('/');
     return `${year}-${month}-${day}`;
@@ -90,7 +90,7 @@ const Register: React.FC = () => {
   const formatCPF = (cpf: string) => {
     return cpf.replace(/[.\-]/g, '');
   };
-  
+
 
   return (
     <View style={Styles.container}>

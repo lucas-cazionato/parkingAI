@@ -4,8 +4,6 @@ import { TextInput, Button } from 'react-native-paper';
 import { Styles } from '../../constants/Styles';
 import { login } from '../../apiService';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
 
 type RootStackParamList = {
   Login: undefined;
@@ -19,8 +17,6 @@ type LoginScreenNavigationProp = NavigationProp<RootStackParamList, 'Login'>;
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  // const [isRegistering, setIsRegistering] = useState(false);
-  // const [forgotPassword, setForgotPassword] = useState(false);
   const [message, setMessage] = useState('');
 
   const navigation = useNavigation<LoginScreenNavigationProp>();
@@ -28,27 +24,18 @@ export default function Login() {
   const handleLogin = async () => {
     try {
       const userData = await login(email, password);
-      const token = await AsyncStorage.getItem('token');
-      console.log('TOKEN JWT:', token);
-      if (token) {
+      console.log('Dados do usuário retornados pela API:', userData);
+      if (userData.token) {
         setMessage(`Bem-vindo, ${userData.login}`);
         navigation.navigate('Main');
-        const storedData = await AsyncStorage.getItem('loginData') as string;
-        const loginData = JSON.parse(storedData); // Converte o JSON em um objeto
-        console.log('Dados de login recuperados:', loginData);
-        console.log('CPF:', loginData.data.cpf);
-        console.log('Login (E-mail):', loginData.data.login);
-        console.log('Nome:', loginData.data.nome);
-        console.log('Data de Nascimento:', loginData.data.dataNascimento);
-        console.log('Telefone:', loginData.data.telefone);
       } else {
-        setMessage('Erro ao obter o token. Tente novamente.');
+        setMessage('Erro ao autenticar. Tente novamente.');
       }
     } catch (error) {
+      console.error('Erro no login:', error);
       setMessage('Erro no login. Verifique suas credenciais.');
     }
   };
-
 
   return (
     <View style={Styles.container}>
@@ -62,7 +49,7 @@ export default function Login() {
       <TextInput
         label="Email"
         value={email}
-        activeUnderlineColor='#ec6408'
+        activeUnderlineColor="#ec6408"
         onChangeText={setEmail}
         keyboardType="email-address"
         autoCapitalize="none"
@@ -72,29 +59,23 @@ export default function Login() {
       <TextInput
         label="Senha"
         value={password}
-        activeUnderlineColor='#ec6408'
+        activeUnderlineColor="#ec6408"
         onChangeText={setPassword}
         secureTextEntry
         style={Styles.input}
       />
 
-
       <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
         <Text style={Styles.forgetText}>Esqueci minha senha</Text>
       </TouchableOpacity>
 
-      <Button
-        mode="contained"
-        onPress={handleLogin}
-        style={Styles.defaultButton}
-      >
+      <Button mode="contained" onPress={handleLogin} style={Styles.defaultButton}>
         Entrar
       </Button>
 
       {message ? <Text style={Styles.messageText}>{message}</Text> : null}
 
-      <TouchableOpacity onPress={() => navigation.navigate('Register')}
-        style={Styles.registerContainer}>
+      <TouchableOpacity onPress={() => navigation.navigate('Register')} style={Styles.registerContainer}>
         <Text style={Styles.registerText}>
           Não tem uma conta? <Text style={Styles.highlightText}>Cadastre-se</Text>
         </Text>
@@ -102,5 +83,3 @@ export default function Login() {
     </View>
   );
 }
-
-
