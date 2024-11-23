@@ -3,7 +3,7 @@ import { View, Text, Alert, StyleSheet } from 'react-native';
 import { TextInput, Button, HelperText, Surface } from 'react-native-paper';
 import { TextInputMask } from 'react-native-masked-text';
 import { useForm, Controller } from 'react-hook-form';
-import { fetchUserData, updateUserData, deleteUserAccount, login } from '../../apiService';
+import { getUserData, updateUserData, deleteUserAccount, login } from '../../apiService';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { Styles } from '../../constants/Styles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
