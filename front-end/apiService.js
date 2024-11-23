@@ -35,23 +35,24 @@ export async function login(login, senha) {
 }
 
 // Realizar requisições autenticadas
-export async function getUserDataByCpf(cpf) {
-    try {
-        const token = await AsyncStorage.getItem('token');
-        if (!token) {
-            throw new Error('Token não encontrado');
-        }
-        const response = await api.get('/auth/cpf/$(cpf)', {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-        return response.data;
-    } catch (error) {
-        console.error('Erro ao buscar dados do usuário pelo CPF:', error);
-        throw error;
-    }
-}
+// export async function getUserDataByCpf(cpf) {
+//     try {
+//         const token = await AsyncStorage.getItem('token');
+//         if (!token) {
+//             throw new Error('Token não encontrado');
+//         }
+//         const response = await api.get('/auth/cpf/$(cpf)', {
+//             headers: {
+//                 Authorization: `Bearer ${token}`,
+//             },
+//         });
+//         return response.data;
+//     } catch (error) {
+//         console.error('Erro ao buscar dados do usuário pelo CPF:', error);
+//         throw error;
+//     }
+// }
+
 
 // Register (Cadastro de usuário)
 export const register = async (formattedUser) => {

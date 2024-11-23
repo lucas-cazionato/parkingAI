@@ -3,7 +3,7 @@ import { View, Text, Alert, StyleSheet } from 'react-native';
 import { TextInput, Button, HelperText, Surface } from 'react-native-paper';
 import { TextInputMask } from 'react-native-masked-text';
 import { useForm, Controller } from 'react-hook-form';
-import { getUserDataByCpf, updateUserData, deleteUserAccount, login } from '../../apiService';
+import { updateUserData, deleteUserAccount, login } from '../../apiService';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { Styles } from '../../constants/Styles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -21,6 +21,7 @@ interface FormData {
 const UserAccount: React.FC = () => {
     const { control, handleSubmit, formState: { errors }, reset } = useForm<FormData>();
     const [isLoading, setIsLoading] = useState(false);
+    const [cpf, setCpf] = useState('');
     const navigation = useNavigation<UserAccountNavigationProp>();
 
     const phoneInputRef = React.useRef<TextInputMask>(null);
@@ -42,6 +43,14 @@ const UserAccount: React.FC = () => {
                 if (!token || !userData) {
                     throw new Error('Informações do usuário não encontradas');
                 }
+                // Preencher os campos do formulário com os dados
+                setCpf(userData.cpf);
+                reset({
+                    nome: userData.nome,
+                    email: userData.login,
+                    telefone: userData.telefone,
+                });
+
             } catch (error) {
                 Alert.alert('Erro', 'Não foi possível carregar os dados do usuário.');
                 console.error(error);
@@ -50,12 +59,12 @@ const UserAccount: React.FC = () => {
             }
         };
         loadUserData();
-    }, []);
+    }, [reset]);
 
     const handleUpdate = async (data: FormData) => {
         try {
             setIsLoading(true);
-            await updateUserData(data);
+            await updateUserData(cpf, data);
             Alert.alert('Sucesso', 'Dados atualizados com sucesso!');
         } catch (error) {
             Alert.alert('Erro', 'Não foi possível atualizar os dados.');
