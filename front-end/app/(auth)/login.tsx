@@ -24,7 +24,9 @@ export default function Login() {
   const handleLogin = async () => {
     try {
       const userData = await login(email, password);
-      console.log('Dados do usuário retornados pela API:', userData);
+      console.log('login_TOKEN:', userData.token);
+      console.log('login_CPF:', userData.cpf);
+      console.log('login_DADOS USUÁRIO:', userData);
       if (userData.token) {
         setMessage(`Bem-vindo, ${userData.login}`);
         navigation.navigate('Main');

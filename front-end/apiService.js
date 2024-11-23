@@ -16,9 +16,14 @@ export async function login(login, senha) {
         const response = await api.post('/auth/login', { login, senha });
         if (response.data.auth) {
             const token = response.data.token;
+            const userData = response.data.data; // Inclui CPF, nome, etc.
+
             if (token) {
-                await AsyncStorage.setItem('token', token);
-                console.log('Token armazenado:', token);
+                await AsyncStorage.setItem('token', token);     //Armazenar token
+                await AsyncStorage.setItem('userData', JSON.stringify(userData)); // Armazenar dados do usuário
+                console.log('apiservice_TOKEN:', token);
+                console.log('apiService_CPF:', userData.cpf);
+                console.log('apiService_DADOS USUÁRIO:', userData);
                 return { ...response.data.data, token };
             }
         }
@@ -30,20 +35,20 @@ export async function login(login, senha) {
 }
 
 // Realizar requisições autenticadas
-export async function getUserData(endpoint) {
+export async function getUserDataByCpf(cpf) {
     try {
         const token = await AsyncStorage.getItem('token');
         if (!token) {
             throw new Error('Token não encontrado');
         }
-        const response = await api.get(endpoint, {
+        const response = await api.get('/auth/cpf/$(cpf)', {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
         });
         return response.data;
     } catch (error) {
-        console.error('Erro ao buscar dados do usuário:', error);
+        console.error('Erro ao buscar dados do usuário pelo CPF:', error);
         throw error;
     }
 }
@@ -60,10 +65,12 @@ export const register = async (formattedUser) => {
 };
 
 // Atualizar dados do usuário
-export const updateUserData = async (formattedUser) => {
+export const updateUserData = async (cpf, userData) => {
     try {
         const token = await AsyncStorage.getItem('token');
-        const response = await api.put('/user', formattedUser, {
+        if (!token) throw new Error('Token não encontrado');
+
+        const response = await api.put(`/auth/${cpf}`, userData, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -71,7 +78,7 @@ export const updateUserData = async (formattedUser) => {
         return response.data;
     } catch (error) {
         console.error('Erro ao atualizar dados do usuário:', error);
-        throw error.response?.data?.message || 'Erro ao atualizar';
+        throw error.response?.data?.message || 'Erro ao atualizar os dados';
     }
 };
 
