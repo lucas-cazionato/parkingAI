@@ -165,4 +165,10 @@ export const Styles = StyleSheet.create({
     color: '#ffffff',
   },
 
+  nonEditableInput: {
+    backgroundColor: '#f0f0f0', // Fundo cinza claro
+    color: '#888888', // Texto mais opaco
+  }
+
+
 });

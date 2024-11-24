@@ -8,14 +8,14 @@ import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { Styles } from '../../constants/Styles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
-
 type UserAccountNavigationProp = NavigationProp<any, 'UserAccount'>;
 
 interface FormData {
     nome: string;
     email: string;
     telefone: string;
+    cpf: string;
+    dataNascimento: string;
 }
 
 const UserAccount: React.FC = () => {
@@ -43,12 +43,14 @@ const UserAccount: React.FC = () => {
                 if (!token || !userData) {
                     throw new Error('Informações do usuário não encontradas');
                 }
-                // Preencher os campos do formulário com os dados
+                // Preencher os campos do formulário com os dados do usuário
                 setCpf(userData.cpf);
                 reset({
                     nome: userData.nome,
                     email: userData.login,
                     telefone: userData.telefone,
+                    cpf: userData.cpf,
+                    dataNascimento: userData.dataNascimento,
                 });
 
             } catch (error) {
@@ -106,6 +108,24 @@ const UserAccount: React.FC = () => {
             </Surface>
 
             <View style={Styles.inputContainer}>
+
+                <Controller
+                    control={control}
+                    name="cpf"
+                    rules={{ required: 'Cpf é obrigatório' }}
+                    render={({ field: { value } }) => (
+                        <>
+                            <TextInput
+                                label="CPF (Não pode ser alterado)"
+                                value={cpf || value || ''}
+                                editable={false} // Torna o campo não editável
+                                activeUnderlineColor="transparent" // Remove a linha ativa
+                                style={[Styles.input, Styles.nonEditableInput]} // Adiciona estilo personalizado
+                            />
+                        </>
+                    )}
+                />
+
                 <Controller
                     control={control}
                     name="nome"
@@ -121,12 +141,10 @@ const UserAccount: React.FC = () => {
                                 style={Styles.input}
                                 error={!!errors.nome}
                             />
-                            <HelperText type="error" visible={!!errors.nome} style={Styles.helperText}>
-                                {errors.nome?.message}
-                            </HelperText>
                         </>
                     )}
                 />
+
 
                 <Controller
                     control={control}
@@ -193,6 +211,16 @@ const UserAccount: React.FC = () => {
                         </>
                     )}
                 />
+
+                {/* Campo CPF
+                <TextInput
+                    label="CPF"
+                    value={cpf}
+                    editable={false}
+                    activeUnderlineColor="#ec6408"
+                    style={Styles.input}
+                /> */}
+
 
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 20 }}>
                     <Button
