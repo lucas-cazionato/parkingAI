@@ -3,16 +3,18 @@ import { View, Text, Alert, StyleSheet } from 'react-native';
 import { TextInput, Button, HelperText, Surface } from 'react-native-paper';
 import { TextInputMask } from 'react-native-masked-text';
 import { useForm, Controller } from 'react-hook-form';
-import { updateUserData, deleteUserAccount, login } from '../../apiService';
+import { updateUserData, deleteUserAccount } from '../../apiService';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { Styles } from '../../constants/Styles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ScrollView } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 type UserAccountNavigationProp = NavigationProp<any, 'UserAccount'>;
 
 interface FormData {
     nome: string;
-    email: string;
+    login: string;
     telefone: string;
     cpf: string;
     dataNascimento: string;
@@ -25,6 +27,11 @@ const UserAccount: React.FC = () => {
     const navigation = useNavigation<UserAccountNavigationProp>();
 
     const phoneInputRef = React.useRef<TextInputMask>(null);
+
+    const formatCpf = (cpf: string): string => {
+        // CPF com pontos e traço
+        return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+    };
 
     useEffect(() => {
         const loadUserData = async () => {
@@ -47,11 +54,19 @@ const UserAccount: React.FC = () => {
                 setCpf(userData.cpf);
                 reset({
                     nome: userData.nome,
-                    email: userData.login,
+                    login: userData.login ?? userData.email ?? '',
                     telefone: userData.telefone,
                     cpf: userData.cpf,
                     dataNascimento: userData.dataNascimento,
                 });
+                console.log('Dados resetados no formulário:', {
+                    nome: userData.nome,
+                    email: userData.email,
+                    telefone: userData.telefone,
+                    cpf: userData.cpf,
+                    dataNascimento: userData.dataNascimento,
+                });
+
 
             } catch (error) {
                 Alert.alert('Erro', 'Não foi possível carregar os dados do usuário.');
@@ -66,7 +81,12 @@ const UserAccount: React.FC = () => {
     const handleUpdate = async (data: FormData) => {
         try {
             setIsLoading(true);
-            await updateUserData(cpf, data);
+
+            console.log('userAccount_Dados enviados para atualização:', data);
+            const updatedData = await updateUserData(cpf, data);
+
+            await AsyncStorage.setItem('userData', JSON.stringify(updatedData));
+
             Alert.alert('Sucesso', 'Dados atualizados com sucesso!');
         } catch (error) {
             Alert.alert('Erro', 'Não foi possível atualizar os dados.');
@@ -103,143 +123,138 @@ const UserAccount: React.FC = () => {
 
     return (
         <View style={Styles.container}>
-            <Surface style={Styles.surface}>
-                <Text style={Styles.header}>Gerenciar Conta</Text>
-            </Surface>
-
-            <View style={Styles.inputContainer}>
-
-                <Controller
-                    control={control}
-                    name="cpf"
-                    rules={{ required: 'Cpf é obrigatório' }}
-                    render={({ field: { value } }) => (
-                        <>
-                            <TextInput
-                                label="CPF (Não pode ser alterado)"
-                                value={cpf || value || ''}
-                                editable={false} // Torna o campo não editável
-                                activeUnderlineColor="transparent" // Remove a linha ativa
-                                style={[Styles.input, Styles.nonEditableInput]} // Adiciona estilo personalizado
-                            />
-                        </>
-                    )}
-                />
-
-                <Controller
-                    control={control}
-                    name="nome"
-                    rules={{ required: 'Nome é obrigatório' }}
-                    render={({ field: { onChange, onBlur, value } }) => (
-                        <>
-                            <TextInput
-                                label="Nome Completo"
-                                value={value || ''}
-                                onBlur={onBlur}
-                                onChangeText={onChange}
-                                activeUnderlineColor="#ec6408"
-                                style={Styles.input}
-                                error={!!errors.nome}
-                            />
-                        </>
-                    )}
-                />
+            <ScrollView>
+                <View style={Styles.inputContainer}>
+                    <Surface style={Styles.surface} elevation={4}>
+                        <Icon name="person" size={50} color="#ec6408" />
+                        <Text style={Styles.header}>Minha conta</Text>
+                        <Text style={Styles.subText}>Gerencie informações da conta</Text>
+                    </Surface>
 
 
-                <Controller
-                    control={control}
-                    name="email"
-                    rules={{
-                        required: 'Email é obrigatório',
-                        pattern: { value: /^\S+@\S+$/i, message: 'Email inválido' },
-                    }}
-                    render={({ field: { onChange, onBlur, value } }) => (
-                        <>
-                            <TextInput
-                                label="Email"
-                                value={value || ''}
-                                onBlur={onBlur}
-                                onChangeText={onChange}
-                                activeUnderlineColor="#ec6408"
-                                keyboardType="email-address"
-                                style={Styles.input}
-                                autoCapitalize="none"
-                                error={!!errors.email}
-                            />
-                            <HelperText type="error" visible={!!errors.email} style={Styles.helperText}>
-                                {errors.email?.message}
-                            </HelperText>
-                        </>
-                    )}
-                />
+                    <Controller
+                        control={control}
+                        name="cpf"
+                        rules={{ required: 'Cpf é obrigatório' }}
+                        render={({ field: { value } }) => (
+                            <>
+                                <TextInput
+                                    label="CPF (Não pode ser alterado)"
+                                    value={formatCpf(cpf) || value || ''}
+                                    editable={false} // campo não editável
+                                    activeUnderlineColor="transparent" // Remove a linha ativa
+                                    style={[Styles.input, Styles.nonEditableInput]} // Adiciona estilo personalizado
+                                />
+                            </>
+                        )}
+                    />
 
-                <Controller
-                    control={control}
-                    name="telefone"
-                    rules={{
-                        required: 'Telefone é obrigatório',
-                        pattern: { value: /^\(\d{2}\) \d{4,5}-\d{4}$/, message: 'Telefone inválido' },
-                    }}
-                    render={({ field: { onChange, onBlur, value } }) => (
-                        <>
-                            <TextInput
-                                label="Telefone"
-                                value={value || ''}
-                                onBlur={onBlur}
-                                onChangeText={onChange}
-                                activeUnderlineColor="#ec6408"
-                                style={Styles.input}
-                                error={!!errors.telefone}
-                                render={props => (
-                                    <TextInputMask
-                                        {...props}
-                                        type={'cel-phone'}
-                                        options={{
-                                            maskType: 'BRL',
-                                            withDDD: true,
-                                            dddMask: '(99) ',
-                                        }}
-                                        value={value}
-                                        onChangeText={onChange}
-                                        ref={phoneInputRef}
-                                    />
-                                )}
-                            />
-                            <HelperText type="error" visible={!!errors.telefone} style={Styles.helperText}>
-                                {errors.telefone?.message}
-                            </HelperText>
-                        </>
-                    )}
-                />
-
-                {/* Campo CPF
-                <TextInput
-                    label="CPF"
-                    value={cpf}
-                    editable={false}
-                    activeUnderlineColor="#ec6408"
-                    style={Styles.input}
-                /> */}
+                    <Controller
+                        control={control}
+                        name="nome"
+                        rules={{ required: 'Nome é obrigatório' }}
+                        render={({ field: { onChange, onBlur, value } }) => (
+                            <>
+                                <TextInput
+                                    label="Nome completo"
+                                    value={value || ''}
+                                    onBlur={onBlur}
+                                    onChangeText={onChange}
+                                    activeUnderlineColor="#ec6408"
+                                    style={Styles.input}
+                                    error={!!errors.nome}
+                                />
+                            </>
+                        )}
+                    />
 
 
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 20 }}>
-                    <Button
-                        mode="contained"
-                        onPress={handleSubmit(handleUpdate)}
-                        style={Styles.defaultButton}
-                        loading={isLoading}
-                    >
-                        Salvar Alterações
-                    </Button>
-                    <Button
-                        mode="contained"
-                        onPress={handleDeleteAccount}
-                        style={Styles.cancelButton}
-                    >
-                        Excluir Conta
-                    </Button>
+
+                    <Controller
+                        control={control}
+                        name="login"
+                        rules={{
+                            required: 'Email é obrigatório',
+                            pattern: { value: /^\S+@\S+$/i, message: 'Email inválido' },
+                        }}
+                        render={({ field: { onChange, onBlur, value } }) => (
+                            <>
+                                <TextInput
+                                    label="E-mail"
+                                    value={value || ''}
+                                    onBlur={onBlur}
+                                    onChangeText={onChange}
+                                    activeUnderlineColor="#ec6408"
+                                    keyboardType="email-address"
+                                    style={Styles.input}
+                                    autoCapitalize="none"
+                                    error={!!errors.login}
+                                />
+                                <HelperText type="error" visible={!!errors.login} style={Styles.helperText}>
+                                    {errors.login?.message}
+                                </HelperText>
+                            </>
+                        )}
+                    />
+
+                    <Controller
+                        control={control}
+                        name="telefone"
+                        rules={{
+                            required: 'Telefone é obrigatório',
+                            pattern: { value: /^\(\d{2}\) \d{4,5}-\d{4}$/, message: 'Telefone inválido' },
+                        }}
+                        render={({ field: { onChange, onBlur, value } }) => (
+                            <>
+                                <TextInput
+                                    label="Telefone"
+                                    value={value || ''}
+                                    onBlur={onBlur}
+                                    onChangeText={onChange}
+                                    activeUnderlineColor="#ec6408"
+                                    style={Styles.input}
+                                    error={!!errors.telefone}
+                                    render={props => (
+                                        <TextInputMask
+                                            {...props}
+                                            type={'cel-phone'}
+                                            options={{
+                                                maskType: 'BRL',
+                                                withDDD: true,
+                                                dddMask: '(99) ',
+                                            }}
+                                            value={value}
+                                            onChangeText={onChange}
+                                            ref={phoneInputRef}
+                                        />
+                                    )}
+                                />
+                                <HelperText type="error" visible={!!errors.telefone} style={Styles.helperText}>
+                                    {errors.telefone?.message}
+                                </HelperText>
+                            </>
+                        )}
+                    />
+
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 20 }}>
+                        <Button
+                            mode="contained"
+                            onPress={handleSubmit(handleUpdate)}
+                            style={Styles.defaultButton}
+                            loading={isLoading}
+                        >
+                            Salvar Alterações
+                        </Button>
+                        <Button
+                            mode="contained"
+                            onPress={handleDeleteAccount}
+                            style={Styles.cancelButton}
+                        >
+                            Excluir Conta
+                        </Button>
+                    </View>
                 </View>
-            </View>
+            </ScrollView>
         </View>
     );
 };
