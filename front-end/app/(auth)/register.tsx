@@ -68,7 +68,7 @@ const Register: React.FC = () => {
 
     try {
       const responseData = await register(formattedUser);
-
+      console.log('register_dados formatados:', responseData);
       Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
       navigation.navigate('Login');
 
@@ -97,7 +97,7 @@ const Register: React.FC = () => {
       <ScrollView>
         <View style={Styles.inputContainer}>
           <Surface style={Styles.surface} elevation={4}>
-            <Icon name="person-add" size={100} color="#ec6408" />
+            <Icon name="person-add" size={50} color="#ec6408" />
             <Text style={Styles.header}>Crie sua conta</Text>
             <Text style={Styles.subText}>Preencha os campos com suas informações</Text>
           </Surface>
@@ -130,7 +130,23 @@ const Register: React.FC = () => {
           <Controller
             control={control}
             name="dataNascimento"
-            rules={{ required: 'Data de nascimento é obrigatória' }}
+            rules={{
+              required: 'Data de nascimento é obrigatória',
+              validate: (value) => {
+                const isValidDate = /^\d{2}\/\d{2}\/\d{4}$/.test(value);
+                if (!isValidDate) return 'Data inválida. Use o formato DD/MM/YYYY.';
+                const [day, month, year] = value.split('/').map(Number);
+                const date = new Date(year, month - 1, day);
+                if (
+                  date.getFullYear() !== year ||
+                  date.getMonth() !== month - 1 ||
+                  date.getDate() !== day
+                ) {
+                  return 'Data inválida.';
+                }
+                return true;
+              },
+            }}
             render={({ field: { onChange, onBlur, value } }) => (
               <>
                 <TextInput

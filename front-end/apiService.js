@@ -34,24 +34,6 @@ export async function login(login, senha) {
     }
 }
 
-// Realizar requisições autenticadas
-export async function getUserDataByCpf(cpf) {
-    try {
-        const token = await AsyncStorage.getItem('token');
-        if (!token) {
-            throw new Error('Token não encontrado');
-        }
-        const response = await api.get('/auth/cpf/$(cpf)', {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-        return response.data;
-    } catch (error) {
-        console.error('Erro ao buscar dados do usuário pelo CPF:', error);
-        throw error;
-    }
-}
 
 // Register (Cadastro de usuário)
 export const register = async (formattedUser) => {
@@ -75,6 +57,8 @@ export const updateUserData = async (cpf, userData) => {
                 Authorization: `Bearer ${token}`,
             },
         });
+        console.log('apiService_Dados enviados para API:', userData);
+
         return response.data;
     } catch (error) {
         console.error('Erro ao atualizar dados do usuário:', error);
@@ -82,11 +66,15 @@ export const updateUserData = async (cpf, userData) => {
     }
 };
 
+
+
+
+
 // Excluir conta do usuário
-export const deleteUserAccount = async () => {
+export const deleteUserAccount = async (cpf) => {
     try {
         const token = await AsyncStorage.getItem('token');
-        const response = await api.delete('/user', {
+        const response = await api.delete(`/auth/cpf/${cpf}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },

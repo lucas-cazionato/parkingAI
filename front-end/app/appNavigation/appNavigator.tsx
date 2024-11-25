@@ -32,7 +32,7 @@ function AuthStackNavigator() {
       <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
       <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
       <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ headerShown: false }} />
-
+      <Stack.Screen name="UserAccount" component={UserAccount} options={headerOptions} />
     </Stack.Navigator>
   );
 }
@@ -71,7 +71,7 @@ const AppNavigator = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Auth">
+      <Stack.Navigator initialRouteName={isAuthenticated ? "Main" : "Auth"}>
         <Stack.Screen name="Auth" component={AuthStackNavigator} options={{ headerShown: false }} />
         <Stack.Screen name="Main" component={DrawerNavigator} options={{ headerShown: false }} />
       </Stack.Navigator>
