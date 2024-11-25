@@ -71,10 +71,10 @@ export const updateUserData = async (cpf, userData) => {
 
 
 // Excluir conta do usuário
-export const deleteUserAccount = async () => {
+export const deleteUserAccount = async (cpf) => {
     try {
         const token = await AsyncStorage.getItem('token');
-        const response = await api.delete('/user', {
+        const response = await api.delete(`/auth/cpf/${cpf}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },

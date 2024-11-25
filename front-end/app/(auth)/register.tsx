@@ -68,7 +68,7 @@ const Register: React.FC = () => {
 
     try {
       const responseData = await register(formattedUser);
-
+      console.log('register_dados formatados:', responseData);
       Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
       navigation.navigate('Login');
 

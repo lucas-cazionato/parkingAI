@@ -10,7 +10,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-type UserAccountNavigationProp = NavigationProp<any, 'UserAccount'>;
+type UserAccountNavigationProp = NavigationProp<RootStackParamList, 'UserAccount'>;
+
+
+type RootStackParamList = {
+    UserAccount: undefined;
+    Login: undefined; // após excluir conta, redireciona para o login
+    Main: undefined; // p/ botão cancelar
+};
 
 interface FormData {
     nome: string;
@@ -24,6 +31,7 @@ const UserAccount: React.FC = () => {
     const { control, handleSubmit, formState: { errors }, reset } = useForm<FormData>();
     const [isLoading, setIsLoading] = useState(false);
     const [cpf, setCpf] = useState('');
+
     const navigation = useNavigation<UserAccountNavigationProp>();
 
     const phoneInputRef = React.useRef<TextInputMask>(null);
@@ -123,7 +131,8 @@ const UserAccount: React.FC = () => {
                     onPress: async () => {
                         try {
                             setIsLoading(true);
-                            await deleteUserAccount();
+                            await deleteUserAccount(cpf);
+                            await AsyncStorage.clear(); // Limpar o AsyncStorage
                             Alert.alert('Conta excluída', 'Sua conta foi excluída com sucesso.');
                             navigation.navigate('Login');
                         } catch (error) {
@@ -136,6 +145,7 @@ const UserAccount: React.FC = () => {
             ]
         );
     };
+
 
     return (
         <View style={Styles.container}>
