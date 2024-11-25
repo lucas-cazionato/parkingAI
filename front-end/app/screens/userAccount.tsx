@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Alert, StyleSheet } from 'react-native';
 import { TextInput, Button, HelperText, Surface } from 'react-native-paper';
 import { TextInputMask } from 'react-native-masked-text';
@@ -27,10 +27,21 @@ const UserAccount: React.FC = () => {
     const navigation = useNavigation<UserAccountNavigationProp>();
 
     const phoneInputRef = React.useRef<TextInputMask>(null);
+    const dateInputRef = useRef<TextInputMask>(null);
 
     const formatCpf = (cpf: string): string => {
         // CPF com pontos e traço
         return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+    };
+
+    const formatDateToDDMMYYYY = (dateString: string): string => {
+        const [year, month, day] = dateString.split('-');
+        return `${day}/${month}/${year}`;
+    };
+
+    const formatDateToYYYYMMDD = (dateString: string): string => {
+        const [day, month, year] = dateString.split('/');
+        return `${year}-${month}-${day}`;
     };
 
     useEffect(() => {
@@ -50,21 +61,21 @@ const UserAccount: React.FC = () => {
                 if (!token || !userData) {
                     throw new Error('Informações do usuário não encontradas');
                 }
-                // Preencher os campos do formulário com os dados do usuário
+
                 setCpf(userData.cpf);
                 reset({
                     nome: userData.nome,
-                    login: userData.login ?? userData.email ?? '',
+                    login: userData.login,
                     telefone: userData.telefone,
                     cpf: userData.cpf,
-                    dataNascimento: userData.dataNascimento,
+                    dataNascimento: formatDateToDDMMYYYY(userData.dataNascimento),
                 });
                 console.log('Dados resetados no formulário:', {
                     nome: userData.nome,
-                    email: userData.email,
+                    email: userData.login,
                     telefone: userData.telefone,
                     cpf: userData.cpf,
-                    dataNascimento: userData.dataNascimento,
+                    dataNascimento: formatDateToDDMMYYYY(userData.dataNascimento),
                 });
 
 
@@ -82,8 +93,13 @@ const UserAccount: React.FC = () => {
         try {
             setIsLoading(true);
 
-            console.log('userAccount_Dados enviados para atualização:', data);
-            const updatedData = await updateUserData(cpf, data);
+            const formattedData = {
+                ...data,
+                dataNascimento: formatDateToYYYYMMDD(data.dataNascimento), // Converte para YYYY-MM-DD
+            };
+
+            console.log('Dados enviados para atualização:', formattedData);
+            const updatedData = await updateUserData(cpf, formattedData);
 
             await AsyncStorage.setItem('userData', JSON.stringify(updatedData));
 
@@ -234,6 +250,67 @@ const UserAccount: React.FC = () => {
                                 </HelperText>
                             </>
                         )}
+                    />
+
+                    <Controller
+                        control={control}
+                        name="dataNascimento"
+                        rules={{
+                            required: 'Data de nascimento é obrigatória',
+                            validate: {
+                                isValidDate: (value) => {
+                                    const regex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+                                    if (!regex.test(value)) {
+                                        return 'Data inválida. Use o formato DD/MM/YYYY';
+                                    }
+                                    const [day, month, year] = value.split('/').map(Number);
+                                    const date = new Date(year, month - 1, day);
+                                    if (day < 1 || day > 31 || month < 1 || month > 12 || year < 1900) {
+                                        return 'Data inválida. Use o formato DD/MM/YYYY';
+                                    }
+                                    return true;
+                                },
+                                isNotFutureDate: (value) => {
+                                    const [day, month, year] = value.split('/').map(Number);
+                                    const inputDate = new Date(year, month - 1, day);
+                                    const today = new Date();
+
+                                    if (inputDate > today) {
+                                        return 'A data de nascimento não pode ser no futuro';
+                                    }
+                                    return true;
+                                },
+                            },
+                        }}
+                        render={({ field: { onChange, onBlur, value } }) => (
+                            <>
+                                <TextInput
+                                    label="Data de nascimento"
+                                    value={value || ''}
+                                    onBlur={onBlur}
+                                    onChangeText={onChange}
+                                    activeUnderlineColor="#ec6408"
+                                    style={Styles.input}
+                                    error={!!errors.dataNascimento}
+                                    render={props => (
+                                        <TextInputMask
+                                            {...props}
+                                            type={'datetime'}
+                                            options={{
+                                                format: 'DD/MM/YYYY',
+                                            }}
+                                            value={value}
+                                            onChangeText={onChange}
+                                            ref={dateInputRef}  // Referência para máscara
+                                        />
+                                    )}
+                                />
+                                <HelperText type="error" visible={!!errors.dataNascimento} style={Styles.helperText}>
+                                    {errors.dataNascimento?.message}
+                                </HelperText>
+                            </>
+                        )}
+
                     />
 
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 20 }}>

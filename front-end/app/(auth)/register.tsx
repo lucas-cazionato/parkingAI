@@ -130,7 +130,23 @@ const Register: React.FC = () => {
           <Controller
             control={control}
             name="dataNascimento"
-            rules={{ required: 'Data de nascimento é obrigatória' }}
+            rules={{
+              required: 'Data de nascimento é obrigatória',
+              validate: (value) => {
+                const isValidDate = /^\d{2}\/\d{2}\/\d{4}$/.test(value);
+                if (!isValidDate) return 'Data inválida. Use o formato DD/MM/YYYY.';
+                const [day, month, year] = value.split('/').map(Number);
+                const date = new Date(year, month - 1, day);
+                if (
+                  date.getFullYear() !== year ||
+                  date.getMonth() !== month - 1 ||
+                  date.getDate() !== day
+                ) {
+                  return 'Data inválida.';
+                }
+                return true;
+              },
+            }}
             render={({ field: { onChange, onBlur, value } }) => (
               <>
                 <TextInput
