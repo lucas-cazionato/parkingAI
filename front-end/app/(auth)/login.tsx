@@ -61,6 +61,7 @@ export default function Login() {
       <TextInput
         label="Senha"
         value={password}
+        autoCapitalize="none"
         activeUnderlineColor="#ec6408"
         onChangeText={setPassword}
         secureTextEntry

@@ -17,7 +17,7 @@ type RootStackParamList = {
     Auth: { screen: string }; // Permite navegar para telas no AuthStackNavigator
     UserAccount: undefined;
     Main: undefined;
-    mapHome: undefined;
+    MapHome: undefined;
     changePassword: undefined;
 };
 
@@ -53,6 +53,7 @@ const UserAccount: React.FC = () => {
     };
 
     const watchedFields = watch();      // Observar os valores atuais do formulário
+
     const handleNavigateToChangePassword = () => {
         navigation.navigate('changePassword');
     };
@@ -164,7 +165,6 @@ const UserAccount: React.FC = () => {
     };
 
 
-
     return (
         <View style={Styles.container}>
             <ScrollView>
@@ -174,7 +174,6 @@ const UserAccount: React.FC = () => {
                         <Text style={Styles.header}>Minha conta</Text>
                         <Text style={Styles.subText}>Gerencie informações da conta</Text>
                     </Surface>
-
 
                     <Controller
                         control={control}
@@ -190,7 +189,7 @@ const UserAccount: React.FC = () => {
                                     style={[Styles.input, Styles.nonEditableInput]} // Adiciona estilo personalizado
                                 />
                                 <HelperText type="error" visible={!!errors.login} style={Styles.helperText}>
-                                    {errors.login?.message}
+                                    {errors.cpf?.message}
                                 </HelperText>
                             </>
                         )}
@@ -212,13 +211,11 @@ const UserAccount: React.FC = () => {
                                     error={!!errors.nome}
                                 />
                                 <HelperText type="error" visible={!!errors.login} style={Styles.helperText}>
-                                    {errors.login?.message}
+                                    {errors.nome?.message}
                                 </HelperText>
                             </>
                         )}
                     />
-
-
 
                     <Controller
                         control={control}
@@ -263,7 +260,6 @@ const UserAccount: React.FC = () => {
                                     onChangeText={onChange}
                                     activeUnderlineColor="#ec6408"
                                     style={Styles.input}
-                                    error={!!errors.telefone}
                                     render={props => (
                                         <TextInputMask
                                             {...props}
@@ -300,7 +296,8 @@ const UserAccount: React.FC = () => {
                                     const [day, month, year] = value.split('/').map(Number);
                                     const date = new Date(year, month - 1, day);
                                     if (day < 1 || day > 31 || month < 1 || month > 12 || year < 1900) {
-                                        return 'Data inválida. Use o formato DD/MM/YYYY';
+                                        return 'Data inválida. O dia deve ser entre 01 e 31. O mês deve ser entre 01 e 12. O ano deve ser superior a 1900.';
+
                                     }
                                     return true;
                                 },
@@ -344,7 +341,6 @@ const UserAccount: React.FC = () => {
                                 </HelperText>
                             </>
                         )}
-
                     />
 
                     <TextInput
@@ -359,19 +355,14 @@ const UserAccount: React.FC = () => {
                         (Clique{' '}
                         <Text
                             style={Styles.linkText}
-                            onPress={() => navigation.navigate('changePassword')}
+                            onPress={handleNavigateToChangePassword}
                         >
                             aqui
                         </Text>{' '}
                         para alterar a senha)
                     </Text>
-                    <HelperText type="error" visible={!!errors.nome} style={Styles.helperText}>
-                        {errors.nome?.message}
-                    </HelperText>
-
-
+                    <View style={Styles.registerContainer}></View>
                     <View style={Styles.registerContainer}>
-
                         <Button
                             mode="contained"
                             onPress={handleSubmit(handleUpdate)}
@@ -381,11 +372,8 @@ const UserAccount: React.FC = () => {
                         >
                             Salvar Alterações
                         </Button>
-
                     </View>
-
                     <View style={Styles.registerContainer}>
-
                         <Button
                             mode="contained"
                             onPress={handleDeleteAccount}
@@ -393,38 +381,20 @@ const UserAccount: React.FC = () => {
                         >
                             Excluir Conta
                         </Button>
-
                     </View>
-
-                    <View style={Styles.registerContainer}>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 20 }}>
-                            <TouchableOpacity
-                                style={Styles.backButton}
-                                onPress={() => {
-                                    // Navegar para a tela anterior (você pode usar o react-navigation ou outro método)
-                                    console.log('Voltar');
-                                }}
-                            >
-                                <Icon name="arrow-left" size={40} color="#ec6408" />
-                                <Text style={Styles.textInput}>Voltar</Text>
-                            </TouchableOpacity>
-                        </View>
-
+                    <View style={{ flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center' }}>
+                        <TouchableOpacity
+                            style={Styles.backButton}
+                            onPress={() => {
+                                navigation.goBack();
+                            }}
+                        >
+                            <Icon name="arrow-left" size={50} color="#687076" />
+                            <Text style={[Styles.textInput, { marginLeft: 10 }]}>Voltar</Text>
+                        </TouchableOpacity>
                     </View>
-
-
                 </View>
-
-
-
-
-
-
-
-
-
             </ScrollView >
-
         </View >
     );
 };

@@ -198,7 +198,11 @@ export const Styles = StyleSheet.create({
   },
   backButton: {
     padding: 10,
+    alignItems: 'flex-end',
+    marginLeft: 'auto',
+    marginTop: 20
   },
+
   saveButton: {
     backgroundColor: '#ec6408',
     paddingVertical: 10,
