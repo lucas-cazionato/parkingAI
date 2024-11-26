@@ -25,7 +25,7 @@ export default function Login() {
     try {
       const userData = await login(email, password);
       console.log('login_TOKEN:', userData.token);
-      console.log('login_CPF:', userData.cpf);
+      console.log('login_CPF:', userData.data.cpf);
       console.log('login_DADOS USUÁRIO:', userData);
       if (userData.token) {
         setMessage(`Bem-vindo, ${userData.login}`);
