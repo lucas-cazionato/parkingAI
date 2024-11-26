@@ -112,6 +112,7 @@ const UserAccount: React.FC = () => {
             await AsyncStorage.setItem('userData', JSON.stringify(updatedData));
 
             Alert.alert('Sucesso', 'Dados atualizados com sucesso!');
+            navigation.goBack;
         } catch (error) {
             Alert.alert('Erro', 'Não foi possível atualizar os dados.');
         } finally {

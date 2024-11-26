@@ -2,6 +2,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { URL_APIGATEWAY } from './config';
 
+
 // Instância do axios para configurar a base URL
 const api = axios.create({
     baseURL: URL_APIGATEWAY,
@@ -36,7 +37,7 @@ api.interceptors.response.use(
     }
 );
 
-// Fazer login e armazenar token JWT
+// Login e token JWT
 export async function login(login, senha) {
     try {
         const response = await api.post('/auth/login', { login, senha });
@@ -55,6 +56,16 @@ export async function login(login, senha) {
     }
 }
 
+// Logout
+export async function logout(navigation) {
+    try {
+        await AsyncStorage.clear(); // Limpa o armazenamento local
+        navigation.navigate('Auth', { screen: 'Login' }); // Redireciona para a página de login
+        console.log('Usuário deslogado com sucesso');
+    } catch (error) {
+        console.error('Erro ao realizar logout:', error);
+    }
+}
 
 // Register (Cadastro de usuário)
 export const register = async (formattedUser) => {
@@ -71,8 +82,9 @@ export const register = async (formattedUser) => {
 export const updateUserData = async (cpf, userData) => {
     try {
         const response = await api.put(`/auth/${cpf}`, userData);
-        return response.data;
         console.log('apiService_Dados enviados para API:', userData);
+        return response.data;
+
     } catch (error) {
         console.error('Erro ao atualizar os dados:', error);
         throw error;
@@ -89,10 +101,10 @@ export async function deleteUserAccount(cpf) {
     }
 }
 
-// Solicitar nova senha
+// Solicitar nova senha (IMPLEMENTAR / corrigir)
 export const newPassword = async (email) => {
     try {
-        const response = await api.post('/auth/forgot', { email });
+        const response = await api.post('/auth/recuperar', { email });
         return response.data;
     } catch (error) {
         console.error('Erro ao solicitar nova senha:', error);

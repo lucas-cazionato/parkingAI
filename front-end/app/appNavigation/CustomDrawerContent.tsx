@@ -1,8 +1,8 @@
 import React from 'react';
 import { DrawerContentScrollView, DrawerItemList, DrawerItem, DrawerContentComponentProps } from '@react-navigation/drawer';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { Styles } from '../../constants/Styles';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { logout } from '@/apiService';
 
 function CustomDrawerContent(props: DrawerContentComponentProps) {
   return (
@@ -31,13 +31,18 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
       <View style={styles.footer}>
         <TouchableOpacity
           style={styles.logoutButton}
-          onPress={() => {
-            // Lógica para logout
-            console.log('Usuário deslogado');
-            props.navigation.navigate('Login'); // Redirecionar para a tela de login
-          }}>
+          onPress={async () => {
+            try {
+              await logout(props.navigation); // Chama a função de logout
+              Alert.alert('Usuário deslogado com sucesso!', 'Obrigado por usar o Parking AI.'); // Exibe a mensagem de sucesso
+            } catch (error) {
+              Alert.alert('Erro', 'Houve um problema ao deslogar. Tente novamente.');
+              console.error('Erro ao realizar logout:', error);
+            }
+          }}
+        >
           <MaterialIcons name="logout" size={24} color="#ec6408" />
-          <Text style={styles.logoutText}>Log Out</Text>
+          <Text style={styles.logoutText}>Sair</Text>
         </TouchableOpacity>
       </View>
     </DrawerContentScrollView>
