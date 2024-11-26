@@ -16,7 +16,7 @@ type UserAccountNavigationProp = NavigationProp<RootStackParamList, 'UserAccount
 type RootStackParamList = {
     Auth: { screen: string }; // Permite navegar para telas no AuthStackNavigator
     UserAccount: undefined;
-    Main: undefined; // p/ botão cancelar
+    Main: undefined;
 };
 
 interface FormData {
@@ -28,18 +28,16 @@ interface FormData {
 }
 
 const UserAccount: React.FC = () => {
-    const { control, handleSubmit, formState: { errors }, reset } = useForm<FormData>();
+    const { control, handleSubmit, formState: { errors }, reset, watch } = useForm<FormData>();
     const [isLoading, setIsLoading] = useState(false);
     const [cpf, setCpf] = useState('');
-
+    const [originalData, setOriginalData] = useState<FormData | null>(null); // Dados originais (antes das alterações)
     const navigation = useNavigation<UserAccountNavigationProp>();
-
     const phoneInputRef = React.useRef<TextInputMask>(null);
     const dateInputRef = useRef<TextInputMask>(null);
 
     const formatCpf = (cpf: string): string => {
-        // CPF com pontos e traço
-        return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+        return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');         // CPF com pontos e traço
     };
 
     const formatDateToDDMMYYYY = (dateString: string): string => {
@@ -51,6 +49,8 @@ const UserAccount: React.FC = () => {
         const [day, month, year] = dateString.split('/');
         return `${year}-${month}-${day}`;
     };
+
+    const watchedFields = watch();      // Observar os valores atuais do formulário
 
     useEffect(() => {
         const loadUserData = async () => {
@@ -71,6 +71,14 @@ const UserAccount: React.FC = () => {
                 }
 
                 setCpf(userData.cpf);
+                setOriginalData({
+                    nome: userData.nome,
+                    login: userData.login,
+                    telefone: userData.telefone,
+                    cpf: userData.cpf,
+                    dataNascimento: formatDateToDDMMYYYY(userData.dataNascimento),
+                });
+
                 reset({
                     nome: userData.nome,
                     login: userData.login,
@@ -78,15 +86,7 @@ const UserAccount: React.FC = () => {
                     cpf: userData.cpf,
                     dataNascimento: formatDateToDDMMYYYY(userData.dataNascimento),
                 });
-                console.log('Dados resetados no formulário:', {
-                    nome: userData.nome,
-                    email: userData.login,
-                    telefone: userData.telefone,
-                    cpf: userData.cpf,
-                    dataNascimento: formatDateToDDMMYYYY(userData.dataNascimento),
-                });
-
-
+                console.log('Dados resetados no formulário:', userData);
             } catch (error) {
                 Alert.alert('Erro', 'Não foi possível carregar os dados do usuário.');
                 console.error(error);
@@ -96,6 +96,16 @@ const UserAccount: React.FC = () => {
         };
         loadUserData();
     }, [reset]);
+
+    const hasChanges = () => {      //Verificar se houve alteração nos campos do formulário
+        if (!originalData) return false;
+        return (
+            watchedFields.nome !== originalData.nome ||
+            watchedFields.login !== originalData.login ||
+            watchedFields.telefone !== originalData.telefone ||
+            watchedFields.dataNascimento !== originalData.dataNascimento
+        );
+    };
 
     const handleUpdate = async (data: FormData) => {
         try {
@@ -111,6 +121,7 @@ const UserAccount: React.FC = () => {
 
             await AsyncStorage.setItem('userData', JSON.stringify(updatedData));
 
+            setOriginalData(formattedData); // Atualiza os dados originais
             Alert.alert('Sucesso', 'Dados atualizados com sucesso!');
             navigation.goBack;
         } catch (error) {
@@ -336,8 +347,9 @@ const UserAccount: React.FC = () => {
                         <Button
                             mode="contained"
                             onPress={handleSubmit(handleUpdate)}
-                            style={Styles.defaultButton}
+                            style={[Styles.defaultButton, !hasChanges() && Styles.disabledButton]}
                             loading={isLoading}
+                            disabled={!hasChanges()} // Desabilita o botão salvar se não houver alterações
                         >
                             Salvar Alterações
                         </Button>
@@ -349,6 +361,7 @@ const UserAccount: React.FC = () => {
                             Excluir Conta
                         </Button>
                     </View>
+
                 </View>
             </ScrollView>
         </View>

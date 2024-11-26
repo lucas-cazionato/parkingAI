@@ -114,6 +114,11 @@ export const Styles = StyleSheet.create({
     backgroundColor: '#05204b',
   },
 
+  disabledButton: {
+    backgroundColor: '#f0f0f0', // Cor cinza para botão desativado
+    color: '#888888', // Texto mais opaco
+  },
+
   highlightText: {
     color: '#ec6408', // Texto laranja
   },
