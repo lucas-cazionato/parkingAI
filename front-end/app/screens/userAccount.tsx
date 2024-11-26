@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, Alert, StyleSheet } from 'react-native';
+import { View, Text, Alert, StyleSheet, TouchableOpacity } from 'react-native';
 import { TextInput, Button, HelperText, Surface } from 'react-native-paper';
 import { TextInputMask } from 'react-native-masked-text';
 import { useForm, Controller } from 'react-hook-form';
@@ -17,6 +17,8 @@ type RootStackParamList = {
     Auth: { screen: string }; // Permite navegar para telas no AuthStackNavigator
     UserAccount: undefined;
     Main: undefined;
+    mapHome: undefined;
+    changePassword: undefined;
 };
 
 interface FormData {
@@ -51,6 +53,9 @@ const UserAccount: React.FC = () => {
     };
 
     const watchedFields = watch();      // Observar os valores atuais do formulário
+    const handleNavigateToChangePassword = () => {
+        navigation.navigate('changePassword');
+    };
 
     useEffect(() => {
         const loadUserData = async () => {
@@ -123,7 +128,6 @@ const UserAccount: React.FC = () => {
 
             setOriginalData(formattedData); // Atualiza os dados originais
             Alert.alert('Sucesso', 'Dados atualizados com sucesso!');
-            navigation.goBack;
         } catch (error) {
             Alert.alert('Erro', 'Não foi possível atualizar os dados.');
         } finally {
@@ -343,6 +347,34 @@ const UserAccount: React.FC = () => {
 
                     />
 
+
+
+                    <TextInput
+                        label="Senha"
+                        style={[Styles.input, Styles.nonEditableInput]}
+                        value="••••••••"
+                        editable={false}
+                        selectTextOnFocus={false}
+                        activeUnderlineColor='#ec6408'
+                    />
+                    <Text style={Styles.passwordText}>
+                        (Clique{' '}
+                        <Text
+                            style={Styles.linkText}
+                            onPress={() => navigation.navigate('changePassword')}
+                        >
+                            aqui
+                        </Text>{' '}
+                        para alterar a senha)
+                    </Text>
+                    <HelperText type="error" visible={!!errors.nome} style={Styles.helperText}>
+                        {errors.nome?.message}
+                    </HelperText>
+
+
+
+
+
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 20 }}>
                         <Button
                             mode="contained"
@@ -363,8 +395,8 @@ const UserAccount: React.FC = () => {
                     </View>
 
                 </View>
-            </ScrollView>
-        </View>
+            </ScrollView >
+        </View >
     );
 };
 

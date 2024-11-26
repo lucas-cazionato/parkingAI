@@ -173,7 +173,25 @@ export const Styles = StyleSheet.create({
   nonEditableInput: {
     backgroundColor: '#f0f0f0', // Fundo cinza claro
     color: '#888888', // Texto mais opaco
+  },
+
+  passwordContainer: {
+    borderWidth: 1,
+    borderColor: '#d3d3d3',
+    borderRadius: 4,
+    padding: 10,
+    backgroundColor: '#f9f9f9',
+  },
+  passwordText: {
+    fontSize: 14,
+    color: '#555',
+  },
+  linkText: {
+    color: '#ec6408',
+    textDecorationLine: 'underline',
   }
+
+
 
 
 });
