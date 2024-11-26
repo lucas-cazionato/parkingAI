@@ -11,32 +11,6 @@ const api = axios.create({
     },
 });
 
-// Interceptor para requisições autenticadas
-api.interceptors.request.use(
-    async (config) => {
-        const token = await AsyncStorage.getItem('token');
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`; // Adiciona o token ao cabeçalho
-        }
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
-    }
-);
-
-// Interceptor para respostas sem token (logout e exclusao de conta)
-api.interceptors.response.use(
-    (response) => response,
-    async (error) => {
-        if (error.response?.status === 401) { // Erro de autorização
-            await AsyncStorage.clear(); // Limpa o armazenamento local
-            navigate('Login'); // Redireciona para a página de login
-        }
-        return Promise.reject(error); // Continua propagando o erro
-    }
-);
-
 // Login e token JWT
 export async function login(login, senha) {
     try {
@@ -59,9 +33,14 @@ export async function login(login, senha) {
 // Logout
 export async function logout(navigation) {
     try {
-        await AsyncStorage.clear(); // Limpa o armazenamento local
+        await AsyncStorage.removeItem('token');
         navigation.navigate('Auth', { screen: 'Login' }); // Redireciona para a página de login
         console.log('Usuário deslogado com sucesso');
+        // Redefine a pilha de navegação para evitar retorno às telas protegidas
+        navigation.reset({
+            index: 0,
+            routes: [{ name: 'Auth', screen: 'Login' }],
+        });
     } catch (error) {
         console.error('Erro ao realizar logout:', error);
     }

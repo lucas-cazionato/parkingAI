@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerContentComponentProps } from '@react-navigation/drawer';
+import { createDrawerNavigator, DrawerContentComponentProps } from '@react-navigation/drawer';
 import Login from '../(auth)/login';
 import Register from '../(auth)/register';
 import ForgotPassword from '../(auth)/forgotPassword';
 import UserAccount from '../screens/userAccount';
-import ChangePassword from '../screens/changePassword'
+import ChangePassword from '../screens/changePassword';
 import MapHome from '../screens/mapHome';
 import MapSimulate from '../screens/mapSimulate';
 import Review from '../screens/review';
@@ -35,16 +35,16 @@ function AuthStackNavigator() {
       <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ headerShown: false }} />
       <Stack.Screen name="ChangePassword" component={ChangePassword} options={{ headerShown: false }} />
       <Stack.Screen name="MapHome" component={MapHome} options={{ headerShown: false }} />
-
     </Stack.Navigator>
   );
 }
 
-
 function DrawerNavigator() {
   return (
-    <Drawer.Navigator initialRouteName="mapHome"
-      drawerContent={(props: DrawerContentComponentProps) => <CustomDrawerContent {...props} />} screenOptions={{
+    <Drawer.Navigator
+      initialRouteName="mapHome"
+      drawerContent={(props: DrawerContentComponentProps) => <CustomDrawerContent {...props} />}
+      screenOptions={{
         headerShown: true,
         drawerStyle: { backgroundColor: '#05204b' },
         drawerActiveTintColor: '#FFF', // Cor do texto do item ativo
@@ -70,7 +70,7 @@ const AppNavigator = () => {
       setIsAuthenticated(!!token); // Se houver token, o usuário está autenticado
     };
 
-    checkAuthentication();
+    checkAuthentication(); // Verificar a autenticação ao carregar o app
   }, []);
 
   return (
