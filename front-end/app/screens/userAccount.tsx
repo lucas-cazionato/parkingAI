@@ -347,8 +347,6 @@ const UserAccount: React.FC = () => {
 
                     />
 
-
-
                     <TextInput
                         label="Senha"
                         style={[Styles.input, Styles.nonEditableInput]}
@@ -372,10 +370,8 @@ const UserAccount: React.FC = () => {
                     </HelperText>
 
 
+                    <View style={Styles.registerContainer}>
 
-
-
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 20 }}>
                         <Button
                             mode="contained"
                             onPress={handleSubmit(handleUpdate)}
@@ -385,6 +381,11 @@ const UserAccount: React.FC = () => {
                         >
                             Salvar Alterações
                         </Button>
+
+                    </View>
+
+                    <View style={Styles.registerContainer}>
+
                         <Button
                             mode="contained"
                             onPress={handleDeleteAccount}
@@ -392,10 +393,38 @@ const UserAccount: React.FC = () => {
                         >
                             Excluir Conta
                         </Button>
+
                     </View>
 
+                    <View style={Styles.registerContainer}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 20 }}>
+                            <TouchableOpacity
+                                style={Styles.backButton}
+                                onPress={() => {
+                                    // Navegar para a tela anterior (você pode usar o react-navigation ou outro método)
+                                    console.log('Voltar');
+                                }}
+                            >
+                                <Icon name="arrow-left" size={40} color="#ec6408" />
+                                <Text style={Styles.textInput}>Voltar</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                    </View>
+
+
                 </View>
+
+
+
+
+
+
+
+
+
             </ScrollView >
+
         </View >
     );
 };

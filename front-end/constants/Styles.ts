@@ -189,6 +189,35 @@ export const Styles = StyleSheet.create({
   linkText: {
     color: '#ec6408',
     textDecorationLine: 'underline',
+  },
+
+  buttonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
+  backButton: {
+    padding: 10,
+  },
+  saveButton: {
+    backgroundColor: '#ec6408',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  changePasswordButton: {
+    borderColor: '#ec6408',
+    borderWidth: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  deleteAccountButton: {
+    borderColor: '#ec6408',
+    borderWidth: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
   }
 
 
