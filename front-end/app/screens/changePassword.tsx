@@ -27,14 +27,15 @@ const ChangePassword: React.FC = () => {
                 return;
             }
 
-            // Lógica para alterar a senha no backend
+            // IMPLEMENTAR Lógica para alterar a senha no backend (ver apiService.js e server.js)
             const token = await AsyncStorage.getItem('token');
             if (!token) {
                 Alert.alert('Erro', 'Não foi possível identificar o usuário');
                 return;
             }
-
-            // Aqui você fará a chamada para o serviço que altera a senha do usuário
+            console.log("changePassword_TOKEN:", token);
+            // INTEGRAR COM BACK
+            // Fazer chamada para o serviço que altera a senha do usuário
             console.log('Alterando a senha do usuário com os dados:', data);
 
             Alert.alert('Sucesso', 'Senha alterada com sucesso!');
