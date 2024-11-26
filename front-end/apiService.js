@@ -10,26 +10,47 @@ const api = axios.create({
     },
 });
 
-// Fazer login e receber token JWT
+// Interceptor para requisições autenticadas
+api.interceptors.request.use(
+    async (config) => {
+        const token = await AsyncStorage.getItem('token');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`; // Adiciona o token ao cabeçalho
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
+// Interceptor para respostas sem token (logout e exclusao de conta)
+api.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+        if (error.response?.status === 401) { // Erro de autorização
+            await AsyncStorage.clear(); // Limpa o armazenamento local
+            navigate('Login'); // Redireciona para a página de login
+        }
+        return Promise.reject(error); // Continua propagando o erro
+    }
+);
+
+// Fazer login e armazenar token JWT
 export async function login(login, senha) {
     try {
         const response = await api.post('/auth/login', { login, senha });
         if (response.data.auth) {
             const token = response.data.token;
-            const userData = response.data.data; // Inclui CPF, nome, etc.
+            const userData = response.data.data;
 
             if (token) {
-                await AsyncStorage.setItem('token', token);     //Armazenar token
-                await AsyncStorage.setItem('userData', JSON.stringify(userData)); // Armazenar dados do usuário
-                console.log('apiservice_TOKEN:', token);
-                console.log('apiService_CPF:', userData.cpf);
-                console.log('apiService_DADOS USUÁRIO:', userData);
-                return { ...response.data.data, token };
+                await AsyncStorage.setItem('token', token);
+                await AsyncStorage.setItem('userData', JSON.stringify(userData));
+                return { ...response.data };
             }
         }
-        throw new Error('Autenticação falhou.');
     } catch (error) {
-        console.error('Erro ao fazer login:', error);
         throw error;
     }
 }
@@ -49,42 +70,24 @@ export const register = async (formattedUser) => {
 // Atualizar dados do usuário
 export const updateUserData = async (cpf, userData) => {
     try {
-        const token = await AsyncStorage.getItem('token');
-        if (!token) throw new Error('Token não encontrado');
-
-        const response = await api.put(`/auth/${cpf}`, userData, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-        console.log('apiService_Dados enviados para API:', userData);
-
+        const response = await api.put(`/auth/${cpf}`, userData);
         return response.data;
+        console.log('apiService_Dados enviados para API:', userData);
     } catch (error) {
-        console.error('Erro ao atualizar dados do usuário:', error);
-        throw error.response?.data?.message || 'Erro ao atualizar os dados';
+        console.error('Erro ao atualizar os dados:', error);
+        throw error;
     }
 };
-
-
-
-
 
 // Excluir conta do usuário
-export const deleteUserAccount = async (cpf) => {
+export async function deleteUserAccount(cpf) {
     try {
-        const token = await AsyncStorage.getItem('token');
-        const response = await api.delete(`/auth/cpf/${cpf}`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-        return response.data;
+        console.log(cpf)
+        await api.delete(`/auth/cpf/${cpf}`);
     } catch (error) {
-        console.error('Erro ao excluir a conta do usuário:', error);
-        throw error.response?.data?.message || 'Erro ao excluir a conta';
+        console.error('Erro ao excluir conta:', error.response?.data || error.message);
     }
-};
+}
 
 // Solicitar nova senha
 export const newPassword = async (email) => {
@@ -96,3 +99,5 @@ export const newPassword = async (email) => {
         throw error.response?.data?.message || 'Erro ao solicitar nova senha';
     }
 };
+
+export default api;

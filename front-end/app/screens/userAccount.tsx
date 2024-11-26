@@ -14,8 +14,8 @@ type UserAccountNavigationProp = NavigationProp<RootStackParamList, 'UserAccount
 
 
 type RootStackParamList = {
+    Auth: { screen: string }; // Permite navegar para telas no AuthStackNavigator
     UserAccount: undefined;
-    Login: undefined; // após excluir conta, redireciona para o login
     Main: undefined; // p/ botão cancelar
 };
 
@@ -134,7 +134,8 @@ const UserAccount: React.FC = () => {
                             await deleteUserAccount(cpf);
                             await AsyncStorage.clear(); // Limpar o AsyncStorage
                             Alert.alert('Conta excluída', 'Sua conta foi excluída com sucesso.');
-                            navigation.navigate('Login');
+                            navigation.navigate('Auth', { screen: 'Login' });
+
                         } catch (error) {
                             Alert.alert('Erro', 'Não foi possível excluir a conta.');
                         } finally {
@@ -145,6 +146,7 @@ const UserAccount: React.FC = () => {
             ]
         );
     };
+
 
 
     return (
@@ -171,6 +173,9 @@ const UserAccount: React.FC = () => {
                                     activeUnderlineColor="transparent" // Remove a linha ativa
                                     style={[Styles.input, Styles.nonEditableInput]} // Adiciona estilo personalizado
                                 />
+                                <HelperText type="error" visible={!!errors.login} style={Styles.helperText}>
+                                    {errors.login?.message}
+                                </HelperText>
                             </>
                         )}
                     />
@@ -190,6 +195,9 @@ const UserAccount: React.FC = () => {
                                     style={Styles.input}
                                     error={!!errors.nome}
                                 />
+                                <HelperText type="error" visible={!!errors.login} style={Styles.helperText}>
+                                    {errors.login?.message}
+                                </HelperText>
                             </>
                         )}
                     />
