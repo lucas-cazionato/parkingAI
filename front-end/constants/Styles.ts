@@ -114,6 +114,11 @@ export const Styles = StyleSheet.create({
     backgroundColor: '#05204b',
   },
 
+  disabledButton: {
+    backgroundColor: '#f0f0f0', // Cor cinza para botão desativado
+    color: '#888888', // Texto mais opaco
+  },
+
   highlightText: {
     color: '#ec6408', // Texto laranja
   },
@@ -168,7 +173,58 @@ export const Styles = StyleSheet.create({
   nonEditableInput: {
     backgroundColor: '#f0f0f0', // Fundo cinza claro
     color: '#888888', // Texto mais opaco
+  },
+
+  passwordContainer: {
+    borderWidth: 1,
+    borderColor: '#d3d3d3',
+    borderRadius: 4,
+    padding: 10,
+    backgroundColor: '#f9f9f9',
+  },
+  passwordText: {
+    fontSize: 14,
+    color: '#555',
+  },
+  linkText: {
+    color: '#ec6408',
+    textDecorationLine: 'underline',
+  },
+
+  buttonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
+  backButton: {
+    padding: 10,
+    alignItems: 'flex-end',
+    marginLeft: 'auto',
+    marginTop: 20
+  },
+
+  saveButton: {
+    backgroundColor: '#ec6408',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  changePasswordButton: {
+    borderColor: '#ec6408',
+    borderWidth: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  deleteAccountButton: {
+    borderColor: '#ec6408',
+    borderWidth: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
   }
+
+
 
 
 });

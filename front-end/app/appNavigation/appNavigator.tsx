@@ -6,6 +6,7 @@ import Login from '../(auth)/login';
 import Register from '../(auth)/register';
 import ForgotPassword from '../(auth)/forgotPassword';
 import UserAccount from '../screens/userAccount';
+import ChangePassword from '../screens/changePassword'
 import MapHome from '../screens/mapHome';
 import MapSimulate from '../screens/mapSimulate';
 import Review from '../screens/review';
@@ -32,7 +33,9 @@ function AuthStackNavigator() {
       <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
       <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
       <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ headerShown: false }} />
-      <Stack.Screen name="UserAccount" component={UserAccount} options={headerOptions} />
+      <Stack.Screen name="ChangePassword" component={ChangePassword} options={{ headerShown: false }} />
+      <Stack.Screen name="MapHome" component={MapHome} options={{ headerShown: false }} />
+
     </Stack.Navigator>
   );
 }
@@ -52,6 +55,7 @@ function DrawerNavigator() {
       <Drawer.Screen name="mapSimulate" component={MapSimulate} options={headerOptions} />
       <Drawer.Screen name="review" component={Review} options={headerOptions} />
       <Drawer.Screen name="UserAccount" component={UserAccount} options={headerOptions} />
+      <Drawer.Screen name="changePassword" component={ChangePassword} options={headerOptions} />
     </Drawer.Navigator>
   );
 }

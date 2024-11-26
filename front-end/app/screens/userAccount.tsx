@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, Alert, StyleSheet } from 'react-native';
+import { View, Text, Alert, StyleSheet, TouchableOpacity } from 'react-native';
 import { TextInput, Button, HelperText, Surface } from 'react-native-paper';
 import { TextInputMask } from 'react-native-masked-text';
 import { useForm, Controller } from 'react-hook-form';
@@ -16,7 +16,9 @@ type UserAccountNavigationProp = NavigationProp<RootStackParamList, 'UserAccount
 type RootStackParamList = {
     Auth: { screen: string }; // Permite navegar para telas no AuthStackNavigator
     UserAccount: undefined;
-    Main: undefined; // p/ botão cancelar
+    Main: undefined;
+    MapHome: undefined;
+    changePassword: undefined;
 };
 
 interface FormData {
@@ -28,18 +30,16 @@ interface FormData {
 }
 
 const UserAccount: React.FC = () => {
-    const { control, handleSubmit, formState: { errors }, reset } = useForm<FormData>();
+    const { control, handleSubmit, formState: { errors }, reset, watch } = useForm<FormData>();
     const [isLoading, setIsLoading] = useState(false);
     const [cpf, setCpf] = useState('');
-
+    const [originalData, setOriginalData] = useState<FormData | null>(null); // Dados originais (antes das alterações)
     const navigation = useNavigation<UserAccountNavigationProp>();
-
     const phoneInputRef = React.useRef<TextInputMask>(null);
     const dateInputRef = useRef<TextInputMask>(null);
 
     const formatCpf = (cpf: string): string => {
-        // CPF com pontos e traço
-        return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+        return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');         // CPF com pontos e traço
     };
 
     const formatDateToDDMMYYYY = (dateString: string): string => {
@@ -50,6 +50,12 @@ const UserAccount: React.FC = () => {
     const formatDateToYYYYMMDD = (dateString: string): string => {
         const [day, month, year] = dateString.split('/');
         return `${year}-${month}-${day}`;
+    };
+
+    const watchedFields = watch();      // Observar os valores atuais do formulário
+
+    const handleNavigateToChangePassword = () => {
+        navigation.navigate('changePassword');
     };
 
     useEffect(() => {
@@ -71,6 +77,14 @@ const UserAccount: React.FC = () => {
                 }
 
                 setCpf(userData.cpf);
+                setOriginalData({
+                    nome: userData.nome,
+                    login: userData.login,
+                    telefone: userData.telefone,
+                    cpf: userData.cpf,
+                    dataNascimento: formatDateToDDMMYYYY(userData.dataNascimento),
+                });
+
                 reset({
                     nome: userData.nome,
                     login: userData.login,
@@ -78,15 +92,7 @@ const UserAccount: React.FC = () => {
                     cpf: userData.cpf,
                     dataNascimento: formatDateToDDMMYYYY(userData.dataNascimento),
                 });
-                console.log('Dados resetados no formulário:', {
-                    nome: userData.nome,
-                    email: userData.login,
-                    telefone: userData.telefone,
-                    cpf: userData.cpf,
-                    dataNascimento: formatDateToDDMMYYYY(userData.dataNascimento),
-                });
-
-
+                console.log('Dados resetados no formulário:', userData);
             } catch (error) {
                 Alert.alert('Erro', 'Não foi possível carregar os dados do usuário.');
                 console.error(error);
@@ -96,6 +102,16 @@ const UserAccount: React.FC = () => {
         };
         loadUserData();
     }, [reset]);
+
+    const hasChanges = () => {      //Verificar se houve alteração nos campos do formulário
+        if (!originalData) return false;
+        return (
+            watchedFields.nome !== originalData.nome ||
+            watchedFields.login !== originalData.login ||
+            watchedFields.telefone !== originalData.telefone ||
+            watchedFields.dataNascimento !== originalData.dataNascimento
+        );
+    };
 
     const handleUpdate = async (data: FormData) => {
         try {
@@ -111,8 +127,8 @@ const UserAccount: React.FC = () => {
 
             await AsyncStorage.setItem('userData', JSON.stringify(updatedData));
 
+            setOriginalData(formattedData); // Atualiza os dados originais
             Alert.alert('Sucesso', 'Dados atualizados com sucesso!');
-            navigation.goBack;
         } catch (error) {
             Alert.alert('Erro', 'Não foi possível atualizar os dados.');
         } finally {
@@ -149,7 +165,6 @@ const UserAccount: React.FC = () => {
     };
 
 
-
     return (
         <View style={Styles.container}>
             <ScrollView>
@@ -159,7 +174,6 @@ const UserAccount: React.FC = () => {
                         <Text style={Styles.header}>Minha conta</Text>
                         <Text style={Styles.subText}>Gerencie informações da conta</Text>
                     </Surface>
-
 
                     <Controller
                         control={control}
@@ -175,7 +189,7 @@ const UserAccount: React.FC = () => {
                                     style={[Styles.input, Styles.nonEditableInput]} // Adiciona estilo personalizado
                                 />
                                 <HelperText type="error" visible={!!errors.login} style={Styles.helperText}>
-                                    {errors.login?.message}
+                                    {errors.cpf?.message}
                                 </HelperText>
                             </>
                         )}
@@ -197,13 +211,11 @@ const UserAccount: React.FC = () => {
                                     error={!!errors.nome}
                                 />
                                 <HelperText type="error" visible={!!errors.login} style={Styles.helperText}>
-                                    {errors.login?.message}
+                                    {errors.nome?.message}
                                 </HelperText>
                             </>
                         )}
                     />
-
-
 
                     <Controller
                         control={control}
@@ -248,7 +260,6 @@ const UserAccount: React.FC = () => {
                                     onChangeText={onChange}
                                     activeUnderlineColor="#ec6408"
                                     style={Styles.input}
-                                    error={!!errors.telefone}
                                     render={props => (
                                         <TextInputMask
                                             {...props}
@@ -285,7 +296,8 @@ const UserAccount: React.FC = () => {
                                     const [day, month, year] = value.split('/').map(Number);
                                     const date = new Date(year, month - 1, day);
                                     if (day < 1 || day > 31 || month < 1 || month > 12 || year < 1900) {
-                                        return 'Data inválida. Use o formato DD/MM/YYYY';
+                                        return 'Data inválida. O dia deve ser entre 01 e 31. O mês deve ser entre 01 e 12. O ano deve ser superior a 1900.';
+
                                     }
                                     return true;
                                 },
@@ -329,18 +341,39 @@ const UserAccount: React.FC = () => {
                                 </HelperText>
                             </>
                         )}
-
                     />
 
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 20 }}>
+                    <TextInput
+                        label="Senha"
+                        style={[Styles.input, Styles.nonEditableInput]}
+                        value="••••••••"
+                        editable={false}
+                        selectTextOnFocus={false}
+                        activeUnderlineColor='#ec6408'
+                    />
+                    <Text style={Styles.passwordText}>
+                        (Clique{' '}
+                        <Text
+                            style={Styles.linkText}
+                            onPress={handleNavigateToChangePassword}
+                        >
+                            aqui
+                        </Text>{' '}
+                        para alterar a senha)
+                    </Text>
+                    <View style={Styles.registerContainer}></View>
+                    <View style={Styles.registerContainer}>
                         <Button
                             mode="contained"
                             onPress={handleSubmit(handleUpdate)}
-                            style={Styles.defaultButton}
+                            style={[Styles.defaultButton, !hasChanges() && Styles.disabledButton]}
                             loading={isLoading}
+                            disabled={!hasChanges()} // Desabilita o botão salvar se não houver alterações
                         >
                             Salvar Alterações
                         </Button>
+                    </View>
+                    <View style={Styles.registerContainer}>
                         <Button
                             mode="contained"
                             onPress={handleDeleteAccount}
@@ -349,9 +382,20 @@ const UserAccount: React.FC = () => {
                             Excluir Conta
                         </Button>
                     </View>
+                    <View style={{ flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center' }}>
+                        <TouchableOpacity
+                            style={Styles.backButton}
+                            onPress={() => {
+                                navigation.goBack();
+                            }}
+                        >
+                            <Icon name="arrow-left" size={50} color="#687076" />
+                            <Text style={[Styles.textInput, { marginLeft: 10 }]}>Voltar</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
-            </ScrollView>
-        </View>
+            </ScrollView >
+        </View >
     );
 };
 
