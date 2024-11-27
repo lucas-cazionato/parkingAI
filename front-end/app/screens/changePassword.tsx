@@ -16,6 +16,9 @@ interface ChangePasswordData {
 const ChangePassword: React.FC = () => {
     const { control, handleSubmit, formState: { errors }, watch } = useForm<ChangePasswordData>();
     const [isLoading, setIsLoading] = useState(false);
+    const [oldPasswordVisible, setOldPasswordVisible] = useState(false);
+    const [newPasswordVisible, setNewPasswordVisible] = useState(false);
+    const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
     const navigation = useNavigation();
 
     const handleUpdatePassword = async (data: ChangePasswordData) => {
@@ -65,7 +68,9 @@ const ChangePassword: React.FC = () => {
                         <>
                             <TextInput
                                 label="Senha Atual"
-                                secureTextEntry
+                                autoCapitalize="none"
+                                secureTextEntry={!oldPasswordVisible}
+                                right={<TextInput.Icon icon={oldPasswordVisible ? "eye-off" : "eye"} onPress={() => setOldPasswordVisible(!oldPasswordVisible)} />}
                                 value={value || ''}
                                 onBlur={onBlur}
                                 onChangeText={onChange}
@@ -88,7 +93,9 @@ const ChangePassword: React.FC = () => {
                         <>
                             <TextInput
                                 label="Nova Senha"
-                                secureTextEntry
+                                autoCapitalize="none"
+                                secureTextEntry={!newPasswordVisible}
+                                right={<TextInput.Icon icon={newPasswordVisible ? "eye-off" : "eye"} onPress={() => setNewPasswordVisible(!newPasswordVisible)} />}
                                 value={value || ''}
                                 onBlur={onBlur}
                                 onChangeText={onChange}
@@ -111,7 +118,9 @@ const ChangePassword: React.FC = () => {
                         <>
                             <TextInput
                                 label="Confirmar Senha"
-                                secureTextEntry
+                                autoCapitalize="none"
+                                secureTextEntry={!confirmPasswordVisible}
+                                right={<TextInput.Icon icon={confirmPasswordVisible ? "eye-off" : "eye"} onPress={() => setConfirmPasswordVisible(!confirmPasswordVisible)} />}
                                 value={value || ''}
                                 onBlur={onBlur}
                                 onChangeText={onChange}
