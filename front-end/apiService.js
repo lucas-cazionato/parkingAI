@@ -112,4 +112,14 @@ export const newPassword = async (email) => {
     }
 };
 
+export const sendReview = async (reviewToSend) => {
+    try {
+        const response = await api.post('/quest', { reviewToSend });
+        return response.data;
+    } catch (error) {
+        console.error('Erro ao solicitar enviar avaliação:', error);
+        throw error.response?.data?.message || 'Erro ao enviar avaliação';
+    }
+};
+
 export default api;
