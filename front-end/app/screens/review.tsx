@@ -192,6 +192,8 @@ export default function Review({ navigation }: ReviewProps) {
                 });
               }}
               mode="outlined"
+              outlineColor="#ec6408"
+              activeOutlineColor="#ec6408"
               style={Styles.textInput}
               error={!!errors.comentario}
             />
@@ -203,7 +205,7 @@ export default function Review({ navigation }: ReviewProps) {
         />
       </View>
 
-      <Button mode="contained" onPress={handleSubmit(onSubmit)}>
+      <Button mode="contained" onPress={handleSubmit(onSubmit)} style={Styles.defaultButton}>
         Enviar Avaliação
       </Button>
     </ScrollView>
