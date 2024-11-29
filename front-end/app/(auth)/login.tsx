@@ -33,9 +33,18 @@ export default function Login() {
       } else {
         setMessage('Erro ao autenticar. Tente novamente.');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro no login:', error);
-      setMessage('Erro no login. Verifique suas credenciais.');
+
+      let errorMessage = 'Erro ao autenticar. Tente novamente.';
+
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      }
+
+      setMessage(errorMessage);
     }
   };
 
