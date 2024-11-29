@@ -11,7 +11,7 @@ const api = axios.create({
     },
 });
 
-// Interceptor para requisições autenticadas
+// Requisições autenticadas
 api.interceptors.request.use(
     async (config) => {
         const token = await AsyncStorage.getItem('token');
@@ -25,7 +25,7 @@ api.interceptors.request.use(
     }
 );
 
-// Interceptor para respostas sem token (logout e exclusao de conta)
+// Respostas sem token (logout e exclusao de conta)
 api.interceptors.response.use(
     (response) => response,
     async (error) => {
@@ -56,16 +56,30 @@ export async function login(login, senha) {
     }
 }
 
+
 // Logout
 export async function logout(navigation) {
     try {
-        await AsyncStorage.clear(); // Limpa o armazenamento local
-        navigation.navigate('Auth', { screen: 'Login' }); // Redireciona para a página de login
-        console.log('Usuário deslogado com sucesso');
+
+        //Obter o valor do token
+        const token1 = await AsyncStorage.getItem('token');
+        console.log('logout_token1', token1);
+
+        // Fazer logout e remover o token do AsyncStorage
+        await api.post('/logout');
+        await AsyncStorage.removeItem('token');
+        const token2 = await AsyncStorage.getItem('token');
+        console.log('logout_token2', token2);
+
+        // Redirecionar para a página de login
+        navigation.navigate('Auth', { screen: 'Login' });
+        console.log('logout_Usuário deslogado com sucesso');
+
     } catch (error) {
         console.error('Erro ao realizar logout:', error);
     }
 }
+
 
 // Register (Cadastro de usuário)
 export const register = async (formattedUser) => {
