@@ -9,6 +9,7 @@ import { ReviewModel } from '../models/reviewModel';
 import { sendReview } from '@/apiService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ScrollView } from 'react-native-gesture-handler';
+import { Alert } from 'react-native';
 
 
 type ReviewProps = {
@@ -16,34 +17,41 @@ type ReviewProps = {
 };
 
 interface ExtendedReviewModel extends ReviewModel {
-  cpf: string;
+  cpfUsuario: string;
 }
 
 export default function Review({ navigation }: ReviewProps) {
   const { control, handleSubmit, formState: { errors } } = useForm<ExtendedReviewModel>();
   const [cpf, setCpf] = useState<string>('');
   const [questionario, setQuestionario] = useState<ReviewModel>({
-    achouVaga: 'SIM',  
-    notaGeral: 5,      
-    comentario: '',    
+    achouVaga: 'SIM',
+    notaGeral: 5,
+    comentario: '',
   });
 
   useEffect(() => {
     const loadUserData = async () => {
       try {
-        const storedUserData = await AsyncStorage.getItem('userData');
-        const userData = storedUserData ? JSON.parse(storedUserData) : null;
 
-        if (userData && userData.cpf) {
-          setCpf(userData.cpf);
-        } else {
-          throw new Error('Informações do usuário não encontradas');
-        }
-      } catch (error) {
-        console.error('Erro ao carregar dados do usuário:', error);
-      }
-    };
+          //Recuperar token e dados do usuário armazenados no AsyncStorage
+          const token = await AsyncStorage.getItem('token');
+          const storedUserData = await AsyncStorage.getItem('userData');
+          const userData = storedUserData ? JSON.parse(storedUserData) : null;
 
+          console.log("userAccount_TOKEN:", token);
+          console.log('userAccount_CPF:', userData.cpf);
+          console.log('userAccount_DADOS USUÁRIO:', userData);
+
+          if (!token || !userData) {
+              throw new Error('Informações do usuário não encontradas');
+          }
+
+    setCpf(userData.cpf);
+    } catch (error) {
+        Alert.alert('Erro', 'Não foi possível carregar os dados do usuário.');
+        console.error(error);
+    }
+};
     loadUserData();
   }, []);
 
@@ -56,25 +64,39 @@ export default function Review({ navigation }: ReviewProps) {
     const reviewData = { ...data, cpf };
 
     const reviewToSend: ExtendedReviewModel = {
-      cpf: reviewData.cpf,
-      achouVaga: questionario.achouVaga, 
-      notaGeral: questionario.notaGeral, 
-      comentario: questionario.comentario.trim(),      
+      cpfUsuario: reviewData.cpf,
+      achouVaga: questionario.achouVaga,
+      notaGeral: questionario.notaGeral,
+      comentario: questionario.comentario.trim(),
     };
 
     try {
       const response = await sendReview(reviewToSend);
       console.log('Avaliação enviada:', reviewToSend);
 
-
-      if (response.ok) {
+      if (response.status === 200 || response.status === 201) {
+        Alert.alert('Sucesso', 'Avaliação enviada com sucesso!');
         console.log('Avaliação enviada com sucesso:', data);
-        navigation.goBack();
+        navigation.navigate('mapHome');
+
       } else {
-        console.error('Erro ao enviar avaliação:', response.statusText);
+        console.error('Erro :', response.statusText);
+        Alert.alert('Erro', 'Erro ao enviar avaliação.');
       }
-    } catch (error) {
+
+    } catch (error: any) {
       console.error('Erro ao enviar avaliação:', error);
+
+      let errorMessage = 'Erro desconhecido ao enviar avaliação.';
+
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      }
+
+      Alert.alert('Erro', errorMessage);
     }
   };
 
@@ -99,7 +121,7 @@ export default function Review({ navigation }: ReviewProps) {
                       onChange(achouVaga);
                       setQuestionario((prevReview) => ({
                         ...prevReview,
-                        achouVaga: achouVaga as 'SIM' | 'NAO',
+                        achouVaga: achouVaga as 'SIM' | 'NÃO',
                       }));
                     }}
                     value={value}
@@ -109,7 +131,7 @@ export default function Review({ navigation }: ReviewProps) {
                   <Text style={Styles.radioButtonLabel}>Sim</Text>
                 </View>
                 <View style={Styles.radioButtonContainer}>
-                  <RadioButton value="NAO" color="#ec6408" />
+                  <RadioButton value="NÃO" color="#ec6408" />
                   <Text style={Styles.radioButtonLabel}>Não</Text>
                 </View>
               </RadioButton.Group>
