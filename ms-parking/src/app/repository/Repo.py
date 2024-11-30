@@ -29,7 +29,7 @@ class Repo:
       ) AS distancy,
       ST_AsGeoJSON(ST_Transform(p.way, 4326)) as way_geojson
     FROM planet_osm_polygon p
-    WHERE tags->'capacity' IS NOT NULL
+    WHERE tags->'capacity' IS NOT NULL AND p.amenity='parking' AND p.tags->'parking'='street_side'
     ORDER BY distancy ASC
     LIMIT 5;
     """
