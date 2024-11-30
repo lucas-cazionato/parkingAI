@@ -1,3 +1,5 @@
 node_modules/
 front-end/config.ts
 .vscode/
+.env
+.mongo
