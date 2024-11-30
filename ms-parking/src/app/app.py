@@ -43,8 +43,17 @@ def parking():
     # Criando uma instancia da classe ProcessarData para processar a data
     processar_data = ProcessarData()
 
-    # Definindo o current_time como o horário atual
-    current_time = datetime.now()
+    # Se constar o atributo 'simulation_time' no JSON, vai usá-lo para simulação. Caso contrário, usará o momento atual
+    simulation_time = data.get('simulation_time')
+    if simulation_time:
+        try:
+            # Converter o 'simulation_time' para um objeto datetime, se possível
+            parking_time = datetime.fromisoformat(simulation_time)
+        except ValueError:
+            return jsonify({"error": "Formato de 'simulation_time' inválido."}), 400
+    else:
+        # Caso não exista 'simulation_time', usamos o momento atual
+        parking_time = datetime.now()
 
     # Declaracao do array com as informacoes dos poligonos/vagas a serem processados pelo modelo de IA
     # A partir do processamento, serao retornadas as probabilidades de ocupacao dos poligonos/vagas
@@ -93,7 +102,7 @@ def parking():
             way_geojson = {}  # Caso ocorra erro, atribui um dicionário vazio como fallback
    
         # Processando a data para obter os parametros necessarios ao modelo
-        date_info = processar_data.processDate(current_time)
+        date_info = processar_data.processDate(parking_time)
 
         # Montando o array com as informações a serem passadas para a IA
         vaga_info = {
@@ -123,7 +132,7 @@ def parking():
         vagas_info.append(vaga_info)
         # Adicionando as informacoes de cada poligono/vaga ao array de retorno da API
         result.append(result_info)
-        
+         
     # Criacao de uma instância da classe Previsao, para retornar as probabilidades de ocupacao dos poligonos/vagas
     previsao = Previsao()
 
@@ -152,6 +161,9 @@ def parking():
         ])    
         # Adicionando o final_result ao array de resultados finais
         final_results.append(final_result)
+        
+    # Acionando função para plotar os poligonos/vagas encontrados em um mapa (formato .html)
+    plotar_poligonos_encontrados(final_results)
 
     # Retorno com as probabilidades de ocupacao para os poligonos/vagas mais proximos
     return app.response_class(
