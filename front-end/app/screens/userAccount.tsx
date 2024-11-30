@@ -10,6 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
+
 type UserAccountNavigationProp = NavigationProp<RootStackParamList, 'UserAccount'>;
 
 
@@ -52,11 +53,97 @@ const UserAccount: React.FC = () => {
         return `${year}-${month}-${day}`;
     };
 
-    const watchedFields = watch();      // Observar os valores atuais do formulário
-
     const handleNavigateToChangePassword = () => {
         navigation.navigate('changePassword');
     };
+
+    // Verificar se os valores do formulário são diferentes dos dados originais p/ ativar o botão salvar
+    const formValues = watch(); // Monitorar os valores do formulário
+    const isFormChanged = originalData &&
+        (formValues.nome !== originalData.nome ||
+            formValues.login !== originalData.login ||
+            formValues.telefone !== originalData.telefone ||
+            formValues.dataNascimento !== originalData.dataNascimento);
+
+
+    const handleUpdate = async (data: FormData) => {
+        try {
+
+            setIsLoading(true);
+
+            //Formatar a data
+            const formattedData = {
+                ...data,
+                dataNascimento: formatDateToYYYYMMDD(data.dataNascimento), // Converter para YYYY-MM-DD
+            };
+
+            console.log('Dados enviados para atualização:', formattedData);
+
+            //Atualizat os dados do usuário
+            const updatedData = await updateUserData(cpf, formattedData);
+
+            //Armazenar os dados atualizados no AsyncStorage
+            await AsyncStorage.setItem('userData', JSON.stringify(updatedData));
+
+            // Atualizar os dados originais no estado
+            setOriginalData(updatedData);
+
+            // Resetar o formulário com os dados atualizados
+            reset({
+                nome: updatedData.nome,
+                login: updatedData.login,
+                telefone: updatedData.telefone,
+                cpf: updatedData.cpf,
+                dataNascimento: formatDateToDDMMYYYY(updatedData.dataNascimento),
+            });
+            Alert.alert('Sucesso', 'Dados atualizados com sucesso!');
+
+            // Recarregar a tela UserAccount após a atualização
+            navigation.reset({
+                index: 0,
+                routes: [{ name: 'UserAccount' }],
+            });
+
+
+        } catch (error) {
+            Alert.alert('Erro', 'Não foi possível atualizar os dados.');
+        } finally {
+            setIsLoading(false);
+            useEffect;
+        }
+    };
+
+    const handleDeleteAccount = async () => {
+        Alert.alert(
+            'Excluir Conta',
+            'Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita.',
+            [
+                { text: 'Cancelar', style: 'cancel' },
+                {
+                    text: 'Excluir',
+                    style: 'destructive',
+                    onPress: async () => {
+                        try {
+                            setIsLoading(true);
+                            await deleteUserAccount(cpf);
+                            await AsyncStorage.clear(); // Limpar o AsyncStorage
+                            Alert.alert('Conta excluída', 'Sua conta foi excluída com sucesso.');
+                            navigation.navigate('Auth', { screen: 'Login' });
+
+                        } catch (error) {
+                            Alert.alert('Erro', 'Não foi possível excluir a conta.');
+                        } finally {
+                            setIsLoading(false);
+                        }
+                    }
+                },
+            ]
+        );
+    };
+
+
+
+
 
     useEffect(() => {
         const loadUserData = async () => {
@@ -92,6 +179,7 @@ const UserAccount: React.FC = () => {
                     cpf: userData.cpf,
                     dataNascimento: formatDateToDDMMYYYY(userData.dataNascimento),
                 });
+
                 console.log('Dados resetados no formulário:', userData);
             } catch (error) {
                 Alert.alert('Erro', 'Não foi possível carregar os dados do usuário.');
@@ -101,68 +189,9 @@ const UserAccount: React.FC = () => {
             }
         };
         loadUserData();
-    }, [reset]);
+    }, []);
 
-    const hasChanges = () => {      //Verificar se houve alteração nos campos do formulário
-        if (!originalData) return false;
-        return (
-            watchedFields.nome !== originalData.nome ||
-            watchedFields.login !== originalData.login ||
-            watchedFields.telefone !== originalData.telefone ||
-            watchedFields.dataNascimento !== originalData.dataNascimento
-        );
-    };
 
-    const handleUpdate = async (data: FormData) => {
-        try {
-            setIsLoading(true);
-
-            const formattedData = {
-                ...data,
-                dataNascimento: formatDateToYYYYMMDD(data.dataNascimento), // Converte para YYYY-MM-DD
-            };
-
-            console.log('Dados enviados para atualização:', formattedData);
-            const updatedData = await updateUserData(cpf, formattedData);
-
-            await AsyncStorage.setItem('userData', JSON.stringify(updatedData));
-
-            setOriginalData(formattedData); // Atualiza os dados originais
-            Alert.alert('Sucesso', 'Dados atualizados com sucesso!');
-        } catch (error) {
-            Alert.alert('Erro', 'Não foi possível atualizar os dados.');
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const handleDeleteAccount = async () => {
-        Alert.alert(
-            'Excluir Conta',
-            'Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita.',
-            [
-                { text: 'Cancelar', style: 'cancel' },
-                {
-                    text: 'Excluir',
-                    style: 'destructive',
-                    onPress: async () => {
-                        try {
-                            setIsLoading(true);
-                            await deleteUserAccount(cpf);
-                            await AsyncStorage.clear(); // Limpar o AsyncStorage
-                            Alert.alert('Conta excluída', 'Sua conta foi excluída com sucesso.');
-                            navigation.navigate('Auth', { screen: 'Login' });
-
-                        } catch (error) {
-                            Alert.alert('Erro', 'Não foi possível excluir a conta.');
-                        } finally {
-                            setIsLoading(false);
-                        }
-                    }
-                },
-            ]
-        );
-    };
 
 
     return (
@@ -275,7 +304,10 @@ const UserAccount: React.FC = () => {
                                         />
                                     )}
                                 />
-                                <HelperText type="error" visible={!!errors.telefone} style={Styles.helperText}>
+                                <HelperText type="error"
+                                    visible={!!errors.telefone}
+                                    style={Styles.helperText}
+                                >
                                     {errors.telefone?.message}
                                 </HelperText>
                             </>
@@ -366,9 +398,9 @@ const UserAccount: React.FC = () => {
                         <Button
                             mode="contained"
                             onPress={handleSubmit(handleUpdate)}
-                            style={[Styles.defaultButton, !hasChanges() && Styles.disabledButton]}
-                            loading={isLoading}
-                            disabled={!hasChanges()} // Desabilita o botão salvar se não houver alterações
+                            style={[Styles.defaultButton, !isFormChanged && Styles.disabledButton]}
+
+                            disabled={!isFormChanged || isLoading} // Botão desabilitado se o formulário não tiver alterações ou se estiver carregando
                         >
                             Salvar Alterações
                         </Button>
@@ -386,12 +418,21 @@ const UserAccount: React.FC = () => {
                         <TouchableOpacity
                             style={Styles.backButton}
                             onPress={() => {
-                                navigation.goBack();
+                                if (originalData) {
+                                    reset(originalData); // Restaura os valores originais
+                                    setOriginalData(originalData); // Atualiza o estado com os valores originais
+                                    navigation.goBack(); // Navega para a tela anterior
+                                } else {
+                                    Alert.alert('Erro', 'Os dados originais não estão disponíveis.');
+                                }
                             }}
                         >
                             <Icon name="arrow-left" size={50} color="#687076" />
-                            <Text style={[Styles.textInput, { marginLeft: 10 }]}>Voltar</Text>
+                            <Text style={[Styles.textInput, { marginLeft: 10 }]}
+                            >Voltar
+                            </Text>
                         </TouchableOpacity>
+
                     </View>
                 </View>
             </ScrollView >

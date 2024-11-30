@@ -11,7 +11,7 @@ const api = axios.create({
     },
 });
 
-// Requisições autenticadas
+// (req) Requisições autenticadas
 api.interceptors.request.use(
     async (config) => {
         const token = await AsyncStorage.getItem('token');
@@ -22,18 +22,6 @@ api.interceptors.request.use(
     },
     (error) => {
         return Promise.reject(error);
-    }
-);
-
-// Respostas sem token (logout e exclusao de conta)
-api.interceptors.response.use(
-    (response) => response,
-    async (error) => {
-        if (error.response?.status === 401) { // Erro de autorização
-            await AsyncStorage.clear(); // Limpa o armazenamento local
-            navigate('Login'); // Redireciona para a página de login
-        }
-        return Promise.reject(error); // Continua propagando o erro
     }
 );
 
@@ -110,6 +98,7 @@ export async function deleteUserAccount(cpf) {
     try {
         console.log(cpf)
         await api.delete(`/auth/cpf/${cpf}`);
+        console.error('Conta excluída com sucesso!',);
     } catch (error) {
         console.error('Erro ao excluir conta:', error.response?.data || error.message);
     }
