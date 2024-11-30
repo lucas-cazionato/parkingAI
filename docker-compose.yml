@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+  # postgres-db:
+  #   container_name: postgres-db
+  #   build: 
+  #     context: .
+  #     dockerfile: ./postgres.Dockerfile
+  #   env_file:
+  #     - .env
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - .postgres-data:/var/lib/postgresql
+  #   networks:
+  #     - bantads-network
+  #     - rabbitmq-net
+    
+  #   restart: on-failure:3
+
+  ms-usuario:
+    container_name: ms-usuario
+    build:
+      context: ./ms-usuario
+      dockerfile: ./Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      - mongo-db
+    ports:
+      - "3001:3001"
+    networks:
+      - parking-ai-network
+    restart: on-failure:3
+
+  ms-mensagens:
+    container_name: ms-mensagens
+    build:
+      context: ./ms-mensagens
+      dockerfile: ./Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      - mongo-db
+      - mysql-db
+    ports:
+      - "3002:3002"
+    networks:
+      - parking-ai-network
+    restart: on-failure:3
+
+  mongo-db:
+    image: mongo:latest
+    container_name: mongo-db
+    env_file:
+      - .env
+    ports:
+      - "27017:27017"
+    volumes:
+      - .mongo:/data/db
+    networks:
+      - parking-ai-network
+    restart: on-failure:3
+
+  mysql-db:
+    image: mysql:8.0
+    container_name: mysql-db
+    env_file:
+      - .env
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - parking-ai-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 3
+
+volumes:
+  mysql_data:
+
+networks:
+  parking-ai-network:
+    driver: bridge
