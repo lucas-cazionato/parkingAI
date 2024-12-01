@@ -36,4 +36,4 @@ def plotar_poligonos_encontrados(polygon_info):
             print(f"Erro ao processar o polígono: {e}")
 
     map_.save("./mapa_parking_polygons.html")
-    print("Mapa salvo em 'utils/mapa_parking_polygons.html'. Abra no navegador para visualizar.")
+    print("Mapa salvo em './mapa_parking_polygons.html'. Abra no navegador para visualizar.")
