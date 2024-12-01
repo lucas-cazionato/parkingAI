@@ -173,6 +173,6 @@ def parking():
     )
 
 # Verifica se o script está sendo executado diretamente
-# Se for o caso, inicia o servidor Flask com o modo de depuração ativado
+# Se for o caso, inicia o servidor Flask
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
