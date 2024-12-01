@@ -1,22 +1,44 @@
 version: '3.8'
 
 services:
-  # postgres-db:
-  #   container_name: postgres-db
-  #   build: 
-  #     context: .
-  #     dockerfile: ./postgres.Dockerfile
-  #   env_file:
-  #     - .env
-  #   ports:
-  #     - "5432:5432"
-  #   volumes:
-  #     - .postgres-data:/var/lib/postgresql
-  #   networks:
-  #     - bantads-network
-  #     - rabbitmq-net
-    
-  #   restart: on-failure:3
+  postgis:
+    build:
+      context: ./ms-parking/map-data
+      dockerfile: Dockerfile.postgis
+    environment:
+      POSTGRES_PASSWORD: root
+      POSTGRES_USER: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    networks:
+      - parking-network
+
+  osm2pgsql:
+    build:
+      context: ./ms-parking/map-data
+      dockerfile: Dockerfile.osm2pgsql
+    depends_on:
+      - postgis
+    environment:
+      - PGPASSWORD=osmpass
+    networks:
+      - parking-network
+
+  ms-parking:
+    container_name: ms-parking
+    environment:
+      - POSTGIS_HOST=postgis
+    build:
+      context: ./ms-parking
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgis
+    networks:
+      - parking-network
 
   ms-usuario:
     container_name: ms-usuario
@@ -30,7 +52,7 @@ services:
     ports:
       - "3001:3001"
     networks:
-      - parking-ai-network
+      - user-service-network
     restart: on-failure:3
 
   ms-mensagens:
@@ -46,7 +68,7 @@ services:
     ports:
       - "3002:3002"
     networks:
-      - parking-ai-network
+      - user-service-network
     restart: on-failure:3
 
   mongo-db:
@@ -59,7 +81,7 @@ services:
     volumes:
       - .mongo:/data/db
     networks:
-      - parking-ai-network
+      - user-service-network
     restart: on-failure:3
 
   mysql-db:
@@ -72,7 +94,7 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
-      - parking-ai-network
+      - user-service-network
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
@@ -80,7 +102,10 @@ services:
 
 volumes:
   mysql_data:
+  pg_data:
 
 networks:
-  parking-ai-network:
+  user-service-network:
+    driver: bridge
+  parking-network:
     driver: bridge
