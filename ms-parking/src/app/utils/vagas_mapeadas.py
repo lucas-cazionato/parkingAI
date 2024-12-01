@@ -38,8 +38,8 @@ def plotar_poligonos(polygon_info):
         except Exception as e:
             print(f"Erro ao processar o polígono: {e}")
 
-    map_.save("./mapa_polygons.html")
-    print("Mapa salvo em './mapa_polygons.html'. Abra no navegador para visualizar.")
+    map_.save("./utils/mapa_polygons.html")
+    print("Mapa salvo em './utils/mapa_polygons.html'. Abra no navegador para visualizar.")
 
 # Script principal
 if __name__ == "__main__":
