@@ -6,9 +6,9 @@ import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Styles } from '../../constants/Styles';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { updateUserPassword } from '../../apiService';
 
 interface ChangePasswordData {
-    oldPassword: string;
     newPassword: string;
     confirmPassword: string;
 }
@@ -16,7 +16,6 @@ interface ChangePasswordData {
 const ChangePassword: React.FC = () => {
     const { control, handleSubmit, formState: { errors }, watch } = useForm<ChangePasswordData>();
     const [isLoading, setIsLoading] = useState(false);
-    const [oldPasswordVisible, setOldPasswordVisible] = useState(false);
     const [newPasswordVisible, setNewPasswordVisible] = useState(false);
     const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
     const navigation = useNavigation();
@@ -24,23 +23,11 @@ const ChangePassword: React.FC = () => {
     const handleUpdatePassword = async (data: ChangePasswordData) => {
         try {
             setIsLoading(true);
-
-            if (data.newPassword !== data.confirmPassword) {
+            if (data.newPassword !== data.confirmPassword) {                    // Verificar se as senhas coincidem
                 Alert.alert('Erro', 'As senhas não coincidem');
                 return;
             }
-
-            // IMPLEMENTAR Lógica para alterar a senha no backend (ver apiService.js e server.js)
-            const token = await AsyncStorage.getItem('token');
-            if (!token) {
-                Alert.alert('Erro', 'Não foi possível identificar o usuário');
-                return;
-            }
-            console.log("changePassword_TOKEN:", token);
-            // INTEGRAR COM BACK
-            // Fazer chamada para o serviço que altera a senha do usuário
-            console.log('Alterando a senha do usuário com os dados:', data);
-
+            await updateUserPassword(data.newPassword);         // Chamar a função para atualizar a senha, passando a nova senha
             Alert.alert('Sucesso', 'Senha alterada com sucesso!');
             navigation.goBack();
         } catch (error) {
@@ -59,31 +46,6 @@ const ChangePassword: React.FC = () => {
                     <Text style={Styles.header}>Alterar Senha</Text>
                     <Text style={Styles.subText}>Gerencie sua senha de acesso</Text>
                 </Surface>
-
-                <Controller
-                    control={control}
-                    name="oldPassword"
-                    rules={{ required: 'Senha atual é obrigatória' }}
-                    render={({ field: { onChange, onBlur, value } }) => (
-                        <>
-                            <TextInput
-                                label="Senha Atual"
-                                autoCapitalize="none"
-                                secureTextEntry={!oldPasswordVisible}
-                                right={<TextInput.Icon icon={oldPasswordVisible ? "eye-off" : "eye"} onPress={() => setOldPasswordVisible(!oldPasswordVisible)} />}
-                                value={value || ''}
-                                onBlur={onBlur}
-                                onChangeText={onChange}
-                                activeUnderlineColor="#ec6408"
-                                style={Styles.input}
-                                error={!!errors.oldPassword}
-                            />
-                            <HelperText type="error" visible={!!errors.oldPassword} style={Styles.helperText}>
-                                {errors.oldPassword?.message}
-                            </HelperText>
-                        </>
-                    )}
-                />
 
                 <Controller
                     control={control}

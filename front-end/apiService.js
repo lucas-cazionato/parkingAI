@@ -93,6 +93,39 @@ export const updateUserData = async (cpf, userData) => {
     }
 };
 
+// Atualizar senha do usuário
+export const updateUserPassword = async (novaSenha) => {
+    try {
+        const token = await AsyncStorage.getItem('token');      // Recuperar o token e os dados do usuário do AsyncStorage
+        const userData = await AsyncStorage.getItem('userData');
+        if (!token || !userData) {
+            console.error('Dados do usuário não encontrados!');
+            throw new Error('Dados do usuário não encontrados!');
+        }
+        console.log("Dados do usuário recuperados do AsyncStorage:", userData);
+        const parsedUserData = JSON.parse(userData);
+        const { cpf, id, login, nome, dataNascimento, telefone } = parsedUserData;
+        const updatedUserData = {       // Atualizar a senha no objeto de dados do usuário
+            id,
+            cpf,
+            login,
+            nome,
+            dataNascimento,
+            telefone,
+            senha: novaSenha  // Altera apenas a senha
+        };
+        const response = await api.put(`/auth/${cpf}`, updatedUserData);         // Chamar a API para atualizar os dados do usuário
+        await AsyncStorage.setItem('userData', JSON.stringify(updatedUserData));         // Armazenar no AsyncStorage os dados atualizados com a nova senha
+        const storedUserData = await AsyncStorage.getItem('userData');      // Verificar se os dados foram atualizados corretamente no AsyncStorage
+        console.log("Dados atualizados no AsyncStorage:", storedUserData);
+        return response.data;
+    } catch (error) {
+        console.error('Erro ao atualizar a senha:', error);
+        throw error;
+    }
+};
+
+
 // Excluir conta do usuário
 export async function deleteUserAccount(cpf) {
     try {

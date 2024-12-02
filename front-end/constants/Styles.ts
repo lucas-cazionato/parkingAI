@@ -222,6 +222,12 @@ export const Styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
+  },
+
+  errorText: {
+    color: "red",
+    fontSize: 14,
+    marginVertical: 4,
   }
 
 
