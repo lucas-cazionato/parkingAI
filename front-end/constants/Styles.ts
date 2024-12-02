@@ -12,7 +12,8 @@ export const Styles = StyleSheet.create({
 
   logoContainer: {
     alignItems: 'center',
-    marginBottom: 40,
+    marginTop: 40,
+    marginBottom: 60,
   },
 
   inputContainer: {
@@ -38,6 +39,11 @@ export const Styles = StyleSheet.create({
     width: 300,
     height: 300,
     resizeMode: 'contain',
+    borderRadius: 50, // Deixa a borda arredondada
+    overflow: 'hidden', // Garante que o conteúdo siga o contorno arredondado
+    borderWidth: 3, // Para adicionar borda se necessário
+    borderColor: '#ec6408', // Cor da borda (opcional)
+    //clipPath: 'ellipse(70% 100% at 50% 50%)', // Formato de folha
   },
 
   rememberMeContainer: {
@@ -65,11 +71,7 @@ export const Styles = StyleSheet.create({
     marginBottom: 20
   },
 
-  forgetText: {
-    textAlign: 'right',
-    color: '#ffffff',
-    marginBottom: 20
-  },
+
 
   header: {
     fontSize: 22,
@@ -228,9 +230,31 @@ export const Styles = StyleSheet.create({
     color: "red",
     fontSize: 14,
     marginVertical: 4,
-  }
+  },
 
 
+
+  checkboxLabel: {
+    marginLeft: 8,
+    fontSize: 16,
+    color: '#333',
+  },
+
+  rowContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 8,
+    marginBottom: 60,
+  },
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  forgetText: {
+    textAlign: 'right',
+    color: '#ffffff',
+  },
 
 
 });
