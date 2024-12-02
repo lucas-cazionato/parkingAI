@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native';
 import { TextInput, Button, Checkbox } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Styles } from '../../constants/Styles';
@@ -60,21 +60,9 @@ export default function Login() {
           await AsyncStorage.removeItem('savedPassword');
           await AsyncStorage.setItem('rememberMe', 'false');
         }
-      } else {
-        setMessage('Erro ao autenticar. Tente novamente.');
       }
     } catch (error: any) {
-      console.error('Erro no login:', error);
-
-      let errorMessage = 'Erro ao autenticar. Tente novamente.';
-
-      if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      } else if (typeof error === 'string') {
-        errorMessage = error;
-      }
-
-      setMessage(errorMessage);
+      Alert.alert('ERRO', error.message);
     }
   };
 

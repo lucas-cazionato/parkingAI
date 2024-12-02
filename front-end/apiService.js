@@ -40,7 +40,10 @@ export async function login(login, senha) {
             }
         }
     } catch (error) {
-        throw error;
+        if (error.response?.status === 401) {
+            throw new Error('\nUsuário ou senha inválido(a).\n\nTente novamente.');
+        }
+        throw new Error(error.response?.data?.message || 'Erro ao autenticar');
     }
 }
 
@@ -75,10 +78,13 @@ export const register = async (formattedUser) => {
         const response = await api.post('/auth', formattedUser);
         return response.data;
     } catch (error) {
-        console.error('Erro ao cadastrar usuário:', error);
-        throw error.response?.data?.message || 'Erro ao cadastrar';
+        if (error.response?.status === 409) {
+            throw new Error('\nUsuário já cadastrado. \n\nTente novamente com outro CPF ou e-mail.');
+        }
+        throw new Error(error.response?.data?.message || 'Erro ao cadastrar usuário');
     }
-};
+}
+
 
 // Atualizar dados do usuário
 export const updateUserData = async (cpf, userData) => {
