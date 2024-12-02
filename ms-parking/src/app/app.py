@@ -163,7 +163,7 @@ def parking():
         final_results.append(final_result)
         
     # Acionando função para plotar os poligonos/vagas encontrados em um mapa (formato .html)
-    plotar_poligonos_encontrados(final_results)
+    # plotar_poligonos_encontrados(final_results)
 
     # Retorno com as probabilidades de ocupacao para os poligonos/vagas mais proximos
     return app.response_class(
@@ -173,6 +173,6 @@ def parking():
     )
 
 # Verifica se o script está sendo executado diretamente
-# Se for o caso, inicia o servidor Flask
+# Se for o caso, inicia o servidor Flask com o modo de depuração ativado
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
