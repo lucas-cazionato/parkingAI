@@ -33,8 +33,11 @@ services:
     build:
       context: ./ms-parking
       dockerfile: Dockerfile
+    volumes:
+      - ./ms-parking/:/app
     ports:
       - "5000:5000"
+    working_dir: /app
     depends_on:
       - postgis
     networks:
