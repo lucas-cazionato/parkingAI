@@ -18,6 +18,7 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
+  const [PasswordVisible, setPasswordVisible] = useState(false);
 
   const navigation = useNavigation<LoginScreenNavigationProp>();
 
@@ -73,9 +74,17 @@ export default function Login() {
         autoCapitalize="none"
         activeUnderlineColor="#ec6408"
         onChangeText={setPassword}
-        secureTextEntry
+        secureTextEntry={!PasswordVisible}
+        right={<TextInput.Icon icon={PasswordVisible ? "eye" : "eye-off"} onPress={() => setPasswordVisible(!PasswordVisible)} />}
         style={Styles.input}
       />
+
+
+
+
+
+
+
 
       <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
         <Text style={Styles.forgetText}>Esqueci minha senha</Text>

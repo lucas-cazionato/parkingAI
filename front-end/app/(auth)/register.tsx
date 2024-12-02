@@ -298,8 +298,9 @@ const Register: React.FC = () => {
                     setUser({ ...user, senha });
                   }}
                   activeUnderlineColor='#ec6408'
+                  autoCapitalize="none"
                   secureTextEntry={!passwordVisible}
-                  right={<TextInput.Icon icon={passwordVisible ? "eye-off" : "eye"} onPress={() => setPasswordVisible(!passwordVisible)} />}
+                  right={<TextInput.Icon icon={passwordVisible ? "eye" : "eye-off"} onPress={() => setPasswordVisible(!passwordVisible)} />}
                   style={Styles.input}
                   error={!!errors.senha}
                 />
@@ -315,8 +316,9 @@ const Register: React.FC = () => {
             value={confirmPassword}
             onChangeText={setConfirmPassword}
             activeUnderlineColor='#ec6408'
+            autoCapitalize="none"
             secureTextEntry={!confirmPasswordVisible}
-            right={<TextInput.Icon icon={confirmPasswordVisible ? "eye-off" : "eye"} onPress={() => setConfirmPasswordVisible(!confirmPasswordVisible)} />}
+            right={<TextInput.Icon icon={confirmPasswordVisible ? "eye" : "eye-off"} onPress={() => setConfirmPasswordVisible(!confirmPasswordVisible)} />}
             style={Styles.input}
             error={!!errors.confirmPassword}
           />
