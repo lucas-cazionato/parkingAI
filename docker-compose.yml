@@ -42,6 +42,21 @@ services:
       - postgis
     networks:
       - parking-network
+  
+  api-gateway:
+    container_name: api-gateway
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - ms-parking
+      - ms-usuario
+      - ms-mensagens
+    networks:
+      - user-service-network
+      - parking-network
 
   ms-usuario:
     container_name: ms-usuario
