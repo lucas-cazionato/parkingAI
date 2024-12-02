@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { TextInput, Button } from 'react-native-paper';
+import { TextInput, Button, Checkbox } from 'react-native-paper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Styles } from '../../constants/Styles';
 import { login } from '../../apiService';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
@@ -17,20 +18,48 @@ type LoginScreenNavigationProp = NavigationProp<RootStackParamList, 'Login'>;
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
   const [message, setMessage] = useState('');
   const [PasswordVisible, setPasswordVisible] = useState(false);
 
   const navigation = useNavigation<LoginScreenNavigationProp>();
 
+  useEffect(() => {
+    const loadCredentials = async () => {
+      try {
+        const savedEmail = await AsyncStorage.getItem('savedEmail');
+        const savedPassword = await AsyncStorage.getItem('savedPassword');
+        const savedRememberMe = await AsyncStorage.getItem('rememberMe');
+
+        if (savedEmail && savedPassword && savedRememberMe === 'true') {
+          setEmail(savedEmail);
+          setPassword(savedPassword);
+          setRememberMe(true);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar credenciais salvas:', error);
+      }
+    };
+
+    loadCredentials();
+  }, []);
+
   const handleLogin = async () => {
     try {
       const userData = await login(email, password);
-      console.log('login_TOKEN:', userData.token);
-      console.log('login_CPF:', userData.data.cpf);
-      console.log('login_DADOS USUÁRIO:', userData);
       if (userData.token) {
         setMessage(`Bem-vindo, ${userData.login}`);
         navigation.navigate('Main');
+
+        if (rememberMe) {
+          await AsyncStorage.setItem('savedEmail', email);
+          await AsyncStorage.setItem('savedPassword', password);
+          await AsyncStorage.setItem('rememberMe', 'true');
+        } else {
+          await AsyncStorage.removeItem('savedEmail');
+          await AsyncStorage.removeItem('savedPassword');
+          await AsyncStorage.setItem('rememberMe', 'false');
+        }
       } else {
         setMessage('Erro ao autenticar. Tente novamente.');
       }
@@ -79,16 +108,20 @@ export default function Login() {
         style={Styles.input}
       />
 
+      <View style={Styles.rowContainer}>
+        <View style={Styles.checkboxContainer}>
+          <Checkbox
+            status={rememberMe ? 'checked' : 'unchecked'}
+            onPress={() => setRememberMe(!rememberMe)}
+            color="#ffffff"
+          />
+          <Text style={Styles.highlightText}>Lembrar de mim</Text>
+        </View>
 
-
-
-
-
-
-
-      <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
-        <Text style={Styles.forgetText}>Esqueci minha senha</Text>
-      </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
+          <Text style={Styles.forgetText}>Esqueci minha senha</Text>
+        </TouchableOpacity>
+      </View>
 
       <Button mode="contained" onPress={handleLogin} style={Styles.defaultButton}>
         Entrar
