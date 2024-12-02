@@ -57,7 +57,7 @@ const ChangePassword: React.FC = () => {
                                 label="Nova Senha"
                                 autoCapitalize="none"
                                 secureTextEntry={!newPasswordVisible}
-                                right={<TextInput.Icon icon={newPasswordVisible ? "eye-off" : "eye"} onPress={() => setNewPasswordVisible(!newPasswordVisible)} />}
+                                right={<TextInput.Icon icon={newPasswordVisible ? "eye" : "eye-off"} onPress={() => setNewPasswordVisible(!newPasswordVisible)} />}
                                 value={value || ''}
                                 onBlur={onBlur}
                                 onChangeText={onChange}
@@ -82,7 +82,7 @@ const ChangePassword: React.FC = () => {
                                 label="Confirmar Senha"
                                 autoCapitalize="none"
                                 secureTextEntry={!confirmPasswordVisible}
-                                right={<TextInput.Icon icon={confirmPasswordVisible ? "eye-off" : "eye"} onPress={() => setConfirmPasswordVisible(!confirmPasswordVisible)} />}
+                                right={<TextInput.Icon icon={confirmPasswordVisible ? "eye" : "eye-off"} onPress={() => setConfirmPasswordVisible(!confirmPasswordVisible)} />}
                                 value={value || ''}
                                 onBlur={onBlur}
                                 onChangeText={onChange}
