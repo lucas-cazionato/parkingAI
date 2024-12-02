@@ -72,13 +72,10 @@ const Register: React.FC = () => {
       Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
       navigation.navigate('Login');
 
-    } catch (error) {
-      if (error instanceof Error) {
-        Alert.alert('Erro', error.message || 'Ocorreu um erro ao realizar o cadastro.');
-      } else {
-        Alert.alert('Erro', 'Ocorreu um erro desconhecido ao realizar o cadastro.');
-      }
+    } catch (error: any) {
+      Alert.alert('ERRO', error.message);
     }
+
   };
 
   // Formata a data no padrão ISO (yyyy-MM-dd)

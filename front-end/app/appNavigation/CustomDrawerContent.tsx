@@ -34,7 +34,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
           onPress={async () => {
             try {
               await logout(props.navigation); // Chama a função de logout
-              Alert.alert('Usuário deslogado com sucesso!', 'Obrigado por usar o Parking AI.'); // Exibe a mensagem de sucesso
+              Alert.alert('Usuário deslogado com sucesso!', '\nObrigado por usar o Parking AI.'); // Exibe a mensagem de sucesso
             } catch (error) {
               Alert.alert('Erro', 'Houve um problema ao deslogar. Tente novamente.');
               console.error('Erro ao realizar logout:', error);
