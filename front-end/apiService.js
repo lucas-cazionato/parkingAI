@@ -137,10 +137,10 @@ export async function deleteUserAccount(cpf) {
     }
 }
 
-// Solicitar nova senha (IMPLEMENTAR / corrigir)
-export const newPassword = async (email) => {
+// Solicitar nova senha 
+export const newPassword = async (login) => {
     try {
-        const response = await api.post('/auth/recuperar', { email });
+        const response = await api.post('/auth/recuperar', { login });
         return response.data;
     } catch (error) {
         console.error('Erro ao solicitar nova senha:', error);

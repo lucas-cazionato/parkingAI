@@ -17,14 +17,15 @@ type ForgotPasswordScreenNavigationProp = NavigationProp<RootStackParamList, 'Fo
 
 
 const ForgotPassword: React.FC = () => {
-  const { control, handleSubmit, formState: { errors } } = useForm<{ email: string }>();
+  const { control, handleSubmit, formState: { errors } } = useForm<{ login: string }>();
   const navigation = useNavigation<ForgotPasswordScreenNavigationProp>();
 
-  const onSubmit: SubmitHandler<{ email: string }> = async (data) => {
-    console.log('Email enviado:', data.email);
+  const onSubmit: SubmitHandler<{ login: string }> = async (data) => {
+    console.log('Email enviado:', data.login);
     try {
-      const responseData = await newPassword(data.email);
+      const responseData = await newPassword(data.login);
 
+      console.log('email enviado:', responseData);
       Alert.alert('Recuperação de Senha', 'Instruções de recuperação de senha foram enviadas para o seu email.');
       navigation.navigate('Login'); 
 
@@ -47,7 +48,7 @@ const ForgotPassword: React.FC = () => {
           </Surface>
           <Controller
             control={control}
-            name="email"
+            name="login"
             rules={{ required: 'Email é obrigatório', pattern: { value: /^\S+@\S+$/i, message: 'Email inválido' } }}
             render={({ field: { onChange, onBlur, value } }) => (
               <>
@@ -60,10 +61,10 @@ const ForgotPassword: React.FC = () => {
                   autoCapitalize="none"
                   activeUnderlineColor='#ec6408'
                   style={Styles.input}
-                  error={!!errors.email}
+                  error={!!errors.login}
                 />
-                <HelperText type="error" visible={!!errors.email} style={Styles.helperText}>
-                  {errors.email?.message}
+                <HelperText type="error" visible={!!errors.login} style={Styles.helperText}>
+                  {errors.login?.message}
                 </HelperText>
               </>
             )}
