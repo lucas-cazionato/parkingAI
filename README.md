@@ -4,6 +4,29 @@ DS960 - Trabalho de Conclusão de Curso II
 Aplicativo de Estacionamento:
 Aplicativo para dispositivos móveis acoplado a um serviço de Inteligência Artificial, que será treinado para identificar e sugerir regiões urbanas com maior probabilidade de possuir vagas livres de estacionamento em vias públicas, a partir de um endereço de destino informado pelo usuário.
 
+
+# Como rodar a aplicação em Docker 🐳
+
+Para rodar o backend no docker basta executar o seguinte comando (ou rodar o docker na sua GUI)
+```bash
+docker compose up
+```
+
+Se tudo deu certo ao usar o comando `docker ps` você verá os contêiners da aplicação todos executando.
+
+Caso seja a primeira imagem que você está rodando você precisará rodar a importação dos dados dos mapas.
+
+Vá para o diretório `ms-parking/map-data/` e execute o script em bash
+```bash
+./run_import.sh best_map.osm
+```
+
+Por convenção vamos deixar o arquivo mais atual sempre no `best_map.osm`.
+
+Após isso basta usar a collection do postman que foi disponibilizada
+
+---
+
 # Padrões de Commits:
 Seguir os padrões do repositório: https://github.com/iuricode/padroes-de-commits
 * 1 Commit por Pull Request, para facilitar eventuais reverts que se façam necessários
