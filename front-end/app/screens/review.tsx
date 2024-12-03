@@ -33,25 +33,25 @@ export default function Review({ navigation }: ReviewProps) {
     const loadUserData = async () => {
       try {
 
-          //Recuperar token e dados do usuário armazenados no AsyncStorage
-          const token = await AsyncStorage.getItem('token');
-          const storedUserData = await AsyncStorage.getItem('userData');
-          const userData = storedUserData ? JSON.parse(storedUserData) : null;
+        //Recuperar token e dados do usuário armazenados no AsyncStorage
+        const token = await AsyncStorage.getItem('token');
+        const storedUserData = await AsyncStorage.getItem('userData');
+        const userData = storedUserData ? JSON.parse(storedUserData) : null;
 
-          console.log("userAccount_TOKEN:", token);
-          console.log('userAccount_CPF:', userData.cpf);
-          console.log('userAccount_DADOS USUÁRIO:', userData);
+        console.log("userAccount_TOKEN:", token);
+        console.log('userAccount_CPF:', userData.cpf);
+        console.log('userAccount_DADOS USUÁRIO:', userData);
 
-          if (!token || !userData) {
-              throw new Error('Informações do usuário não encontradas');
-          }
+        if (!token || !userData) {
+          throw new Error('Informações do usuário não encontradas');
+        }
 
-    setCpf(userData.cpf);
-    } catch (error) {
+        setCpf(userData.cpf);
+      } catch (error) {
         Alert.alert('Erro', 'Não foi possível carregar os dados do usuário.');
         console.error(error);
-    }
-};
+      }
+    };
     loadUserData();
   }, []);
 
@@ -77,7 +77,7 @@ export default function Review({ navigation }: ReviewProps) {
       if (response.status === 200 || response.status === 201) {
         Alert.alert('Sucesso', 'Avaliação enviada com sucesso!');
         console.log('Avaliação enviada com sucesso:', data);
-        navigation.navigate('mapHome');
+        navigation.navigate('Map');
 
       } else {
         console.error('Erro :', response.statusText);
@@ -102,135 +102,135 @@ export default function Review({ navigation }: ReviewProps) {
 
   return (
     <View style={Styles.container}>
-    <ScrollView>
-      <View style={Styles.inputContainer}>
-        <Surface style={Styles.surface} elevation={4}>
-          <Icon name="star" size={100} color="#ec6408" />
-          <Text style={Styles.header}>Avalie sua experiência</Text>
-        </Surface>
+      <ScrollView>
+        <View style={Styles.inputContainer}>
+          <Surface style={Styles.surface} elevation={4}>
+            <Icon name="star" size={100} color="#ec6408" />
+            <Text style={Styles.header}>Avalie sua experiência</Text>
+          </Surface>
 
-        <Text style={Styles.question}>Você encontrou uma vaga?</Text>
-        <Controller
-          control={control}
-          name="achouVaga"
-          rules={{ required: 'Campo obrigatório' }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <>
-              <RadioButton.Group
-                    onValueChange={(achouVaga) => {
-                      onChange(achouVaga);
-                      setQuestionario((prevReview) => ({
-                        ...prevReview,
-                        achouVaga: achouVaga as 'SIM' | 'NÃO',
-                      }));
-                    }}
-                    value={value}
-                  >
-                <View style={Styles.radioButtonContainer}>
-                  <RadioButton value="SIM" color="#ec6408" />
-                  <Text style={Styles.radioButtonLabel}>Sim</Text>
-                </View>
-                <View style={Styles.radioButtonContainer}>
-                  <RadioButton value="NÃO" color="#ec6408" />
-                  <Text style={Styles.radioButtonLabel}>Não</Text>
-                </View>
-              </RadioButton.Group>
-              <HelperText type="error" visible={!!errors.achouVaga} style={Styles.helperText}>
-                {errors.achouVaga?.message}
-              </HelperText>
-            </>
-          )}
-        />
-      </View>
+          <Text style={Styles.question}>Você encontrou uma vaga?</Text>
+          <Controller
+            control={control}
+            name="achouVaga"
+            rules={{ required: 'Campo obrigatório' }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <>
+                <RadioButton.Group
+                  onValueChange={(achouVaga) => {
+                    onChange(achouVaga);
+                    setQuestionario((prevReview) => ({
+                      ...prevReview,
+                      achouVaga: achouVaga as 'SIM' | 'NÃO',
+                    }));
+                  }}
+                  value={value}
+                >
+                  <View style={Styles.radioButtonContainer}>
+                    <RadioButton value="SIM" color="#ec6408" />
+                    <Text style={Styles.radioButtonLabel}>Sim</Text>
+                  </View>
+                  <View style={Styles.radioButtonContainer}>
+                    <RadioButton value="NÃO" color="#ec6408" />
+                    <Text style={Styles.radioButtonLabel}>Não</Text>
+                  </View>
+                </RadioButton.Group>
+                <HelperText type="error" visible={!!errors.achouVaga} style={Styles.helperText}>
+                  {errors.achouVaga?.message}
+                </HelperText>
+              </>
+            )}
+          />
+        </View>
 
-      <View style={Styles.separator} />
+        <View style={Styles.separator} />
 
-      <View style={Styles.inputContainer}>
-        <Text style={Styles.question}>Como você avalia sua experiência com o ParkingAI?</Text>
-        <Controller
-          control={control}
-          name="notaGeral"
-          rules={{ required: 'Campo obrigatório' }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <>
-              <RadioButton.Group
-                onValueChange={(notaGeral) => {
-                  const nota = parseInt(notaGeral, 10);
-                  onChange(nota); // Atualiza o valor do formulário com número
-                  setQuestionario((prevReview) => ({
-                    ...prevReview,
-                    notaGeral: nota, // Atualiza o estado com o número
-                  }));
-                }}
-                value={value?.toString() || '0'} // Converte o valor para string
-              >
-                <View style={Styles.radioButtonContainer}>
-                  <RadioButton value="5" color="#ec6408" />
-                  <Text style={Styles.radioButtonLabel}>5</Text>
-                </View>
-                <View style={Styles.radioButtonContainer}>
-                  <RadioButton value="4" color="#ec6408" />
-                  <Text style={Styles.radioButtonLabel}>4</Text>
-                </View>
-                <View style={Styles.radioButtonContainer}>
-                  <RadioButton value="3" color="#ec6408" />
-                  <Text style={Styles.radioButtonLabel}>3</Text>
-                </View>
-                <View style={Styles.radioButtonContainer}>
-                  <RadioButton value="2" color="#ec6408" />
-                  <Text style={Styles.radioButtonLabel}>2</Text>
-                </View>
-                <View style={Styles.radioButtonContainer}>
-                  <RadioButton value="1" color="#ec6408" />
-                  <Text style={Styles.radioButtonLabel}>1</Text>
-                </View>
-              </RadioButton.Group>
-              <HelperText type="error" visible={!!errors.notaGeral} style={Styles.helperText}>
-                {errors.notaGeral?.message}
-              </HelperText>
-            </>
-          )}
-        />
-      </View>
+        <View style={Styles.inputContainer}>
+          <Text style={Styles.question}>Como você avalia sua experiência com o ParkingAI?</Text>
+          <Controller
+            control={control}
+            name="notaGeral"
+            rules={{ required: 'Campo obrigatório' }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <>
+                <RadioButton.Group
+                  onValueChange={(notaGeral) => {
+                    const nota = parseInt(notaGeral, 10);
+                    onChange(nota); // Atualiza o valor do formulário com número
+                    setQuestionario((prevReview) => ({
+                      ...prevReview,
+                      notaGeral: nota, // Atualiza o estado com o número
+                    }));
+                  }}
+                  value={value?.toString() || '0'} // Converte o valor para string
+                >
+                  <View style={Styles.radioButtonContainer}>
+                    <RadioButton value="5" color="#ec6408" />
+                    <Text style={Styles.radioButtonLabel}>5</Text>
+                  </View>
+                  <View style={Styles.radioButtonContainer}>
+                    <RadioButton value="4" color="#ec6408" />
+                    <Text style={Styles.radioButtonLabel}>4</Text>
+                  </View>
+                  <View style={Styles.radioButtonContainer}>
+                    <RadioButton value="3" color="#ec6408" />
+                    <Text style={Styles.radioButtonLabel}>3</Text>
+                  </View>
+                  <View style={Styles.radioButtonContainer}>
+                    <RadioButton value="2" color="#ec6408" />
+                    <Text style={Styles.radioButtonLabel}>2</Text>
+                  </View>
+                  <View style={Styles.radioButtonContainer}>
+                    <RadioButton value="1" color="#ec6408" />
+                    <Text style={Styles.radioButtonLabel}>1</Text>
+                  </View>
+                </RadioButton.Group>
+                <HelperText type="error" visible={!!errors.notaGeral} style={Styles.helperText}>
+                  {errors.notaGeral?.message}
+                </HelperText>
+              </>
+            )}
+          />
+        </View>
 
-      <View style={Styles.separator} />
+        <View style={Styles.separator} />
 
-      <View style={Styles.inputContainer}>
-       <Text style={Styles.question}>Como você avalia sua experiência com o ParkingAI?</Text>
-        <Controller
-          control={control}
-          name="comentario"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <>
-            <TextInput
-              label="Comentários adicionais"
-              value={value || ''}
-              onBlur={onBlur}
-              onChangeText={(comentario) => {
-                onChange(comentario);
-                setQuestionario({
-                  ...questionario,
-                  comentario: comentario || '',
-                });
-              }}
-              mode="outlined"
-              outlineColor="#ec6408"
-              activeOutlineColor="#ec6408"
-              style={Styles.textInput}
-              error={!!errors.comentario}
-            />
-              <HelperText type="error" visible={!!errors.comentario} style={Styles.helperText}>
-                {errors.comentario?.message}
-              </HelperText>
-            </>
-          )}
-        />
-      </View>
+        <View style={Styles.inputContainer}>
+          <Text style={Styles.question}>Como você avalia sua experiência com o ParkingAI?</Text>
+          <Controller
+            control={control}
+            name="comentario"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <>
+                <TextInput
+                  label="Comentários adicionais"
+                  value={value || ''}
+                  onBlur={onBlur}
+                  onChangeText={(comentario) => {
+                    onChange(comentario);
+                    setQuestionario({
+                      ...questionario,
+                      comentario: comentario || '',
+                    });
+                  }}
+                  mode="outlined"
+                  outlineColor="#ec6408"
+                  activeOutlineColor="#ec6408"
+                  style={Styles.textInput}
+                  error={!!errors.comentario}
+                />
+                <HelperText type="error" visible={!!errors.comentario} style={Styles.helperText}>
+                  {errors.comentario?.message}
+                </HelperText>
+              </>
+            )}
+          />
+        </View>
 
-      <Button mode="contained" onPress={handleSubmit(onSubmit)} style={Styles.defaultButton}>
-        Enviar Avaliação
-      </Button>
-    </ScrollView>
-   </View>
+        <Button mode="contained" onPress={handleSubmit(onSubmit)} style={Styles.defaultButton}>
+          Enviar Avaliação
+        </Button>
+      </ScrollView>
+    </View>
   );
 }
