@@ -138,6 +138,7 @@ public class UsuarioService {
             u.setSenha(senhaHash);
             return usuarioRepositorio.save(u);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException("Erro ao recuperar senha", e);
         }
     }
