@@ -146,8 +146,11 @@ export async function deleteUserAccount(cpf) {
 // Solicitar nova senha 
 export const newPassword = async (login) => {
     try {
-        const response = await api.post('/auth/recuperar', { login });
-        return response.data;
+
+        const response = await api.post('/auth/recuperar', login );
+
+        return response;
+
     } catch (error) {
         console.error('Erro ao solicitar nova senha:', error);
         throw error.response?.data?.message || 'Erro ao solicitar nova senha';
