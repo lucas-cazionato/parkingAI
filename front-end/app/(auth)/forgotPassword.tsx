@@ -21,20 +21,31 @@ const ForgotPassword: React.FC = () => {
   const navigation = useNavigation<ForgotPasswordScreenNavigationProp>();
 
   const onSubmit: SubmitHandler<{ login: string }> = async (data) => {
-    console.log('Email enviado:', data.login);
     try {
-      const responseData = await newPassword(data.login);
 
-      console.log('email enviado:', responseData);
+      const response = await newPassword(data);
+
+      if (response.status === 204) {
+      console.log('Email enviado com sucesso:', data);
       Alert.alert('Recuperação de Senha', 'Instruções de recuperação de senha foram enviadas para o seu email.');
-      navigation.navigate('Login'); 
+      navigation.navigate('Login');
 
-    } catch (error) {
-      if (error instanceof Error) {
-        Alert.alert('Erro', error.message || 'Ocorreu um erro ao enviar o email de recuperação de senha.');
       } else {
-        Alert.alert('Erro', 'Ocorreu um erro desconhecido ao enviar o email de recuperação de senha.');
+              console.error('Erro :', response.statusText);
+              Alert.alert('Erro', 'Erro ao solicitar senha.');
+            }
+
+    } catch (error: any) {
+      console.error('Erro ao enviar email de recuperação de senha:', error);
+      let errorMessage = 'Ocorreu um erro ao enviar o email de recuperação de senha.';
+
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
       }
+
+      Alert.alert('Erro', errorMessage);
     }
   };
 
