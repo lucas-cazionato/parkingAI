@@ -99,6 +99,34 @@ export const Styles = StyleSheet.create({
     marginHorizontal: 20,
   },
 
+  travelContainer: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: "15%",
+    padding: 5,
+    alignItems: "center",
+    zIndex: 2,
+  },
+  
+  travelBox: {
+    backgroundColor: '#ffffff',
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 10,
+    margin: 10,
+  },
+  
+  travelText: {
+    borderRadius: 8,
+    fontSize: 14,
+    color: '#ec6408',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    margin: 5,
+  },
+
   input: {
     marginBottom: 20,
     backgroundColor: '#ffffff',
@@ -157,6 +185,72 @@ export const Styles = StyleSheet.create({
     color: 'red',
     textAlign: 'center',
     marginTop: 8,
+  },
+
+  overlay: {
+    position: "absolute",
+    top: "10%",
+    left: 0,
+    right: 0,
+    alignItems: "center",
+    paddingHorizontal: 20,
+    zIndex: 2,
+  },
+  simulateButton: {
+    borderRadius: 50,
+    position: "absolute",
+    top: 12,
+    left: 0,
+    right: 0,
+    alignItems: "center",
+    paddingHorizontal: 20,
+    zIndex: 1,
+  },
+  clearButton: {
+    borderRadius: 5,
+    padding: 5,
+    backgroundColor: "white",
+    position: "absolute",
+    right: 4, // Posiciona o botão "X" no canto direito do campo
+    top: 4,
+    zIndex: 1,
+  },
+  inputMap: {
+    backgroundColor: "white",
+    width: "80%",
+    padding: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    marginBottom: 10,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    position: "absolute",
+    bottom: 50,
+    left: 0,
+    right: 0,
+    alignItems: "center",
+    paddingHorizontal: 20,
+    zIndex: 1,
+  },
+  buttonText: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  marker: {
+    backgroundColor: "white",
+    padding: 5,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: "black",
+  },
+  markerText: {
+    fontSize: 12,
+    fontWeight: "bold",
+    color: "black",
   },
 
   drawerContent: {

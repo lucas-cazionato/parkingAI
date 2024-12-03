@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import MapView, { Marker, Polygon } from "react-native-maps";
 import * as Location from "expo-location";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import { Styles } from "@/constants";
 import {
   GooglePlacesAutocomplete,
@@ -13,9 +13,11 @@ import {
   selectDestination,
   selectOrigin,
   selectRouteWaypoints,
+  selectTravelTimeInformation,
   setDestination,
   setOrigin,
   setRouteWaypoints,
+  setTravelTimeInformation,
 } from "@/store/travelSlices";
 import { Button } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -23,13 +25,11 @@ import { useNavigation, NavigationProp } from "@react-navigation/native";
 import axios from "axios";
 import { interpolateColor } from "react-native-reanimated";
 import MapViewDirections from "react-native-maps-directions";
-import { Appbar } from 'react-native-paper';
-import { ParkingSpot } from "@/types";
+import { Text } from "react-native";
 
 type RootStackParamList = {
   mapHome: undefined;
   review: undefined;
-  mapSimulate: undefined;
 };
 
 type HomeScreenNavigationProp = NavigationProp<RootStackParamList, "mapHome">;
@@ -37,28 +37,39 @@ type HomeScreenNavigationProp = NavigationProp<RootStackParamList, "mapHome">;
 export default function MapHome() {
   const navigation = useNavigation<HomeScreenNavigationProp>();
 
-  //  const homePlace = {
-  //    description: "Home",
-  //    geometry: { location: { lat: -25.4230113, lng: -49.2992186 } },
-  //  };
-  //  const workPlace = {
-  //    description: "Work",
-  //    geometry: { location: { lat: -25.441105, lng: -42.276855 } },
-  //  };
+  const homePlace = {
+    description: "Home",
+    geometry: { location: { lat: -25.4230113, lng: -49.2992186 } },
+  };
+  const workPlace = {
+    description: "Work",
+    geometry: { location: { lat: -25.441105, lng: -42.276855 } },
+  };
   const [heading, setHeading] = useState<number | null>(null);
+  const [flagSimular, setFlagSimular] = useState(false);
   const [flagRota, setFlagRota] = useState(false);
   const [flagNavegar, setFlagNavegar] = useState(false);
+  const [locationWatcher, setLocationWatcher] =
+    useState<Location.LocationSubscription | null>(null);
+  const originRef = useRef<GooglePlacesAutocompleteRef>(null);
   const destinationRef = useRef<GooglePlacesAutocompleteRef>(null);
   const mapRef = useRef<MapView>(null);
   const origin = useSelector(selectOrigin);
   const destination = useSelector(selectDestination);
+  const travelInformation = useSelector(selectTravelTimeInformation);
   const routeWaypoints = useSelector(selectRouteWaypoints) || [];
   const dispatch = useDispatch();
   const [parkingSpots, setParkingSpots] = useState<ParkingSpot[]>([]);
   const [selectedSpots, setSelectedSpots] = useState<ParkingSpot[]>([]);
   const [userLocation, setUserLocation] =
     useState<Location.LocationObject | null>(null);
+  const markerImg = require("../../assets/images/vaga.png");
+  const [date, setDate] = useState(new Date());
+  const [show, setShow] = useState(false);
+  const [mode, setMode] = useState('date');
 
+
+  // Centraliza na minha localização atual
   const goToMyLocation = async () => {
     if (mapRef.current && userLocation) {
       mapRef.current.animateCamera({
@@ -66,10 +77,27 @@ export default function MapHome() {
           latitude: userLocation.coords.latitude,
           longitude: userLocation.coords.longitude,
         },
+        pitch: 0,
+        zoom: 17,
       });
     }
   };
 
+  // Coloca o zoom e inclinação em modo de navegação
+  const navigationMode = async () => {
+    if (mapRef.current && userLocation) {
+      mapRef.current.animateCamera({
+        center: {
+          latitude: userLocation.coords.latitude,
+          longitude: userLocation.coords.longitude,
+        },
+        pitch: 50,
+        zoom: 18,
+      });
+    }
+  };
+
+  // Ajusta o zoom para mostrar as vagas e/ou rota
   const fitToRoute = async () => {
     if (destination && parkingSpots.length > 0 && mapRef.current) {
       const coordinates = parkingSpots.flatMap((spot) =>
@@ -91,109 +119,51 @@ export default function MapHome() {
     }
   };
 
-  const navigationMode = async () => {
-    if (mapRef.current && userLocation) {
-      mapRef.current.animateCamera({
-        center: {
-          latitude: userLocation.coords.latitude,
-          longitude: userLocation.coords.longitude,
-        },
-        pitch: 50,
-        zoom: 18, // Define um nível de zoom adequado
-      });
-    }
-  };
-
-  useEffect(() => {
-    const startWatching = async () => {
-      const { granted } = await Location.requestForegroundPermissionsAsync();
-      if (!granted) return;
-
-      await Location.watchPositionAsync(
-        {
-          accuracy: Location.Accuracy.High,
-          timeInterval: 1000, // Atualizações a cada segundo
-          distanceInterval: 5, // Atualização a cada 5 metros
-        },
-        (location) => {
-          setUserLocation(location);
-          setHeading(location.coords.heading); // Atualiza o curso
-        }
-      );
-      console.log("Localização atualizada");
-    };
-    startWatching();
-  }, []);
-
-  const updateCameraWithRotation = () => {
-    if (mapRef.current && userLocation) {
-      mapRef.current.animateCamera({
-        center: {
-          latitude: userLocation.coords.latitude,
-          longitude: userLocation.coords.longitude,
-        },
-        heading: heading || 0, // Use o curso atualizado
-        pitch: 50,
-        zoom: 18, // Ajuste o zoom conforme necessário
-      });
-    }
-  };
-
-  useEffect(() => {
-    if (userLocation && heading !== null) {
-      updateCameraWithRotation();
-    }
-  }, [userLocation, heading]);
-
-  const markerImg = require("../../assets/images/vaga.png");
-
-  async function LocalPermissions() {
+  // Inicia acompanhamento da localização para navegação
+  const startWatching = async () => {
     const { granted } = await Location.requestForegroundPermissionsAsync();
+    if (!granted) return;
 
-    if (granted) {
-      const currentPosition = await Location.getCurrentPositionAsync();
-      setUserLocation(currentPosition);
-    } else {
-      console.log(
-        "É necessário habilitar a permissão de localização para utilizar este serviço."
-      );
-    }
-  }
+    const watcher = await Location.watchPositionAsync(
+      {
+        accuracy: Location.Accuracy.High,
+        timeInterval: 2000, // Atualizações a cada 2 segundos
+        distanceInterval: 10, // Atualização a cada 10 metros
+      },
+      (location) => {
+        setUserLocation(location);
+        setHeading(location.coords.heading); // Atualiza o curso
+      }
+    );
+    setLocationWatcher(watcher);
+    console.log("Acompanhamento de localização iniciado");
+  };
 
-  useEffect(() => {
-    LocalPermissions();
-  }, []);
-
-  useEffect(() => {
-    if (userLocation) {
-      goToMyLocation();
-      dispatch(
-        setOrigin({
-          location: {
-            lat: userLocation?.coords?.latitude,
-            lng: userLocation?.coords?.longitude,
-          },
-          description: "Localização Atual",
-        })
-      );
-    }
-  }, [userLocation]);
-
-  const fetchParkingSpots = async (destination: {
-    location: { lng: number; lat: number };
-  }) => {
-    try {
-      const response = await axios.post<ParkingSpot[]>(
-        URL_MSPARKING + "/parking",
-        destination
-      );
-      return response.data;
-    } catch (error) {
-      console.error("Erro ao buscar os dados de estacionamento:", error);
-      return [];
+  // Interrompe acompanhamento da localização para navegação
+  const stopWatching = () => {
+    if (locationWatcher) {
+      locationWatcher.remove();
+      setLocationWatcher(null);
+      console.log("Acompanhamento de localização interrompido");
     }
   };
 
+  // Atualiza a camera para apontar para a direção de deslocamento
+  const updateCameraWithRotation = async () => {
+    if (mapRef.current && userLocation) {
+      mapRef.current.animateCamera({
+        center: {
+          latitude: userLocation.coords.latitude,
+          longitude: userLocation.coords.longitude,
+        },
+        heading: heading || 0, // Usa o curso atualizado
+        pitch: 50,
+        zoom: 18,
+      });
+    }
+  };
+
+  // Invoca chamado da API ms_parking e define vagas
   const fetchAndSetParkingSpots = async () => {
     if (!destination || !destination.location) {
       console.error("Destino não definido ou inválido.");
@@ -210,36 +180,132 @@ export default function MapHome() {
     setParkingSpots(spots);
   };
 
-  // Buscar vagas quando houver destino
+  // Chamada API ms_parking com retorno das vagas
+  const fetchParkingSpots = async (destination: {
+    location: { lng: number; lat: number };
+  }) => {
+    try {
+      const response = await axios.post<ParkingSpot[]>(
+        URL_MSPARKING + "/parking",
+        destination
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Erro ao buscar os dados de estacionamento:", error);
+      return [];
+    }
+  };
+
+  // Adquirir permissões do usuário para o aplicativo
+  async function LocalPermissions() {
+    const { granted } = await Location.requestForegroundPermissionsAsync();
+
+    if (granted) {
+      const currentPosition = await Location.getCurrentPositionAsync();
+      setUserLocation(currentPosition);
+    } else {
+      console.log(
+        "É necessário habilitar a permissão de localização para utilizar este serviço."
+      );
+    }
+  }
+
+  // Adiciona e remove vagas à rota
+  const handlePolygonPress = (spot: ParkingSpot) => {
+    setSelectedSpots(
+      (prev) =>
+        prev.some((s) => s.osm_id === spot.osm_id)
+          ? prev.filter((s) => s.osm_id !== spot.osm_id) // Remove se já estiver selecionado
+          : [...prev, spot] // Adiciona se não estiver
+    );
+  };
+
+  // CONSTS ----------------------------------------
+  // USE EFFECTS ----------------------------------------
+
+  // Carregamento único das permissões
+  useEffect(() => {
+    LocalPermissions();
+  }, []);
+
+  // Carregamento dependente da localização do usuário
+  useEffect(() => {
+    if (userLocation && !flagSimular && !flagNavegar) {
+      goToMyLocation();
+    }
+    if (userLocation && !flagSimular) {
+      dispatch(
+        setOrigin({
+          location: {
+            lat: userLocation?.coords?.latitude,
+            lng: userLocation?.coords?.longitude,
+          },
+          description: "Localização Atual",
+        })
+      );
+    }
+    if (userLocation && flagNavegar) {
+      updateCameraWithRotation();
+    }
+  }, [userLocation]);
+
+  // Atualiza camera com base na localização e direção do usuário
+  useEffect(() => {
+    if (userLocation && heading !== null) {
+      updateCameraWithRotation();
+    }
+  }, [userLocation, heading]);
+
+  useEffect(() => {
+    if (origin && flagSimular) {
+      mapRef.current?.fitToSuppliedMarkers;
+    }
+  }, [origin]);
+
+  // Buscar vagas quando alterar destino
   useEffect(() => {
     if (destination) {
       fetchAndSetParkingSpots();
     }
   }, [destination]);
 
-  // Zoom nas vagas e destino
+  // Zoom nas vagas e destino sempre que mudar parkingSpots
   useEffect(() => {
     fitToRoute();
   }, [parkingSpots]);
 
-  const navegar = () => {
-    setFlagNavegar(true);
-    navigationMode();
-  };
-  const returnRoute = () => {
-    setFlagNavegar(false);
-    fitToRoute();
-  };
-  const endNavigation = () => {
+  // Ligar/Desligar dados da viagem
+  useEffect(() => {
+    if (!flagRota) {
+      dispatch(setTravelTimeInformation(null));
+    }
+  }, [flagRota]);
+
+  // Ligar/Desligar acompanhamento de navegação
+  useEffect(() => {
+    if (flagNavegar) {
+      startWatching();
+    } else {
+      stopWatching();
+    }
+  }, [flagNavegar]);
+
+  useEffect(() => {
     setParkingSpots([]); // Limpa os polígonos
+    dispatch(setOrigin(null)); // Limpa o marcador
     dispatch(setDestination(null)); // Limpa o marcador
     destinationRef.current?.clear(); // Limpa destinationRef
     setFlagRota(false); // Limpa flag de Rota
     setFlagNavegar(false); // Limpa flag de navegar
-    setSelectedSpots([]); // Deve limpar Vagas
-    navigation.navigate("review");
-  };
-  const verRota = () => {
+    setSelectedSpots([]); // Limpa Vagas
+    goToMyLocation(); // Ajusta visualização do mapa
+  }, [flagSimular]);
+
+  // USE EFFECTS ----------------------------------------
+
+  // BUTTON ACTION ----------------------------------------
+  // Visualizar rota
+  const verRota = useCallback(() => {
     if (!origin || !destination || selectedSpots.length < 2) {
       console.error("Dados insuficientes para calcular a rota.");
       return;
@@ -282,17 +348,39 @@ export default function MapHome() {
         animated: true,
       });
     }
+  }, [origin, destination, selectedSpots, dispatch]);
+
+  const returnRoute = () => {
+    setFlagNavegar(false);
+    fitToRoute();
   };
 
-  const handlePolygonPress = (spot: ParkingSpot) => {
-    setSelectedSpots(
-      (prev) =>
-        prev.some((s) => s.osm_id === spot.osm_id)
-          ? prev.filter((s) => s.osm_id !== spot.osm_id) // Remove se já estiver selecionado
-          : [...prev, spot] // Adiciona se não estiver
-    );
+  const startNavigation = useCallback(() => {
+    setFlagNavegar(true);
+    navigationMode();
+  }, [navigation]);
+
+  const endNavigation = () => {
+    setParkingSpots([]); // Limpa os polígonos
+    dispatch(setDestination(null)); // Limpa o marcador
+    destinationRef.current?.clear(); // Limpa destinationRef
+    setFlagRota(false); // Limpa flag de Rota
+    setFlagNavegar(false); // Limpa flag de navegar
+    setSelectedSpots([]); // Limpa Vagas
+    goToMyLocation(); // Ajusta visualização do mapa
+    navigation.navigate("review");
   };
 
+  const simular = () => {
+    setFlagSimular(true);
+  };
+
+  const navegar = () => {
+    setFlagSimular(false);
+  };
+  // BUTTON ACTION ----------------------------------------
+
+  // MAP VIEW ----------------------------------------
   return (
     <View style={{ flex: 1 }}>
       <MapView
@@ -308,8 +396,8 @@ export default function MapHome() {
         showsTraffic
         moveOnMarkerPress
         initialRegion={{
-          latitude: userLocation?.coords?.latitude! || -25.423427468369646,
-          longitude: userLocation?.coords?.longitude! || -49.25998674411819,
+          latitude: userLocation?.coords?.latitude ?? -25.423427468369646,
+          longitude: userLocation?.coords?.longitude ?? -49.25998674411819,
           latitudeDelta: 0.005,
           longitudeDelta: 0.005,
         }}
@@ -358,6 +446,20 @@ export default function MapHome() {
             </React.Fragment>
           );
         })}
+        {origin?.location &&
+          origin?.location.lat !== undefined &&
+          origin?.location.lng !== undefined &&
+          flagSimular && (
+            <Marker
+              coordinate={{
+                latitude: origin.location.lat,
+                longitude: origin.location.lng,
+              }}
+              title="Origin"
+              description={origin.description}
+              identifier="Origin"
+            />
+          )}
         {destination?.location &&
           destination?.location.lat !== undefined &&
           destination?.location.lng !== undefined && (
@@ -395,7 +497,30 @@ export default function MapHome() {
             apikey={GOOGLE_MAPS_API_KEY}
             strokeWidth={4}
             strokeColor="#05204b"
+            language="pt-BR"
             mode="DRIVING"
+            onReady={(result) => {
+              // Arredondando a distância e a duração
+              const roundedDistance = result.distance.toFixed(1);
+              const roundedDuration = Math.round(result.duration);
+
+              console.log("Distância (km):", roundedDistance);
+              console.log("Duração (min):", roundedDuration);
+
+              // Atualiza o Redux com os valores arredondados
+              dispatch(
+                setTravelTimeInformation({
+                  distance: {
+                    text: `${roundedDistance} km`,
+                    value: roundedDistance,
+                  },
+                  duration: {
+                    text: `${roundedDuration} min`,
+                    value: roundedDuration,
+                  },
+                })
+              );
+            }}
             onError={(errorMessage) => {
               console.error("Erro ao calcular rota:", errorMessage);
             }}
@@ -404,8 +529,80 @@ export default function MapHome() {
       </MapView>
 
       {/* Componentes sobrepostos */}
+      {!flagNavegar && !flagSimular && (
+        <View style={Styles.simulateButton}>
+          <Button
+            mode="elevated"
+            onPress={simular}
+            style={[Styles.defaultButton]}
+          >
+            Fazer uma simulação
+          </Button>
+        </View>
+      )}
+
+      {!flagNavegar && flagSimular && (
+        <View style={Styles.simulateButton}>
+          <Button mode="elevated" onPress={navegar} style={[Styles.button]}>
+            Fazer uma navegação
+          </Button>
+        </View>
+      )}
+
       {!flagNavegar && (
-        <View style={styles.overlay}>
+        <View style={Styles.overlay}>
+          {/* ORIGEM */}
+          {flagSimular && (
+            <View style={{ width: "80%" }}>
+              <GooglePlacesAutocomplete
+                ref={originRef}
+                styles={{
+                  textInput: {
+                    height: 38,
+                    color: "#5d5d5d",
+                    fontSize: 16,
+                  },
+                  predefinedPlacesDescription: {
+                    color: "#1faadb",
+                  },
+                }}
+                placeholder="Origem:"
+                nearbyPlacesAPI="GooglePlacesSearch"
+                debounce={400}
+                query={{
+                  key: GOOGLE_MAPS_API_KEY,
+                  language: "pt-BR",
+                }}
+                fetchDetails={true}
+                minLength={2}
+                enablePoweredByContainer={false}
+                predefinedPlaces={[homePlace, workPlace]}
+                onPress={(data, details = null) => {
+                  dispatch(
+                    setOrigin({
+                      location: details?.geometry?.location,
+                      description: data?.description,
+                    })
+                  );
+                }}
+              />
+              <TouchableOpacity
+                style={Styles.clearButton}
+                onPress={() => {
+                  setParkingSpots([]); // Limpa os polígonos
+                  dispatch(setOrigin(null)); // Limpa o marcador
+                  originRef.current?.clear(); // Limpa destinationRef
+                  setFlagRota(false); // Limpa flag de Rota
+                  setSelectedSpots([]); // Limpa Vagas
+                }}
+                disabled={!origin}
+              >
+                <MaterialIcons name="close" size={20} color="gray" />
+              </TouchableOpacity>
+            </View>
+          )}
+
+          {/* DESTINO */}
           <View style={{ width: "80%" }}>
             <GooglePlacesAutocomplete
               ref={destinationRef}
@@ -429,7 +626,7 @@ export default function MapHome() {
               fetchDetails={true}
               minLength={2}
               enablePoweredByContainer={false}
-              //predefinedPlaces={[homePlace, workPlace]}
+              predefinedPlaces={[homePlace, workPlace]}
               onPress={(data, details = null) => {
                 dispatch(
                   setDestination({
@@ -440,58 +637,65 @@ export default function MapHome() {
               }}
             />
             <TouchableOpacity
-              style={styles.clearButton}
+              style={Styles.clearButton}
               onPress={() => {
                 setParkingSpots([]); // Limpa os polígonos
                 dispatch(setDestination(null)); // Limpa o marcador
                 destinationRef.current?.clear(); // Limpa destinationRef
                 setFlagRota(false); // Limpa flag de Rota
-                setSelectedSpots([]); // Deve limpar Vagas
+                setSelectedSpots([]); // Limpa Vagas
               }}
               disabled={!destination}
             >
               <MaterialIcons name="close" size={20} color="gray" />
             </TouchableOpacity>
           </View>
+          
         </View>
       )}
-      {!flagNavegar && (
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity>
+      
+      {travelInformation && (
+        <View style={Styles.travelContainer}>
+          <View style={Styles.travelBox}>
+            <Text style={Styles.travelText}>
+              Distância: {travelInformation.distance.text}
+            </Text>
+            <Text style={Styles.travelText}>
+              Tempo: {travelInformation.duration.text}
+            </Text>
+          </View>
+        </View>
+      )}
+
+      {destination && !flagNavegar && (
+        <View style={Styles.buttonContainer}>
+          <Button
+            mode="elevated"
+            onPress={verRota}
+            style={[Styles.defaultButton]}
+            disabled={selectedSpots.length < 2}
+          >
+            Ver Rota
+          </Button>
+          {!flagSimular && ( // esconde botão de navegação quando é simulação
             <Button
               mode="elevated"
-              onPress={verRota}
-              style={[
-                Styles.button,
-                { display: destination ? "flex" : "none" }, // Esconde o botão se destination estiver vazio
-              ]}
-              disabled={selectedSpots.length < 2}
-            >
-              Ver Rota
-            </Button>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Button
-              mode="elevated"
-              onPress={navegar}
-              style={[
-                Styles.button,
-                { display: destination ? "flex" : "none" }, // Esconde o botão se destination estiver vazio
-              ]}
+              onPress={startNavigation}
+              style={[Styles.button]}
               disabled={!flagRota}
             >
               Navegar
             </Button>
-          </TouchableOpacity>
+          )}
         </View>
       )}
       {flagNavegar && (
-        <View style={styles.buttonContainer}>
+        <View style={Styles.buttonContainer}>
           <TouchableOpacity>
             <Button
               mode="elevated"
               onPress={returnRoute}
-              style={[Styles.button]}
+              style={[Styles.cancelButton]}
             >
               Voltar
             </Button>
@@ -511,76 +715,4 @@ export default function MapHome() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  overlay: {
-    position: "absolute",
-    top: "15%",
-    left: 0,
-    right: 0,
-    alignItems: "center",
-    paddingHorizontal: 20,
-    zIndex: 2,
-  },
-  clearButton: {
-    borderRadius: 5,
-    padding: 5,
-    backgroundColor: "white",
-    position: "absolute",
-    right: 4, // Posiciona o botão "X" no canto direito do campo
-    top: 4,
-    zIndex: 1,
-  },
-  input: {
-    backgroundColor: "white",
-    width: "80%",
-    padding: 10,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    marginBottom: 10,
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-evenly",
-    position: "absolute",
-    bottom: 50,
-    left: 0,
-    right: 0,
-    alignItems: "center",
-    paddingHorizontal: 20,
-    zIndex: 1,
-  },
-  buttonText: {
-    color: "white",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-  marker: {
-    backgroundColor: "white",
-    padding: 5,
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: "black",
-  },
-  markerText: {
-    fontSize: 12,
-    fontWeight: "bold",
-    color: "black",
-  },
-});
-
-const inputBoxStyles = StyleSheet.create({
-  container: {
-    backgroundColor: "white",
-    marginTop: 10,
-    flex: 0,
-  },
-  textInput: {
-    fontSize: 10,
-    backgroundColor: "#DDDDDD20",
-    borderWidth: 1,
-    borderColor: "#00000050",
-    borderRadius: 50,
-  },
-});
+// MAP VIEW ----------------------------------------

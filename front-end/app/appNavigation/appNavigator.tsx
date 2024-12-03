@@ -8,7 +8,6 @@ import ForgotPassword from '../(auth)/forgotPassword';
 import UserAccount from '../screens/userAccount';
 import ChangePassword from '../screens/changePassword';
 import MapHome from '../screens/mapHome';
-import MapSimulate from '../screens/mapSimulate';
 import Review from '../screens/review';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Styles } from '../../constants/Styles';
@@ -34,7 +33,7 @@ function AuthStackNavigator() {
       <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
       <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ headerShown: false }} />
       <Stack.Screen name="ChangePassword" component={ChangePassword} options={{ headerShown: false }} />
-      <Stack.Screen name="MapHome" component={MapHome} options={{ headerShown: false }} />
+      <Stack.Screen name="Map" component={MapHome} options={{ headerShown: false }} />
     </Stack.Navigator>
   );
 }
@@ -42,7 +41,7 @@ function AuthStackNavigator() {
 function DrawerNavigator() {
   return (
     <Drawer.Navigator
-      initialRouteName="mapHome"
+      initialRouteName="Map"
       drawerContent={(props: DrawerContentComponentProps) => <CustomDrawerContent {...props} />}
       screenOptions={{
         headerShown: true,
@@ -51,8 +50,7 @@ function DrawerNavigator() {
         drawerInactiveTintColor: '#FFF', // Cor do texto dos itens inativos
       }}
     >
-      <Drawer.Screen name="mapHome" component={MapHome} options={headerOptions} />
-      <Drawer.Screen name="mapSimulate" component={MapSimulate} options={headerOptions} />
+      <Drawer.Screen name="Map" component={MapHome} options={headerOptions} />
       <Drawer.Screen name="review" component={Review} options={headerOptions} />
       <Drawer.Screen name="UserAccount" component={UserAccount} options={headerOptions} />
       <Drawer.Screen name="changePassword" component={ChangePassword} options={headerOptions} />
