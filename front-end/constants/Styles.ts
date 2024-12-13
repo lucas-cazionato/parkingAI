@@ -76,8 +76,6 @@ export const Styles = StyleSheet.create({
     marginBottom: 20
   },
 
-
-
   header: {
     fontSize: 22,
     color: '#11181C',
@@ -93,6 +91,8 @@ export const Styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginVertical: 10,
+    padding: 20,
+
   },
 
   subText: {
@@ -376,10 +376,8 @@ export const Styles = StyleSheet.create({
    flex: 1,
    backgroundColor: '#fff',
  },
-  contentContainer: {
-   padding: 16,
-  },
-  header: {
+
+  headerHelp: {
    alignItems: 'center',
    marginBottom: 16,
   },

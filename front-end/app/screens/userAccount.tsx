@@ -199,7 +199,7 @@ const UserAccount: React.FC = () => {
             <ScrollView>
                 <View style={Styles.inputContainer}>
                     <Surface style={Styles.surface} elevation={4}>
-                        <Icon name="person" size={50} color="#ec6408" />
+                        <Icon name="person" size={80} color="#ec6408" />
                         <Text style={Styles.header}>Minha conta</Text>
                         <Text style={Styles.subText}>Gerencie informações da conta</Text>
                     </Surface>

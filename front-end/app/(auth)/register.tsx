@@ -90,11 +90,11 @@ const Register: React.FC = () => {
 
 
   return (
+   <ScrollView>
     <View style={Styles.container}>
-      <ScrollView>
         <View style={Styles.inputContainer}>
           <Surface style={Styles.surface} elevation={4}>
-            <Icon name="person-add" size={50} color="#ec6408" />
+            <Icon name="person-add" size={80} color="#ec6408" />
             <Text style={Styles.header}>Crie sua conta</Text>
             <Text style={Styles.subText}>Preencha os campos com suas informações</Text>
           </Surface>
@@ -339,8 +339,9 @@ const Register: React.FC = () => {
             </Button>
           </View>
         </View>
-      </ScrollView>
+
     </View>
+   </ScrollView>
   );
 };
 
