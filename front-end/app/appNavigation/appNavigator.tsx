@@ -88,7 +88,7 @@ function DrawerNavigator() {
       }}
     >
       <Drawer.Screen
-        name="Página inicial"
+        name="Mapa"
         component={MapHome}
         options={{
           drawerIcon: ({ color, size }) => (
