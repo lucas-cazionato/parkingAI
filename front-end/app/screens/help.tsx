@@ -12,7 +12,7 @@ const Help: React.FC<HelpProps> = ({ navigation }) => {
 
   return (
     <ScrollView style={Styles.helpContainer} contentContainerStyle={Styles.contentContainer}>
-      <View style={Styles.header}>
+      <View style={Styles.headerHelp}>
         <Text style={Styles.headerText}>Perguntas Frequentes</Text>
       </View>
       <List.Section>
@@ -51,7 +51,7 @@ const Help: React.FC<HelpProps> = ({ navigation }) => {
         </List.Accordion>
         <Divider />
         <List.Accordion
-          title="Como contactar o suporte?"
+          title="Como contatar o suporte?"
           left={props => <List.Icon {...props} icon="email" />}
                     titleStyle={{
                       fontSize: 18,

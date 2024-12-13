@@ -101,11 +101,11 @@ export default function Review({ navigation }: ReviewProps) {
   };
 
   return (
+  <ScrollView>
     <View style={Styles.container}>
-      <ScrollView>
         <View style={Styles.inputContainer}>
           <Surface style={Styles.surface} elevation={4}>
-            <Icon name="star" size={100} color="#ec6408" />
+            <Icon name="star" size={80} color="#ec6408" />
             <Text style={Styles.header}>Avalie sua experiência</Text>
           </Surface>
 
@@ -142,8 +142,6 @@ export default function Review({ navigation }: ReviewProps) {
             )}
           />
         </View>
-
-        <View style={Styles.separator} />
 
         <View style={Styles.inputContainer}>
           <Text style={Styles.question}>Como você avalia sua experiência com o ParkingAI?</Text>
@@ -193,8 +191,6 @@ export default function Review({ navigation }: ReviewProps) {
           />
         </View>
 
-        <View style={Styles.separator} />
-
         <View style={Styles.inputContainer}>
           <Text style={Styles.question}>Como você avalia sua experiência com o ParkingAI?</Text>
           <Controller
@@ -230,7 +226,8 @@ export default function Review({ navigation }: ReviewProps) {
         <Button mode="contained" onPress={handleSubmit(onSubmit)} style={Styles.defaultButton}>
           Enviar Avaliação
         </Button>
-      </ScrollView>
+
     </View>
+   </ScrollView>
   );
 }

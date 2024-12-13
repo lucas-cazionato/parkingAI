@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { TouchableOpacity } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator, DrawerContentComponentProps } from '@react-navigation/drawer';
@@ -13,9 +14,7 @@ import Favorites from '../screens/favorites';
 import Help from '../screens/help';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomDrawerContent from './CustomDrawerContent';
-import { MaterialIcons } from '@expo/vector-icons';
-import Feather from '@expo/vector-icons/Feather';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { MaterialIcons, MaterialCommunityIcons, Feather } from '@expo/vector-icons';
 
 
 const Drawer = createDrawerNavigator();
@@ -24,19 +23,50 @@ const Stack = createStackNavigator();
 const headerOptions = {
   headerStyle: {
     backgroundColor: '#05204b',
+    height: 110,
 },
   headerTintColor: '#fff',
   headerTitleStyle: {
     fontWeight: 'bold' as 'bold',
+    fontSize: 23
   },
 };
 
 function AuthStackNavigator() {
   return (
-    <Stack.Navigator initialRouteName="Login" >
-      <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
-      <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
-      <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ headerShown: false }} />
+ <Stack.Navigator initialRouteName="Login" screenOptions={headerOptions}>
+      <Stack.Screen
+        name="Login"
+        component={Login}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="Register"
+        component={Register}
+        options={{
+          headerShown: true,
+          headerRight: () => (
+            <TouchableOpacity onPress={() => navigation.navigate('Ajuda')}>
+              <MaterialIcons name="help-outline" size={24} color="#fff" style={{ marginRight: 15 }} />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="ForgotPassword"
+        component={ForgotPassword}
+        options={{
+          headerShown: true,
+          headerRight: () => (
+            <TouchableOpacity onPress={() => navigation.navigate('Ajuda')}>
+              <MaterialIcons name="help-outline" size={24} color="#fff" style={{ marginRight: 15 }} />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <Stack.Screen name="ChangePassword" component={ChangePassword} options={{ headerShown: false }} />
       <Stack.Screen name="Map" component={MapHome} options={{ headerShown: false }} />
     </Stack.Navigator>
   );
@@ -126,6 +156,7 @@ const AppNavigator = () => {
                         headerTintColor: '#fff',
                         headerTitleStyle: {
                           fontWeight: 'bold' as 'bold',
+                          fontSize: 20,
                         },
                         }}>
         <Stack.Screen name="Auth" component={AuthStackNavigator} options={{ headerShown: false }} />

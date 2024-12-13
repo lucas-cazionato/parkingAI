@@ -53,7 +53,7 @@ const ForgotPassword: React.FC = () => {
       <View style={Styles.container}>
         <View style={Styles.inputContainer}>
           <Surface style={Styles.surface} elevation={4}>
-            <Icon name="question-mark" size={100} color="#ec6408" />
+            <Icon name="question-mark" size={80} color="#ec6408" />
             <Text style={Styles.header}>Recuperar Senha</Text>
             <Text style={Styles.subText}>Preencha o campo com seu e-mail de cadastro</Text>
           </Surface>
