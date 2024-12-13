@@ -108,15 +108,6 @@ const ChangePassword: React.FC = () => {
                     </Button>
                 </View>
 
-                <TouchableOpacity
-                    style={Styles.backButton}
-                    onPress={() => {
-                        navigation.goBack();
-                    }}
-                >
-                    <Icon name="arrow-left" size={50} color="#687076" />
-                    <Text style={[Styles.textInput, { marginLeft: 10 }]}>Voltar</Text>
-                </TouchableOpacity>
             </View>
         </View>
     );

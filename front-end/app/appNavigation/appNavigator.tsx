@@ -9,9 +9,14 @@ import UserAccount from '../screens/userAccount';
 import ChangePassword from '../screens/changePassword';
 import MapHome from '../screens/mapHome';
 import Review from '../screens/review';
+import Favorites from '../screens/favorites';
+import Help from '../screens/help';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Styles } from '../../constants/Styles';
 import CustomDrawerContent from './CustomDrawerContent';
+import { MaterialIcons } from '@expo/vector-icons';
+import Feather from '@expo/vector-icons/Feather';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -19,7 +24,7 @@ const Stack = createStackNavigator();
 const headerOptions = {
   headerStyle: {
     backgroundColor: '#05204b',
-  },
+},
   headerTintColor: '#fff',
   headerTitleStyle: {
     fontWeight: 'bold' as 'bold',
@@ -28,34 +33,75 @@ const headerOptions = {
 
 function AuthStackNavigator() {
   return (
-    <Stack.Navigator initialRouteName="Login">
+    <Stack.Navigator initialRouteName="Login" >
       <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
       <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
       <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ headerShown: false }} />
-      <Stack.Screen name="ChangePassword" component={ChangePassword} options={{ headerShown: false }} />
       <Stack.Screen name="Map" component={MapHome} options={{ headerShown: false }} />
     </Stack.Navigator>
   );
 }
 
+
 function DrawerNavigator() {
   return (
-    <Drawer.Navigator
-      initialRouteName="Map"
-      drawerContent={(props: DrawerContentComponentProps) => <CustomDrawerContent {...props} />}
-      screenOptions={{
-        headerShown: true,
-        drawerStyle: { backgroundColor: '#05204b' },
-        drawerActiveTintColor: '#FFF', // Cor do texto do item ativo
-        drawerInactiveTintColor: '#FFF', // Cor do texto dos itens inativos
-      }}
-    >
-      <Drawer.Screen name="Map" component={MapHome} options={headerOptions} />
-      <Drawer.Screen name="review" component={Review} options={headerOptions} />
-      <Drawer.Screen name="UserAccount" component={UserAccount} options={headerOptions} />
-      <Drawer.Screen name="changePassword" component={ChangePassword} options={headerOptions} />
-    </Drawer.Navigator>
-  );
+        <Drawer.Navigator
+          initialRouteName="Mapa"
+          drawerContent={(props) => <CustomDrawerContent {...props} />}
+          screenOptions={{
+            drawerLabelStyle: {
+              color: '#ffffff',
+              fontSize: 23,
+            },
+             ...headerOptions,
+          }}
+        >
+          <Drawer.Screen
+            name="Mapa"
+            component={MapHome}
+            options={{
+              drawerIcon: ({ color, size }) => (
+                <Feather name="globe" size={26} color={'#ffffff'} />
+              ),
+            }}
+          />
+            <Drawer.Screen
+                name="Conta"
+                component={UserAccount}
+                options={{
+                drawerIcon: ({ color, size }) => (
+                    <MaterialCommunityIcons name="account-circle-outline" size={28} color={'#ffffff'}/>
+                ),
+                }}/>
+          <Drawer.Screen
+            name="Avaliação"
+            component={Review}
+            options={{
+              drawerIcon: ({ color, size }) => (
+                <MaterialIcons name="rate-review" size={20} color={'#ffffff'} />
+              ),
+            }}
+          />
+          <Drawer.Screen
+            name="Favoritos"
+            component={Favorites}
+            options={{
+              drawerIcon: ({ color, size }) => (
+                <MaterialCommunityIcons name="cards-heart-outline" size={28} color={'#ffffff'} />
+              ),
+            }}
+          />
+          <Drawer.Screen
+              name="Ajuda"
+              component={Help}
+              options={{
+                drawerIcon: ({ color, size }) => (
+                  <MaterialIcons name="help-outline" size={30} color={'#ffffff'} />
+                ),
+              }}
+          />
+      </Drawer.Navigator>
+    );
 }
 
 const AppNavigator = () => {
@@ -73,9 +119,19 @@ const AppNavigator = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={isAuthenticated ? "Main" : "Auth"}>
+      <Stack.Navigator initialRouteName={isAuthenticated ? "Main" : "Auth"}
+        screenOptions={{headerStyle: {
+                        backgroundColor: '#05204b',
+                        },
+                        headerTintColor: '#fff',
+                        headerTitleStyle: {
+                          fontWeight: 'bold' as 'bold',
+                        },
+                        }}>
         <Stack.Screen name="Auth" component={AuthStackNavigator} options={{ headerShown: false }} />
         <Stack.Screen name="Main" component={DrawerNavigator} options={{ headerShown: false }} />
+        <Stack.Screen name="Alterar Senha" component={ChangePassword} options={{ headerShown: true }} />
+        <Stack.Screen name="Avaliação" component={Review} options={{ headerShown: true}} />
       </Stack.Navigator>
     </NavigationContainer>
   );

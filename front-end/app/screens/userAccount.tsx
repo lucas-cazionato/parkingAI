@@ -54,7 +54,7 @@ const UserAccount: React.FC = () => {
     };
 
     const handleNavigateToChangePassword = () => {
-        navigation.navigate('changePassword');
+        navigation.navigate('Alterar Senha');
     };
 
     // Verificar se os valores do formulário são diferentes dos dados originais p/ ativar o botão salvar

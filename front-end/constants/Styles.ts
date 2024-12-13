@@ -10,6 +10,11 @@ export const Styles = StyleSheet.create({
     backgroundColor: '#05204b',
   },
 
+    contentContainer: {
+      justifyContent: 'center',
+      padding: 16,
+    },
+
   logoContainer: {
     alignItems: 'center',
     marginTop: 40,
@@ -138,6 +143,7 @@ export const Styles = StyleSheet.create({
 
   defaultButton: {
     backgroundColor: '#ec6408',
+
   },
 
   button: {
@@ -326,7 +332,18 @@ export const Styles = StyleSheet.create({
     marginVertical: 4,
   },
 
-
+    contactButton: {
+      marginTop: 20,
+      padding: 15,
+      backgroundColor: '#ec6408',
+      borderRadius: 5,
+      alignItems: 'center',
+    },
+    contactButtonText: {
+      color: '#fff',
+      fontSize: 16,
+      fontWeight: 'bold',
+    },
 
   checkboxLabel: {
     marginLeft: 8,
@@ -348,6 +365,23 @@ export const Styles = StyleSheet.create({
   forgetText: {
     textAlign: 'right',
     color: '#ffffff',
+  },
+
+  headerText: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      color: Colors.blue,
+   },
+  helpContainer: {
+   flex: 1,
+   backgroundColor: '#fff',
+ },
+  contentContainer: {
+   padding: 16,
+  },
+  header: {
+   alignItems: 'center',
+   marginBottom: 16,
   },
 
 
