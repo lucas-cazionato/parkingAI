@@ -3,31 +3,26 @@ import { DrawerContentScrollView, DrawerItemList, DrawerItem, DrawerContentCompo
 import { View, Text, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { logout } from '@/apiService';
+import Colors from '@/constants/Colors';
 
 function CustomDrawerContent(props: DrawerContentComponentProps) {
   return (
+  //header
     <DrawerContentScrollView {...props} contentContainerStyle={styles.drawerContent}>
       <View style={styles.header}>
         <View style={styles.profileImageContainer}>
-          {/* Adicionar Logo */}
           <Image
-            source={{ uri: 'https://via.placeholder.com/80' }}
+            source={require('../../assets/images/PAI.png')}
             style={styles.profileImage}
           />
         </View>
         <Text style={styles.headerText}>Parking AI</Text>
       </View>
-
-
-      <View style={styles.menu}>
-        {/* DrawerItemList não suporta labelStyle diretamente */}
-        <DrawerItemList {...props} />
-        <DrawerItem
-          label="Ajuda"
-          icon={({ color }) => <MaterialIcons name="help-outline" size={24} color={color} />}
-          onPress={() => props.navigation.navigate('Ajuda')}
-        />
-      </View>
+ {/*Body*/}
+    <View style={styles.menu}>
+        <DrawerItemList {...props} labelStyle={styles.drawerLabel} />
+    </View>
+{/*Footer*/}
       <View style={styles.footer}>
         <TouchableOpacity
           style={styles.logoutButton}
@@ -41,7 +36,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
             }
           }}
         >
-          <MaterialIcons name="logout" size={24} color="#ec6408" />
+          <MaterialIcons name="logout" size={28} color="#ec6408" />
           <Text style={styles.logoutText}>Sair</Text>
         </TouchableOpacity>
       </View>
@@ -61,9 +56,9 @@ const styles = StyleSheet.create({
     borderBottomColor: '#FFF',
   },
   profileImageContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 90,
+    height: 90,
+    borderRadius: 50,
     overflow: 'hidden',
     marginBottom: 10,
   },
@@ -72,7 +67,7 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   headerText: {
-    fontSize: 18,
+    fontSize: 28,
     color: '#FFF',
     fontWeight: 'bold',
   },
@@ -88,21 +83,26 @@ const styles = StyleSheet.create({
   footer: {
     padding: 20,
     borderTopWidth: 1,
+    borderTopColor: '#ffffff',
 
   },
   logoutButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFEDED',
+    backgroundColor: '#ffffff',
     paddingVertical: 10,
     paddingHorizontal: 15,
     borderRadius: 25,
   },
   logoutText: {
-    fontSize: 16,
+    fontSize: 20,
     color: '#ec6408',
     marginLeft: 10,
   },
+  drawerItemLabel: {
+      color: '#ffffff',
+      fontSize: 20,
+    },
 });
 
 export default CustomDrawerContent;

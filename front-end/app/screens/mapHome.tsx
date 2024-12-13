@@ -29,7 +29,7 @@ import { Text } from "react-native";
 
 type RootStackParamList = {
   mapHome: undefined;
-  review: undefined;
+  Avaliação: undefined;
 };
 
 type HomeScreenNavigationProp = NavigationProp<RootStackParamList, "mapHome">;
@@ -368,7 +368,7 @@ export default function MapHome() {
     setFlagNavegar(false); // Limpa flag de navegar
     setSelectedSpots([]); // Limpa Vagas
     goToMyLocation(); // Ajusta visualização do mapa
-    navigation.navigate("review");
+    navigation.navigate("Avaliação");
   };
 
   const simular = () => {
@@ -535,6 +535,7 @@ export default function MapHome() {
             mode="elevated"
             onPress={simular}
             style={[Styles.defaultButton]}
+            textColor="#ffffff"
           >
             Fazer uma simulação
           </Button>
@@ -543,7 +544,7 @@ export default function MapHome() {
 
       {!flagNavegar && flagSimular && (
         <View style={Styles.simulateButton}>
-          <Button mode="elevated" onPress={navegar} style={[Styles.button]}>
+          <Button mode="elevated" onPress={navegar} style={[Styles.button]} textColor="#ffffff">
             Fazer uma navegação
           </Button>
         </View>
@@ -673,6 +674,7 @@ export default function MapHome() {
             mode="elevated"
             onPress={verRota}
             style={[Styles.defaultButton]}
+            textColor="#ffffff"
             disabled={selectedSpots.length < 2}
           >
             Ver Rota
@@ -682,6 +684,7 @@ export default function MapHome() {
               mode="elevated"
               onPress={startNavigation}
               style={[Styles.button]}
+              textColor="#ffffff"
               disabled={!flagRota}
             >
               Navegar
@@ -696,6 +699,7 @@ export default function MapHome() {
               mode="elevated"
               onPress={returnRoute}
               style={[Styles.cancelButton]}
+              textColor="#ffffff"
             >
               Voltar
             </Button>
@@ -706,6 +710,7 @@ export default function MapHome() {
               mode="elevated"
               onPress={endNavigation}
               style={[Styles.button]}
+              textColor="#ffffff"
             >
               Finalizar
             </Button>
