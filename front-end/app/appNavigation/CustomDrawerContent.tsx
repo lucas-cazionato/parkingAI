@@ -7,7 +7,7 @@ import Colors from '@/constants/Colors';
 
 function CustomDrawerContent(props: DrawerContentComponentProps) {
   return (
-  //header
+    //header
     <DrawerContentScrollView {...props} contentContainerStyle={styles.drawerContent}>
       <View style={styles.header}>
         <View style={styles.profileImageContainer}>
@@ -18,11 +18,11 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
         </View>
         <Text style={styles.headerText}>Parking AI</Text>
       </View>
- {/*Body*/}
-    <View style={styles.menu}>
+      {/*Body*/}
+      <View style={styles.menu}>
         <DrawerItemList {...props} labelStyle={styles.drawerLabel} />
-    </View>
-{/*Footer*/}
+      </View>
+      {/*Footer*/}
       <View style={styles.footer}>
         <TouchableOpacity
           style={styles.logoutButton}
@@ -95,14 +95,15 @@ const styles = StyleSheet.create({
     borderRadius: 25,
   },
   logoutText: {
-    fontSize: 20,
+    fontSize: 18,
     color: '#ec6408',
     marginLeft: 10,
+    fontWeight: 'bold'
   },
   drawerItemLabel: {
-      color: '#ffffff',
-      fontSize: 20,
-    },
+    color: '#ffffff',
+    fontSize: 20,
+  },
 });
 
 export default CustomDrawerContent;

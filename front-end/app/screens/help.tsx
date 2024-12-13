@@ -15,52 +15,72 @@ const Help: React.FC<HelpProps> = ({ navigation }) => {
       <View style={Styles.headerHelp}>
         <Text style={Styles.headerText}>Perguntas Frequentes</Text>
       </View>
+
       <List.Section>
         <Divider />
         <List.Accordion
-          title="Como faço para criar uma conta?"
+          title="Como criar uma conta?"
           titleStyle={{
-            fontSize: 17,
+            fontSize: 16,
+            color: '#05204b', // Cor personalizada
           }}
-          rippleColor="rgba(236, 100, 8, 0.3)"
+          rippleColor="hsla(29, 93.40%, 47.80%, 0.38)"
           left={props => <List.Icon {...props} icon="account-plus" />}
         >
-          <List.Item description="Para criar uma conta, clique em 'Registrar' na tela de login e preencha os campos necessários." />
+          <List.Item
+            title="Como criar uma conta?" // Título da pergunta
+            description="Para criar uma conta, clique em 'Registrar' na tela de login e preencha os campos necessários."
+          />
         </List.Accordion>
         <Divider />
         <List.Accordion
-          title="Esqueci minha senha. O que devo fazer?"
+          title="Esqueci minha senha. E agora?"
+          titleStyle={{
+            fontSize: 16,
+            color: '#05204b', // Cor personalizada
+          }}
+          rippleColor="rgba(236, 100, 8, 0.3)"
           left={props => <List.Icon {...props} icon="lock-reset" />}
-                    titleStyle={{
-                      fontSize: 16,
-                    }}
-                    rippleColor="rgba(236, 100, 8, 0.3)"
         >
-          <List.Item description="Clique em 'Esqueci minha senha' na tela de login e siga as instruções para redefinir sua senha." />
+          <List.Item
+            title="Esqueci minha senha. E agora?" // Título da pergunta
+            description="Clique em 'Esqueci minha senha' na tela de login e siga as instruções para redefinir sua senha."
+          />
         </List.Accordion>
         <Divider />
         <List.Accordion
-          title="Como vou avaliar minha experiência?"
+          title="Como avaliar minha experiência?"
+          titleStyle={{
+            fontSize: 16,
+            color: '#05204b', // Cor personalizada
+          }}
+          rippleColor="rgba(236, 100, 8, 0.3)"
           left={props => <List.Icon {...props} icon="star" />}
-                    titleStyle={{
-                      fontSize: 17,
-                    }}
-                    rippleColor="rgba(236, 100, 8, 0.3)"
         >
-          <List.Item description="Após usar o serviço, vá até a seção de avaliações e preencha o formulário de avaliação." />
+          <List.Item
+            title="Como avaliar minha experiência?" // Título da pergunta
+            description="Após usar o serviço, vá até a seção de avaliações e preencha o formulário de avaliação."
+          />
         </List.Accordion>
         <Divider />
         <List.Accordion
-          title="Como contatar o suporte?"
+          title="FALE CONOSCO"
+          titleStyle={{
+            fontSize: 16,
+            color: '#05204b', // Cor personalizada
+          }}
+          rippleColor="rgba(236, 100, 8, 0.3)"
           left={props => <List.Icon {...props} icon="email" />}
-                    titleStyle={{
-                      fontSize: 18,
-                    }}
-                    rippleColor="rgba(236, 100, 8, 0.3)"
         >
-          <List.Item description="Para suporte adicional, envie um email para suporte@parkingai.com." />
+          <List.Item
+            title="FALE CONOSCO" // Título da pergunta
+            description="Para suporte adicional, envie um email para suporte@parkingai.com."
+          />
         </List.Accordion>
       </List.Section>
+
+
+
     </ScrollView>
   );
 };
