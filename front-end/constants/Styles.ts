@@ -10,10 +10,10 @@ export const Styles = StyleSheet.create({
     backgroundColor: '#05204b',
   },
 
-    contentContainer: {
-      justifyContent: 'center',
-      padding: 16,
-    },
+  contentContainer: {
+    justifyContent: 'center',
+    padding: 16,
+  },
 
   logoContainer: {
     alignItems: 'center',
@@ -25,7 +25,7 @@ export const Styles = StyleSheet.create({
     width: '100%',
     padding: 16,
     backgroundColor: '#ffffff',
-    borderRadius: 8,
+    borderRadius: 15,
     shadowColor: 'black',
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },
@@ -112,7 +112,7 @@ export const Styles = StyleSheet.create({
     alignItems: "center",
     zIndex: 2
   },
-  
+
   travelBox: {
     backgroundColor: '#ffffff',
     borderRadius: 8,
@@ -123,7 +123,7 @@ export const Styles = StyleSheet.create({
     margin: 0,
     width: '100%'
   },
-  
+
   travelText: {
     borderRadius: 8,
     fontSize: 14,
@@ -333,18 +333,18 @@ export const Styles = StyleSheet.create({
     marginVertical: 4,
   },
 
-    contactButton: {
-      marginTop: 20,
-      padding: 15,
-      backgroundColor: '#ec6408',
-      borderRadius: 5,
-      alignItems: 'center',
-    },
-    contactButtonText: {
-      color: '#fff',
-      fontSize: 16,
-      fontWeight: 'bold',
-    },
+  contactButton: {
+    marginTop: 20,
+    padding: 15,
+    backgroundColor: '#ec6408',
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  contactButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
 
   checkboxLabel: {
     marginLeft: 8,
@@ -369,19 +369,79 @@ export const Styles = StyleSheet.create({
   },
 
   headerText: {
-      fontSize: 24,
-      fontWeight: 'bold',
-      color: Colors.blue,
-   },
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: Colors.blue,
+  },
   helpContainer: {
-   flex: 1,
-   backgroundColor: '#fff',
- },
-
-  headerHelp: {
-   alignItems: 'center',
-   marginBottom: 16,
+    flex: 1,
+    backgroundColor: '#fff',
   },
 
+  headerHelp: {
+    alignItems: 'center',
+    marginBottom: 16,
+  },
 
+  containerfav: {
+    flex: 1,
+    backgroundColor: '#05204b',
+    padding: 16,
+  },
+
+  headerfav: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 16,
+    color: '#fff', // Cor do texto do título
+
+  },
+  itemfav: {
+    backgroundColor: '#fff',
+    borderRadius: 15, // Canto arredondado
+    padding: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 4,
+    elevation: 7, //
+    marginTop: 15,
+    marginBottom: 15,
+    width: '100%',
+    height: 130,
+    flexDirection: 'column', // Flex direction changed to column
+    position: 'relative', // For absolute positioning of icons
+  },
+  titlefav: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  addressfav: {
+    fontSize: 16,
+    color: '#555',
+  },
+
+  iconsContainer: {
+    position: 'absolute', // Absolute positioning for bottom placement
+    bottom: 10, // Adjust the space from the bottom of the item
+    right: 10, // Adjust the space from the right side of the item
+    flexDirection: 'row',
+    justifyContent: 'space-between', // Distribute icons with space between
+    width: 90,
+    marginRight: 10,
+    marginBottom: 10
+  },
+
+  icon: {
+    marginLeft: 10, // Espaço entre os ícones
+  },
+
+  iconButton: {
+    marginLeft: 10, // Spacing between icons
+  },
 });
+
+
+
+
+

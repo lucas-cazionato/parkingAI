@@ -101,8 +101,8 @@ export default function Review({ navigation }: ReviewProps) {
   };
 
   return (
-  <ScrollView>
-    <View style={Styles.container}>
+    <ScrollView>
+      <View style={Styles.container}>
         <View style={Styles.inputContainer}>
           <Surface style={Styles.surface} elevation={4}>
             <Icon name="star" size={80} color="#ec6408" />
@@ -164,23 +164,23 @@ export default function Review({ navigation }: ReviewProps) {
                 >
                   <View style={Styles.radioButtonContainer}>
                     <RadioButton value="5" color="#ec6408" />
-                    <Text style={Styles.radioButtonLabel}>5</Text>
+                    <Text style={Styles.radioButtonLabel}>Muito boa 😁</Text>
                   </View>
                   <View style={Styles.radioButtonContainer}>
                     <RadioButton value="4" color="#ec6408" />
-                    <Text style={Styles.radioButtonLabel}>4</Text>
+                    <Text style={Styles.radioButtonLabel}>Boa 🙂</Text>
                   </View>
                   <View style={Styles.radioButtonContainer}>
                     <RadioButton value="3" color="#ec6408" />
-                    <Text style={Styles.radioButtonLabel}>3</Text>
+                    <Text style={Styles.radioButtonLabel}>Regular 😐</Text>
                   </View>
                   <View style={Styles.radioButtonContainer}>
                     <RadioButton value="2" color="#ec6408" />
-                    <Text style={Styles.radioButtonLabel}>2</Text>
+                    <Text style={Styles.radioButtonLabel}>Ruim 🙁</Text>
                   </View>
                   <View style={Styles.radioButtonContainer}>
                     <RadioButton value="1" color="#ec6408" />
-                    <Text style={Styles.radioButtonLabel}>1</Text>
+                    <Text style={Styles.radioButtonLabel}>Muito ruim 😣</Text>
                   </View>
                 </RadioButton.Group>
                 <HelperText type="error" visible={!!errors.notaGeral} style={Styles.helperText}>
@@ -199,7 +199,7 @@ export default function Review({ navigation }: ReviewProps) {
             render={({ field: { onChange, onBlur, value } }) => (
               <>
                 <TextInput
-                  label="Comentários adicionais"
+                  label="Comentário (opcional)"
                   value={value || ''}
                   onBlur={onBlur}
                   onChangeText={(comentario) => {
@@ -227,7 +227,7 @@ export default function Review({ navigation }: ReviewProps) {
           Enviar Avaliação
         </Button>
 
-    </View>
-   </ScrollView>
+      </View>
+    </ScrollView>
   );
 }
