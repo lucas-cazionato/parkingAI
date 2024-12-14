@@ -299,6 +299,17 @@ export default function MapHome() {
     setFlagNavegar(false); // Limpa flag de navegar
     setSelectedSpots([]); // Limpa Vagas
     goToMyLocation(); // Ajusta visualização do mapa
+    if (userLocation && !flagSimular) {
+      dispatch(
+        setOrigin({
+          location: {
+            lat: userLocation?.coords?.latitude,
+            lng: userLocation?.coords?.longitude,
+          },
+          description: "Localização Atual",
+        })
+      );
+    }
   }, [flagSimular]);
 
   // USE EFFECTS ----------------------------------------
@@ -369,6 +380,11 @@ export default function MapHome() {
     setSelectedSpots([]); // Limpa Vagas
     goToMyLocation(); // Ajusta visualização do mapa
     navigation.navigate("Avaliação");
+  };
+  
+  const voltarRota = () => {
+    setFlagRota(false);
+    setSelectedSpots([]); // Limpa Vagas
   };
 
   const simular = () => {
@@ -537,7 +553,7 @@ export default function MapHome() {
             style={[Styles.defaultButton]}
             textColor="#ffffff"
           >
-            Fazer uma simulação
+            Mudar para simulação
           </Button>
         </View>
       )}
@@ -545,12 +561,12 @@ export default function MapHome() {
       {!flagNavegar && flagSimular && (
         <View style={Styles.simulateButton}>
           <Button mode="elevated" onPress={navegar} style={[Styles.button]} textColor="#ffffff">
-            Fazer uma navegação
+            Mudar para navegação
           </Button>
         </View>
       )}
 
-      {!flagNavegar && (
+      {!flagRota && !flagNavegar && (
         <View style={Styles.overlay}>
           {/* ORIGEM */}
           {flagSimular && (
@@ -604,6 +620,7 @@ export default function MapHome() {
           )}
 
           {/* DESTINO */}
+          {!flagRota && (
           <View style={{ width: "80%" }}>
             <GooglePlacesAutocomplete
               ref={destinationRef}
@@ -651,6 +668,45 @@ export default function MapHome() {
               <MaterialIcons name="close" size={20} color="gray" />
             </TouchableOpacity>
           </View>
+          )}
+
+{flagSimular && (
+            <View style={{ width: "80%" }}>
+              <GooglePlacesAutocomplete
+                ref={originRef}
+                styles={{
+                  textInput: {
+                    height: 38,
+                    color: "#5d5d5d",
+                    fontSize: 16,
+                  },
+                  predefinedPlacesDescription: {
+                    color: "#1faadb",
+                  },
+                }}
+                placeholder="18/12/2024 - 19h"
+                nearbyPlacesAPI="GooglePlacesSearch"
+                debounce={400}
+                query={{
+                  key: GOOGLE_MAPS_API_KEY,
+                  language: "pt-BR",
+                }}
+                fetchDetails={true}
+                minLength={2}
+                enablePoweredByContainer={false}
+                predefinedPlaces={[homePlace, workPlace]}
+                onPress={(data, details = null) => {
+                  dispatch(
+                    setOrigin({
+                      location: details?.geometry?.location,
+                      description: data?.description,
+                    })
+                  );
+                }}
+              />
+            </View>
+          )}
+
           
         </View>
       )}
@@ -670,7 +726,8 @@ export default function MapHome() {
 
       {destination && !flagNavegar && (
         <View style={Styles.buttonContainer}>
-          <Button
+          {!flagRota && (
+            <Button
             mode="elevated"
             onPress={verRota}
             style={[Styles.defaultButton]}
@@ -679,7 +736,19 @@ export default function MapHome() {
           >
             Ver Rota
           </Button>
-          {!flagSimular && ( // esconde botão de navegação quando é simulação
+          )}
+          {flagRota && (
+            <Button
+            mode="elevated"
+            onPress={voltarRota}
+            style={[Styles.defaultButton]}
+            textColor="#ffffff"
+            disabled={selectedSpots.length < 2}
+          >
+            Editar Endereço
+          </Button>
+          )}
+          {!flagSimular && flagRota && ( // esconde botão de navegação quando é simulação
             <Button
               mode="elevated"
               onPress={startNavigation}
@@ -701,7 +770,7 @@ export default function MapHome() {
               style={[Styles.cancelButton]}
               textColor="#ffffff"
             >
-              Voltar
+              Sair
             </Button>
           </TouchableOpacity>
 

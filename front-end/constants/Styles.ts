@@ -108,19 +108,20 @@ export const Styles = StyleSheet.create({
     position: "absolute",
     left: 0,
     right: 0,
-    bottom: "15%",
-    padding: 5,
+    bottom: 0,
     alignItems: "center",
-    zIndex: 2,
+    zIndex: 2
   },
   
   travelBox: {
     backgroundColor: '#ffffff',
     borderRadius: 8,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 10,
-    margin: 10,
+    margin: 0,
+    width: '100%'
   },
   
   travelText: {
