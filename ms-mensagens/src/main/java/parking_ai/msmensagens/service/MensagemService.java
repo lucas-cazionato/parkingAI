@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import parking_ai.msmensagens.dto.Location;
 import parking_ai.msmensagens.dto.QuestionarioDTO;
 import parking_ai.msmensagens.enums.AchouVagaEnum;
 import parking_ai.msmensagens.exception.AvaliacaoInvalidaException;
@@ -60,6 +61,8 @@ public class MensagemService {
             q.setAchouVaga(quest.getAchouVaga());
             q.setNotaGeral(quest.getNotaGeral());
             q.setComentario(quest.getComentario());
+            q.setLatitude(quest.getLatitude());
+            q.setLongitude(quest.getLongitude());
             if ((q.getAchouVaga()!=AchouVagaEnum.SIM && q.getAchouVaga()!=AchouVagaEnum.NÃO)
             || (q.getNotaGeral()!=null && (!(q.getNotaGeral() instanceof Integer) || q.getNotaGeral()<1 || q.getNotaGeral()>5))) {
                 throw new AvaliacaoInvalidaException("Questionario com dados e/ou formato invalidos.");
@@ -79,6 +82,15 @@ public class MensagemService {
         quest.setNotaGeral(questDTO.getNotaGeral());
         quest.setComentario(questDTO.getComentario());
         quest.setDataRegistro(questDTO.getDataRegistro());
+
+        // Verifica se localizacao é null antes de acessar seus atributos
+        if (questDTO.getLocalizacao() != null) {
+            quest.setLatitude(questDTO.getLocalizacao().getLat());
+            quest.setLongitude(questDTO.getLocalizacao().getLng());
+        } else {
+            quest.setLatitude(-99999); 
+            quest.setLongitude(-99999);
+        }
         return quest;
     }
 
@@ -91,6 +103,7 @@ public class MensagemService {
         questDTO.setNotaGeral(quest.getNotaGeral());
         questDTO.setComentario(quest.getComentario());
         questDTO.setDataRegistro(quest.getDataRegistro());
+        questDTO.setLocalizacao(new Location(quest.getLatitude(), quest.getLongitude()));
         return questDTO;
     }
 

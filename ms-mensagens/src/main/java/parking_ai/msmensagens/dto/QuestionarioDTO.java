@@ -30,4 +30,6 @@ public class QuestionarioDTO implements Serializable {
     private String comentario;
 
     private LocalDateTime dataRegistro;
+
+    private Location localizacao;
 }

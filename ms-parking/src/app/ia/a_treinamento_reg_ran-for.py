@@ -2,9 +2,9 @@
 # Link 1 (Definicao): https://scikit-learn.org/stable/modules/ensemble.html
 # Link 2 (Implementacao): https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html#sklearn.ensemble.RandomForestRegressor
 # Métricas:
-# Tempo de Treinamento: 62.936347007751465 segundos
-# Erro Quadrático Médio (MSE): 0.015226504547598827
-# Coeficiente de Determinação (R²): 0.9384212991258511
+# Tempo de Treinamento: 131.99940156936646 segundos
+# Erro Quadrático Médio (MSE): 0.005774286928828721
+# Coeficiente de Determinação (R²): 0.9353312202359754
 import pandas as pd  # Importação da biblioteca pandas para manipulação de dados
 from sklearn.model_selection import train_test_split  # Divisão do conjunto de dados em treinamento e teste
 from sklearn.ensemble import RandomForestRegressor  # Importação do modelo de Random Forest

@@ -55,4 +55,10 @@ public class Questionario implements Serializable {
     @LastModifiedDate
     @Column (name = "data_registro")
     private LocalDateTime dataRegistro;
+
+    @Column(name = "latitude")
+    private double latitude;
+
+    @Column(name = "longitude")
+    private double longitude;
 }

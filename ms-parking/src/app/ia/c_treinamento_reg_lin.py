@@ -1,9 +1,10 @@
 # Modelo 3 (Desempenho) - LinearRegression, modelo de regressão linear
 # Link 1 (Definicao): https://scikit-learn.org/stable/modules/linear_model.html
 # Link 2 (Implementacao): https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html#sklearn.linear_model.LinearRegression
-# Tempo de Treinamento: 0.20866012573242188 segundos
-# Erro Quadrático Médio (MSE): 0.16943738552208107
-# Coeficiente de Determinação (R²): 0.3147649844817839
+# Métricas:
+# Tempo de Treinamento: 0.15802788734436035 segundos
+# Erro Quadrático Médio (MSE): 0.05162517238265091
+# Coeficiente de Determinação (R²): 0.42182698154027165
 import pandas as pd  # Importação da biblioteca pandas para manipulação de dados
 from sklearn.model_selection import train_test_split  # Divisão do conjunto de dados em treinamento e teste
 from sklearn.linear_model import LinearRegression  # Importação do modelo de regressão linear
