@@ -2,9 +2,9 @@
 # Link 1 (Definicao): https://scikit-learn.org/stable/modules/tree.html
 # Link 2 (Implementacao): https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeRegressor.html
 # Métricas:
-# Tempo de Treinamento: 0.743375301361084 segundos
-# Erro Quadrático Médio (MSE): 0.019350919142585805
-# Coeficiente de Determinação (R²): 0.9217414306877776
+# Tempo de Treinamento: 1.2152631282806396 segundos
+# Erro Quadrático Médio (MSE): 0.007319417761720418
+# Coeficiente de Determinação (R²): 0.9180266202445881
 import pandas as pd # Importacao da biblioteca pandas para manipulação de dados
 from sklearn.model_selection import train_test_split # Importacao da biblioteca de divisao do conjunto de dados em treinamento e teste
 from sklearn.tree import DecisionTreeRegressor # Importacao do modelo DecisionTreeRegressor
