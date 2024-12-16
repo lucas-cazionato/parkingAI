@@ -92,7 +92,18 @@ export default function MapHome() {
           longitude: userLocation.coords.longitude,
         },
         pitch: 50,
-        zoom: 18,
+        zoom: 20,
+      });
+    }
+  };
+
+  // Zoom no marcador
+  const zoomToMarker = (coordinate: { latitude: number; longitude: number }) => {
+    if (mapRef.current) {
+      mapRef.current.animateCamera({
+        center: coordinate,
+        zoom: 20,  // Define o nível de zoom desejado
+        pitch: 0,
       });
     }
   };
@@ -290,6 +301,35 @@ export default function MapHome() {
     }
   }, [flagNavegar]);
 
+  // Zoom na rota
+  useEffect(() => {
+    if (!flagNavegar && origin && destination && parkingSpots.length > 0 && mapRef.current) {
+      const coordinates = parkingSpots.flatMap((spot) =>
+        spot.way_geojson.coordinates[0].map(([lng, lat]) => ({
+          latitude: lat,
+          longitude: lng,
+        }))
+      );
+      // Inclui o destino nas coordenadas
+      coordinates.push({
+        latitude: destination.location.lat,
+        longitude: destination.location.lng,
+      });
+  
+      // Inclui a origem nas coordenadas
+      coordinates.push({
+        latitude: origin.location.lat,
+        longitude: origin.location.lng,
+      });
+  
+      mapRef.current.fitToCoordinates(coordinates, {
+        edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
+        animated: true,
+      });
+    }
+  }, [flagRota, flagNavegar]);
+
+  // Limpeza dos dados entre simulação e navegação
   useEffect(() => {
     setParkingSpots([]); // Limpa os polígonos
     dispatch(setOrigin(null)); // Limpa o marcador
@@ -317,7 +357,7 @@ export default function MapHome() {
   // BUTTON ACTION ----------------------------------------
   // Visualizar rota
   const verRota = useCallback(() => {
-    if (!origin || !destination || selectedSpots.length < 2) {
+    if (!origin || !destination || selectedSpots.length < 1) {
       console.error("Dados insuficientes para calcular a rota.");
       return;
     }
@@ -334,36 +374,10 @@ export default function MapHome() {
         }))
       )
     );
-
-    if (origin && destination && parkingSpots.length > 0 && mapRef.current) {
-      const coordinates = parkingSpots.flatMap((spot) =>
-        spot.way_geojson.coordinates[0].map(([lng, lat]) => ({
-          latitude: lat,
-          longitude: lng,
-        }))
-      );
-      // Inclui o destino nas coordenadas
-      coordinates.push({
-        latitude: destination.location.lat,
-        longitude: destination.location.lng,
-      });
-
-      // Inclui a origem nas coordenadas
-      coordinates.push({
-        latitude: origin.location.lat,
-        longitude: origin.location.lng,
-      });
-
-      mapRef.current.fitToCoordinates(coordinates, {
-        edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
-        animated: true,
-      });
-    }
   }, [origin, destination, selectedSpots, dispatch]);
 
   const returnRoute = () => {
     setFlagNavegar(false);
-    fitToRoute();
   };
 
   const startNavigation = useCallback(() => {
@@ -382,9 +396,10 @@ export default function MapHome() {
     navigation.navigate("Avaliação");
   };
   
-  const voltarRota = () => {
+  const voltarVagas = () => {
     setFlagRota(false);
     setSelectedSpots([]); // Limpa Vagas
+    fitToRoute();
   };
 
   const simular = () => {
@@ -458,6 +473,7 @@ export default function MapHome() {
                 coordinate={center}
                 title={`Vagas totais: ${spot.capacity}`}
                 icon={markerImg}
+                onPress={() => zoomToMarker(center)}
               ></Marker>
             </React.Fragment>
           );
@@ -591,7 +607,7 @@ export default function MapHome() {
                   language: "pt-BR",
                 }}
                 fetchDetails={true}
-                minLength={2}
+                minLength={3}
                 enablePoweredByContainer={false}
                 predefinedPlaces={[homePlace, workPlace]}
                 onPress={(data, details = null) => {
@@ -642,7 +658,7 @@ export default function MapHome() {
                 language: "pt-BR",
               }}
               fetchDetails={true}
-              minLength={2}
+              minLength={3}
               enablePoweredByContainer={false}
               predefinedPlaces={[homePlace, workPlace]}
               onPress={(data, details = null) => {
@@ -652,6 +668,7 @@ export default function MapHome() {
                     description: data?.description,
                   })
                 );
+                setSelectedSpots([]); // Limpa Vagas
               }}
             />
             <TouchableOpacity
@@ -662,8 +679,9 @@ export default function MapHome() {
                 destinationRef.current?.clear(); // Limpa destinationRef
                 setFlagRota(false); // Limpa flag de Rota
                 setSelectedSpots([]); // Limpa Vagas
+                destinationRef.current?.setAddressText("");
               }}
-              disabled={!destination}
+              disabled={!destinationRef}
             >
               <MaterialIcons name="close" size={20} color="gray" />
             </TouchableOpacity>
@@ -692,9 +710,10 @@ export default function MapHome() {
                   language: "pt-BR",
                 }}
                 fetchDetails={true}
-                minLength={2}
+                minLength={3}
                 enablePoweredByContainer={false}
                 predefinedPlaces={[homePlace, workPlace]}
+                
                 onPress={(data, details = null) => {
                   dispatch(
                     setOrigin({
@@ -724,6 +743,16 @@ export default function MapHome() {
         </View>
       )}
 
+      {!flagRota && destination && selectedSpots.length<1 && (
+        <View style={Styles.travelContainer}>
+          <View style={Styles.travelBox}>
+            <Text style={Styles.travelText}>
+              Selecione ao menos 1 local com vagas marcadas
+            </Text>
+          </View>
+        </View>
+      )}
+
       {destination && !flagNavegar && (
         <View style={Styles.buttonContainer}>
           {!flagRota && (
@@ -732,7 +761,7 @@ export default function MapHome() {
             onPress={verRota}
             style={[Styles.defaultButton]}
             textColor="#ffffff"
-            disabled={selectedSpots.length < 2}
+            disabled={selectedSpots.length < 1}
           >
             Ver Rota
           </Button>
@@ -740,12 +769,11 @@ export default function MapHome() {
           {flagRota && (
             <Button
             mode="elevated"
-            onPress={voltarRota}
+            onPress={voltarVagas}
             style={[Styles.defaultButton]}
             textColor="#ffffff"
-            disabled={selectedSpots.length < 2}
           >
-            Editar Endereço
+            Alterar Endereço
           </Button>
           )}
           {!flagSimular && flagRota && ( // esconde botão de navegação quando é simulação

@@ -114,8 +114,7 @@ export const Styles = StyleSheet.create({
   },
 
   travelBox: {
-    backgroundColor: '#ffffff',
-    borderRadius: 8,
+    backgroundColor: '#05204b',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -196,7 +195,7 @@ export const Styles = StyleSheet.create({
 
   overlay: {
     position: "absolute",
-    top: "10%",
+    top: 65,
     left: 0,
     right: 0,
     alignItems: "center",
