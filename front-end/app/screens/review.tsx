@@ -77,7 +77,7 @@ export default function Review({ navigation }: ReviewProps) {
       if (response.status === 200 || response.status === 201) {
         Alert.alert('Sucesso', 'Avaliação enviada com sucesso!');
         console.log('Avaliação enviada com sucesso:', data);
-        navigation.navigate('Map');
+        navigation.navigate('Mapa');
 
       } else {
         console.error('Erro :', response.statusText);
@@ -192,14 +192,14 @@ export default function Review({ navigation }: ReviewProps) {
         </View>
 
         <View style={Styles.inputContainer}>
-          <Text style={Styles.question}>Como você avalia sua experiência com o ParkingAI?</Text>
+          <Text style={Styles.question}>Comentários</Text>
           <Controller
             control={control}
             name="comentario"
             render={({ field: { onChange, onBlur, value } }) => (
               <>
                 <TextInput
-                  label="Comentário (opcional)"
+                  label="(Opcional)"
                   value={value || ''}
                   onBlur={onBlur}
                   onChangeText={(comentario) => {
