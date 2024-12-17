@@ -267,6 +267,7 @@ export default function MapHome() {
     }
   }, [userLocation, heading]);
 
+  // Zoom na rota de simulação
   useEffect(() => {
     if (origin && flagSimular) {
       mapRef.current?.fitToSuppliedMarkers;
@@ -284,6 +285,19 @@ export default function MapHome() {
   useEffect(() => {
     fitToRoute();
   }, [parkingSpots]);
+
+  // Alterar vagas muda a rota e se remover todos os locais de estacionamento cancela a rota 
+  useEffect(() => {
+    if (selectedSpots.length == 0) {
+      setFlagRota(false);
+      fitToRoute();
+    }
+    else {
+      if (flagRota) {
+        verRota();
+      }
+    }
+  }, [selectedSpots]);  
 
   // Ligar/Desligar dados da viagem
   useEffect(() => {
@@ -351,7 +365,6 @@ export default function MapHome() {
       );
     }
   }, [flagSimular]);
-
   // USE EFFECTS ----------------------------------------
 
   // BUTTON ACTION ----------------------------------------
@@ -443,7 +456,7 @@ export default function MapHome() {
           const fillColor = interpolateColor(
             spot.probability_occupancy,
             [0, 0.5, 1],
-            ["#ff0000", "#ffff00", "#00ff00"]
+            ["#00ff00", "#ffff00", "#ff0000"]
           );
 
           // Calcula o centro do polígono
