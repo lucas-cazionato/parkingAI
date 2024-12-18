@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Set the OSM file to the first argument, or default to "data.osm" if no argument is provided
-OSM_FILE=${1:-map.osm}
+OSM_FILE=${1:-best_map.osm}
 
 
 docker compose run -v $(pwd)/map-data:/data osm2pgsql \
