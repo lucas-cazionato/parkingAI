@@ -7,7 +7,7 @@ import {
   GooglePlacesAutocomplete,
   GooglePlacesAutocompleteRef,
 } from "react-native-google-places-autocomplete";
-import { GOOGLE_MAPS_API_KEY, URL_MSPARKING } from "@/config";
+import { GOOGLE_MAPS_API_KEY } from "@/config";
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectDestination,
@@ -22,10 +22,11 @@ import {
 import { Button } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import axios from "axios";
 import { interpolateColor } from "react-native-reanimated";
 import MapViewDirections from "react-native-maps-directions";
 import { Text } from "react-native";
+import { fetchParkingSpots, fetchParkingSpotsSimulation } from "@/apiService";
+import SimulationTimePicker from "@/components/SimulationTimePicker";
 
 type RootStackParamList = {
   mapHome: undefined;
@@ -64,10 +65,7 @@ export default function MapHome() {
   const [userLocation, setUserLocation] =
     useState<Location.LocationObject | null>(null);
   const markerImg = require("../../assets/images/vaga.png");
-  const [date, setDate] = useState(new Date());
-  const [show, setShow] = useState(false);
-  const [mode, setMode] = useState('date');
-
+  const [simulationTime, setSimulationTime] = useState<string | null>(null);
 
   // Centraliza na minha localização atual
   const goToMyLocation = async () => {
@@ -98,11 +96,14 @@ export default function MapHome() {
   };
 
   // Zoom no marcador
-  const zoomToMarker = (coordinate: { latitude: number; longitude: number }) => {
+  const zoomToMarker = (coordinate: {
+    latitude: number;
+    longitude: number;
+  }) => {
     if (mapRef.current) {
       mapRef.current.animateCamera({
         center: coordinate,
-        zoom: 20,  // Define o nível de zoom desejado
+        zoom: 20, // Define o nível de zoom desejado
         pitch: 0,
       });
     }
@@ -191,19 +192,26 @@ export default function MapHome() {
     setParkingSpots(spots);
   };
 
-  // Chamada API ms_parking com retorno das vagas
-  const fetchParkingSpots = async (destination: {
-    location: { lng: number; lat: number };
-  }) => {
+  // Invoca chamado da API ms_parking e define vagas
+  const fetchAndSetParkingSpotsSimulation = async () => {
+    if (!destination || !destination.location) {
+      console.error("Destino não definido ou inválido.");
+      return;
+    }
+
+    const simulation = {
+      location: {
+        lng: destination.location.lng,
+        lat: destination.location.lat,
+      },
+      simulation_time: simulationTime, // Usando a data formatada
+    };
+
     try {
-      const response = await axios.post<ParkingSpot[]>(
-        URL_MSPARKING + "/parking",
-        destination
-      );
-      return response.data;
+      const spots = await fetchParkingSpotsSimulation(simulation);
+      setParkingSpots(spots);
     } catch (error) {
-      console.error("Erro ao buscar os dados de estacionamento:", error);
-      return [];
+      console.error("Erro ao buscar vagas de simulação:", error);
     }
   };
 
@@ -229,6 +237,11 @@ export default function MapHome() {
           ? prev.filter((s) => s.osm_id !== spot.osm_id) // Remove se já estiver selecionado
           : [...prev, spot] // Adiciona se não estiver
     );
+  };
+
+  // Cuidar da data e hora selecionadas
+  const handleDateTimeChange = (formattedDate: string) => {
+    setSimulationTime(formattedDate);
   };
 
   // CONSTS ----------------------------------------
@@ -277,27 +290,30 @@ export default function MapHome() {
   // Buscar vagas quando alterar destino
   useEffect(() => {
     if (destination) {
-      fetchAndSetParkingSpots();
+      if (flagSimular && simulationTime) {
+        fetchAndSetParkingSpotsSimulation();
+      } else {
+        fetchAndSetParkingSpots();
+      }
     }
-  }, [destination]);
+  }, [destination, simulationTime]);
 
   // Zoom nas vagas e destino sempre que mudar parkingSpots
   useEffect(() => {
     fitToRoute();
   }, [parkingSpots]);
 
-  // Alterar vagas muda a rota e se remover todos os locais de estacionamento cancela a rota 
+  // Alterar vagas muda a rota e se remover todos os locais de estacionamento cancela a rota
   useEffect(() => {
     if (selectedSpots.length == 0) {
       setFlagRota(false);
       fitToRoute();
-    }
-    else {
+    } else {
       if (flagRota) {
         verRota();
       }
     }
-  }, [selectedSpots]);  
+  }, [selectedSpots]);
 
   // Ligar/Desligar dados da viagem
   useEffect(() => {
@@ -317,7 +333,13 @@ export default function MapHome() {
 
   // Zoom na rota
   useEffect(() => {
-    if (!flagNavegar && origin && destination && parkingSpots.length > 0 && mapRef.current) {
+    if (
+      !flagNavegar &&
+      origin &&
+      destination &&
+      parkingSpots.length > 0 &&
+      mapRef.current
+    ) {
       const coordinates = parkingSpots.flatMap((spot) =>
         spot.way_geojson.coordinates[0].map(([lng, lat]) => ({
           latitude: lat,
@@ -329,13 +351,13 @@ export default function MapHome() {
         latitude: destination.location.lat,
         longitude: destination.location.lng,
       });
-  
+
       // Inclui a origem nas coordenadas
       coordinates.push({
         latitude: origin.location.lat,
         longitude: origin.location.lng,
       });
-  
+
       mapRef.current.fitToCoordinates(coordinates, {
         edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
         animated: true,
@@ -352,6 +374,7 @@ export default function MapHome() {
     setFlagRota(false); // Limpa flag de Rota
     setFlagNavegar(false); // Limpa flag de navegar
     setSelectedSpots([]); // Limpa Vagas
+    setSimulationTime(null); // Limpa horário para simulação
     goToMyLocation(); // Ajusta visualização do mapa
     if (userLocation && !flagSimular) {
       dispatch(
@@ -408,7 +431,7 @@ export default function MapHome() {
     goToMyLocation(); // Ajusta visualização do mapa
     navigation.navigate("Avaliação");
   };
-  
+
   const voltarVagas = () => {
     setFlagRota(false);
     setSelectedSpots([]); // Limpa Vagas
@@ -589,7 +612,12 @@ export default function MapHome() {
 
       {!flagNavegar && flagSimular && (
         <View style={Styles.simulateButton}>
-          <Button mode="elevated" onPress={navegar} style={[Styles.button]} textColor="#ffffff">
+          <Button
+            mode="elevated"
+            onPress={navegar}
+            style={[Styles.button]}
+            textColor="#ffffff"
+          >
             Mudar para navegação
           </Button>
         </View>
@@ -609,7 +637,8 @@ export default function MapHome() {
                     fontSize: 16,
                   },
                   predefinedPlacesDescription: {
-                    color: "#1faadb",
+                    color: "bold",
+                    fontSize: 16,
                   },
                 }}
                 placeholder="Origem:"
@@ -650,61 +679,9 @@ export default function MapHome() {
 
           {/* DESTINO */}
           {!flagRota && (
-          <View style={{ width: "80%" }}>
-            <GooglePlacesAutocomplete
-              ref={destinationRef}
-              styles={{
-                textInput: {
-                  height: 38,
-                  color: "#5d5d5d",
-                  fontSize: 16,
-                },
-                predefinedPlacesDescription: {
-                  color: "#1faadb",
-                },
-              }}
-              placeholder="Destino:"
-              nearbyPlacesAPI="GooglePlacesSearch"
-              debounce={400}
-              query={{
-                key: GOOGLE_MAPS_API_KEY,
-                language: "pt-BR",
-              }}
-              fetchDetails={true}
-              minLength={3}
-              enablePoweredByContainer={false}
-              predefinedPlaces={[homePlace, workPlace]}
-              onPress={(data, details = null) => {
-                dispatch(
-                  setDestination({
-                    location: details?.geometry?.location,
-                    description: data?.description,
-                  })
-                );
-                setSelectedSpots([]); // Limpa Vagas
-              }}
-            />
-            <TouchableOpacity
-              style={Styles.clearButton}
-              onPress={() => {
-                setParkingSpots([]); // Limpa os polígonos
-                dispatch(setDestination(null)); // Limpa o marcador
-                destinationRef.current?.clear(); // Limpa destinationRef
-                setFlagRota(false); // Limpa flag de Rota
-                setSelectedSpots([]); // Limpa Vagas
-                destinationRef.current?.setAddressText("");
-              }}
-              disabled={!destinationRef}
-            >
-              <MaterialIcons name="close" size={20} color="gray" />
-            </TouchableOpacity>
-          </View>
-          )}
-
-{flagSimular && (
             <View style={{ width: "80%" }}>
               <GooglePlacesAutocomplete
-                ref={originRef}
+                ref={destinationRef}
                 styles={{
                   textInput: {
                     height: 38,
@@ -715,7 +692,7 @@ export default function MapHome() {
                     color: "#1faadb",
                   },
                 }}
-                placeholder="18/12/2024 - 19h"
+                placeholder="Destino:"
                 nearbyPlacesAPI="GooglePlacesSearch"
                 debounce={400}
                 query={{
@@ -726,23 +703,41 @@ export default function MapHome() {
                 minLength={3}
                 enablePoweredByContainer={false}
                 predefinedPlaces={[homePlace, workPlace]}
-                
                 onPress={(data, details = null) => {
                   dispatch(
-                    setOrigin({
+                    setDestination({
                       location: details?.geometry?.location,
                       description: data?.description,
                     })
                   );
+                  setSelectedSpots([]); // Limpa Vagas
                 }}
               />
+              <TouchableOpacity
+                style={Styles.clearButton}
+                onPress={() => {
+                  setParkingSpots([]); // Limpa os polígonos
+                  dispatch(setDestination(null)); // Limpa o marcador
+                  destinationRef.current?.clear(); // Limpa destinationRef
+                  setFlagRota(false); // Limpa flag de Rota
+                  setSelectedSpots([]); // Limpa Vagas
+                  destinationRef.current?.setAddressText("");
+                }}
+                disabled={!destinationRef}
+              >
+                <MaterialIcons name="close" size={20} color="gray" />
+              </TouchableOpacity>
             </View>
           )}
 
-          
+          {flagSimular && (
+            <View style={{ width: "80%" }}>
+              <SimulationTimePicker onDateTimeChange={handleDateTimeChange} />
+            </View>
+          )}
         </View>
       )}
-      
+
       {travelInformation && (
         <View style={Styles.travelContainer}>
           <View style={Styles.travelBox}>
@@ -756,7 +751,7 @@ export default function MapHome() {
         </View>
       )}
 
-      {!flagRota && destination && selectedSpots.length<1 && (
+      {!flagRota && destination && selectedSpots.length < 1 && (
         <View style={Styles.travelContainer}>
           <View style={Styles.travelBox}>
             <Text style={Styles.travelText}>
@@ -770,36 +765,37 @@ export default function MapHome() {
         <View style={Styles.buttonContainer}>
           {!flagRota && (
             <Button
-            mode="elevated"
-            onPress={verRota}
-            style={[Styles.defaultButton]}
-            textColor="#ffffff"
-            disabled={selectedSpots.length < 1}
-          >
-            Ver Rota
-          </Button>
+              mode="elevated"
+              onPress={verRota}
+              style={[Styles.defaultButton]}
+              textColor="#ffffff"
+              disabled={selectedSpots.length < 1}
+            >
+              Ver Rota
+            </Button>
           )}
           {flagRota && (
             <Button
-            mode="elevated"
-            onPress={voltarVagas}
-            style={[Styles.defaultButton]}
-            textColor="#ffffff"
-          >
-            Alterar Endereço
-          </Button>
-          )}
-          {!flagSimular && flagRota && ( // esconde botão de navegação quando é simulação
-            <Button
               mode="elevated"
-              onPress={startNavigation}
-              style={[Styles.button]}
+              onPress={voltarVagas}
+              style={[Styles.defaultButton]}
               textColor="#ffffff"
-              disabled={!flagRota}
             >
-              Navegar
+              Alterar Endereço
             </Button>
           )}
+          {!flagSimular &&
+            flagRota && ( // esconde botão de navegação quando é simulação
+              <Button
+                mode="elevated"
+                onPress={startNavigation}
+                style={[Styles.button]}
+                textColor="#ffffff"
+                disabled={!flagRota}
+              >
+                Navegar
+              </Button>
+            )}
         </View>
       )}
       {flagNavegar && (

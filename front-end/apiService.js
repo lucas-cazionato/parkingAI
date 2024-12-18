@@ -168,4 +168,26 @@ export const sendReview = async (reviewToSend) => {
         throw error.response?.data?.message || 'Erro ao enviar avaliação';
     }
 };
+
+// Chamada API ms_parking com retorno das vagas
+export const fetchParkingSpots = async (destination) => {
+    try {
+        const response = await api.post('/parking', destination);
+        return response.data;
+    } catch (error) {
+        console.error("Erro ao buscar os dados de estacionamento:", error);
+        throw error.response?.data?.message || "Erro ao buscar vagas de estacionamento";
+    }
+};
+
+// Chamada API ms_parking com retorno das vagas de simulação
+export const fetchParkingSpotsSimulation = async (simulation) => {
+    try {
+        const response = await api.post('/parking', simulation);
+        return response.data;
+    } catch (error) {
+        console.error("Erro ao buscar os dados de estacionamento:", error);
+        throw error.response?.data?.message || "Erro ao buscar vagas de estacionamento";
+    }
+};
 export default api;
