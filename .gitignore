@@ -3,3 +3,4 @@ front-end/config.ts
 .vscode/
 .env
 .mongo
+*.DS_STORE
