@@ -1,6 +1,6 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { URL_APIGATEWAY } from './config';
+import { URL_APIGATEWAY, URL_MSPARKING } from './config';
 
 
 // Instância do axios para configurar a base URL
@@ -10,6 +10,15 @@ const api = axios.create({
         'Content-Type': 'application/json',
     },
 });
+
+// Instância do axios para configurar a base URL do ms-parking
+const api_parking = axios.create({
+    baseURL: URL_MSPARKING,
+    headers: {
+        'Content-Type': 'application/json',
+    },
+});
+
 
 // (req) Requisições autenticadas
 api.interceptors.request.use(
@@ -30,8 +39,16 @@ export async function login(login, senha) {
     try {
         const response = await api.post('/auth/login', { login, senha });
         if (response.data.auth) {
+            console.log('USUÁRIO LOGADO COM SUCESSO!')
             const token = response.data.token;
             const userData = response.data.data;
+            console.log('Dados do usuario logado:');
+            console.log('   Nome: ', userData.nome);
+            console.log('   CPF: ', userData.cpf);
+            console.log('   Data de Nascimento: ', userData.dataNascimento);
+            console.log('   E-mail: ', userData.login);
+            console.log('   Telefone: ', userData.telefone);
+            console.log('   Token: ', token);
 
             if (token) {
                 await AsyncStorage.setItem('token', token);
@@ -54,17 +71,17 @@ export async function logout(navigation) {
 
         //Obter o valor do token
         const token1 = await AsyncStorage.getItem('token');
-        console.log('logout_token1', token1);
+        console.log('logout - Token antes do logout: ', token1);
 
         // Fazer logout e remover o token do AsyncStorage
         await api.post('/logout');
         await AsyncStorage.removeItem('token');
         const token2 = await AsyncStorage.getItem('token');
-        console.log('logout_token2', token2);
+        console.log('logout - Token depois do logout: ', token2);
 
         // Redirecionar para a página de login
         navigation.navigate('Auth', { screen: 'Login' });
-        console.log('logout_Usuário deslogado com sucesso');
+        console.log('logout - USUÁRIO DESLOGADO COM SUCESSO!');
 
     } catch (error) {
         console.error('Erro ao realizar logout:', error);
@@ -147,7 +164,7 @@ export async function deleteUserAccount(cpf) {
 export const newPassword = async (login) => {
     try {
 
-        const response = await api.post('/auth/recuperar', login );
+        const response = await api.post('/auth/recuperar', login);
 
         return response;
 
@@ -172,7 +189,7 @@ export const sendReview = async (reviewToSend) => {
 // Chamada API ms_parking com retorno das vagas
 export const fetchParkingSpots = async (destination) => {
     try {
-        const response = await api.post('/parking', destination);
+        const response = await api_parking.post('/parking', destination);
         return response.data;
     } catch (error) {
         console.error("Erro ao buscar os dados de estacionamento:", error);
@@ -183,7 +200,7 @@ export const fetchParkingSpots = async (destination) => {
 // Chamada API ms_parking com retorno das vagas de simulação
 export const fetchParkingSpotsSimulation = async (simulation) => {
     try {
-        const response = await api.post('/parking', simulation);
+        const response = await api_parking.post('/parking', simulation);
         return response.data;
     } catch (error) {
         console.error("Erro ao buscar os dados de estacionamento:", error);

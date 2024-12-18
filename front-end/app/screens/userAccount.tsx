@@ -20,6 +20,8 @@ type RootStackParamList = {
     Main: undefined;
     MapHome: undefined;
     changePassword: undefined;
+    Senha: undefined;
+    Conta: undefined;
 };
 
 interface FormData {
@@ -54,7 +56,7 @@ const UserAccount: React.FC = () => {
     };
 
     const handleNavigateToChangePassword = () => {
-        navigation.navigate('Alterar Senha');
+        navigation.navigate('Senha');
     };
 
     // Verificar se os valores do formulário são diferentes dos dados originais p/ ativar o botão salvar
@@ -101,8 +103,9 @@ const UserAccount: React.FC = () => {
             // Recarregar a tela UserAccount após a atualização
             navigation.reset({
                 index: 0,
-                routes: [{ name: 'UserAccount' }],
+                routes: [{ name: 'Conta' }],
             });
+            console.log('Available routes:', navigation.getState().routes);
 
 
         } catch (error) {
