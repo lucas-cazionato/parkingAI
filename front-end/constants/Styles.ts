@@ -392,12 +392,12 @@ export const Styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 16,
-    color: '#fff', // Cor do texto do título
+    color: '#fff', 
 
   },
   itemfav: {
     backgroundColor: '#fff',
-    borderRadius: 15, // Canto arredondado
+    borderRadius: 15, 
     padding: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -408,8 +408,8 @@ export const Styles = StyleSheet.create({
     marginBottom: 15,
     width: '100%',
     height: 130,
-    flexDirection: 'column', // Flex direction changed to column
-    position: 'relative', // For absolute positioning of icons
+    flexDirection: 'column', 
+    position: 'relative', 
   },
   titlefav: {
     fontSize: 18,
@@ -421,11 +421,11 @@ export const Styles = StyleSheet.create({
   },
 
   iconsContainer: {
-    position: 'absolute', // Absolute positioning for bottom placement
-    bottom: 10, // Adjust the space from the bottom of the item
-    right: 10, // Adjust the space from the right side of the item
+    position: 'absolute', 
+    bottom: 10,
+    right: 10, 
     flexDirection: 'row',
-    justifyContent: 'space-between', // Distribute icons with space between
+    justifyContent: 'space-between', 
     width: 90,
     marginRight: 10,
     marginBottom: 10
@@ -436,7 +436,85 @@ export const Styles = StyleSheet.create({
   },
 
   iconButton: {
-    marginLeft: 10, // Spacing between icons
+    marginLeft: 10,
+  },
+
+  surfacefav: {
+    padding: 16,
+    marginBottom: 16,
+    borderRadius: 8,
+  },
+  itemActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  itemContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  itemContent: {
+    flex: 1,
+  },
+  itemTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  itemAddress: {
+    fontSize: 14,
+    color: '#666',
+  },
+  addFavoriteContainer: {
+    marginTop: 16,
+  },
+  textInputFav: {
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 6,
+    borderRadius: 4,
+    underlineColor: '#ec6408',
+  },
+  floatingButton: {
+    position: "absolute",
+    bottom: 20,
+    right: 20,
+    backgroundColor: "#ec6408",
+    borderRadius: 30,
+    width: 60,
+    height: 60,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: 5,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
+
+    backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 10,
+    width: "80%",
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 15,
+    textAlign: "center",
+    padding:5
+  },
+  buttonContainerFav: {
+    marginTop: 20,
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
 });
 
