@@ -2,28 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Modal, View, Text, FlatList, TouchableOpacity, Alert, ActivityIndicator, StyleSheet, TextInput, KeyboardAvoidingView  } from 'react-native';
 import { NavigationProp } from '@react-navigation/native';
 import { Surface, Button} from 'react-native-paper';
-import { ScrollView } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import axios from 'axios';
 import { GOOGLE_MAPS_API_KEY } from '../../config';
 import { Styles } from '../../constants/Styles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getFavorites, deleteFavorite, updateFavorite, addFavorite } from '@/apiService';
 import { GooglePlacesAutocomplete, GooglePlacesAutocompleteRef } from "react-native-google-places-autocomplete";
-
-
-type FavoriteItem = {
-  idFavorito: number;
-  descricao: string;
-  numero: string;
-  complemento: string;
-  idGoogle: string;
-  description: string;
-  location: {
-    lat: number,
-    lng: number
-  }
-};
 
 type FavoritesProps = {
   navigation: NavigationProp<any>;

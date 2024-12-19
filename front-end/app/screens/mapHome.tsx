@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import MapView, { Marker, Polygon } from "react-native-maps";
 import * as Location from "expo-location";
-import { TouchableOpacity, View } from "react-native";
+import { Alert, Keyboard, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import { Styles } from "@/constants";
 import {
   GooglePlacesAutocomplete,
@@ -19,14 +19,16 @@ import {
   setRouteWaypoints,
   setTravelTimeInformation,
 } from "@/store/travelSlices";
-import { Button } from "react-native-paper";
+import { ActivityIndicator, Button } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { interpolateColor } from "react-native-reanimated";
 import MapViewDirections from "react-native-maps-directions";
 import { Text } from "react-native";
-import { fetchParkingSpots, fetchParkingSpotsSimulation } from "@/apiService";
+import { fetchParkingSpots, fetchParkingSpotsSimulation, getFavorites } from "@/apiService";
 import SimulationTimePicker from "@/components/SimulationTimePicker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { reloadAppAsync } from "expo";
 
 type RootStackParamList = {
   mapHome: undefined;
@@ -37,16 +39,8 @@ type HomeScreenNavigationProp = NavigationProp<RootStackParamList, "mapHome">;
 
 export default function MapHome() {
   const navigation = useNavigation<HomeScreenNavigationProp>();
-
-  const homePlace = {
-    description: "Home",
-    geometry: { location: { lat: -25.4230113, lng: -49.2992186 } },
-  };
-  const workPlace = {
-    description: "Work",
-    geometry: { location: { lat: -25.441105, lng: -42.276855 } },
-  };
   const [heading, setHeading] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false);
   const [flagSimular, setFlagSimular] = useState(false);
   const [flagRota, setFlagRota] = useState(false);
   const [flagNavegar, setFlagNavegar] = useState(false);
@@ -66,7 +60,8 @@ export default function MapHome() {
     useState<Location.LocationObject | null>(null);
   const markerImg = require("../../assets/images/vaga.png");
   const [simulationTime, setSimulationTime] = useState<string | null>(null);
-
+  const [predefinedPlaces, setPredefinedPlaces] = useState<any[]>([]);
+  
   // Centraliza na minha localização atual
   const goToMyLocation = async () => {
     if (mapRef.current && userLocation) {
@@ -77,20 +72,6 @@ export default function MapHome() {
         },
         pitch: 0,
         zoom: 17,
-      });
-    }
-  };
-
-  // Coloca o zoom e inclinação em modo de navegação
-  const navigationMode = async () => {
-    if (mapRef.current && userLocation) {
-      mapRef.current.animateCamera({
-        center: {
-          latitude: userLocation.coords.latitude,
-          longitude: userLocation.coords.longitude,
-        },
-        pitch: 50,
-        zoom: 20,
       });
     }
   };
@@ -177,23 +158,33 @@ export default function MapHome() {
 
   // Invoca chamado da API ms_parking e define vagas
   const fetchAndSetParkingSpots = async () => {
+    setLoading(true);
+
     if (!destination || !destination.location) {
       console.error("Destino não definido ou inválido.");
       return;
     }
 
-    const spots = await fetchParkingSpots({
+    const search = {
       location: {
         lng: destination.location.lng,
         lat: destination.location.lat,
       },
-    });
-
-    setParkingSpots(spots);
+    };
+    try {
+      const spots = await fetchParkingSpots(search);
+      setParkingSpots(spots);
+    } catch (error) {
+      console.error("Erro ao buscar vagas:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Invoca chamado da API ms_parking e define vagas
   const fetchAndSetParkingSpotsSimulation = async () => {
+    setLoading(true);
+
     if (!destination || !destination.location) {
       console.error("Destino não definido ou inválido.");
       return;
@@ -212,6 +203,8 @@ export default function MapHome() {
       setParkingSpots(spots);
     } catch (error) {
       console.error("Erro ao buscar vagas de simulação:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -242,7 +235,45 @@ export default function MapHome() {
   // Cuidar da data e hora selecionadas
   const handleDateTimeChange = (formattedDate: string) => {
     setSimulationTime(formattedDate);
-  };  
+  };
+
+ const fetchFavorites = async (cpfUsuario:string) => {
+    try {
+
+    console.log('CPF do usuário:', cpfUsuario);
+      const response = await getFavorites(cpfUsuario);
+      console.log('Dados de favoritos:', response.data);
+      console.log('response:', response);
+      const favoriteData: FavoriteItem[] = response;
+      const places = favoriteData.map(favorite => ({
+        description: favorite.descricao || favorite.description,
+        geometry: {
+          location: favorite.location,
+        },
+      }));
+      setPredefinedPlaces(places);
+    } catch (error) {
+      console.error('Erro ao listar favoritos:', error);
+    }
+  };
+
+  const loadUserData = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      const storedUserData = await AsyncStorage.getItem('userData');
+      const userData = storedUserData ? JSON.parse(storedUserData) : null;
+
+      if (!token || !userData || !userData.cpf) {
+        throw new Error('Informações do usuário não encontradas ou inválidas.');
+      }
+      fetchFavorites(userData.cpf);
+    } catch (error) {
+      Alert.alert('Erro', 'Não foi possível carregar os dados do usuário.');
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // CONSTS ----------------------------------------
   // USE EFFECTS ----------------------------------------
@@ -250,7 +281,13 @@ export default function MapHome() {
   // Carregamento único das permissões
   useEffect(() => {
     LocalPermissions();
+    loadUserData();
   }, []);
+
+  useEffect(() => {
+    
+    loadUserData();
+  }, []); // destinationRef.current?.isFocused
 
   // Carregamento dependente da localização do usuário
   useEffect(() => {
@@ -388,6 +425,16 @@ export default function MapHome() {
       );
     }
   }, [flagSimular]);
+
+  // Importar favoritos
+  useEffect(() => {
+    if (flagNavegar) {
+      startWatching();
+    } else {
+      stopWatching();
+    }
+  }, [predefinedPlaces]);
+
   // USE EFFECTS ----------------------------------------
 
   // BUTTON ACTION ----------------------------------------
@@ -418,7 +465,6 @@ export default function MapHome() {
 
   const startNavigation = useCallback(() => {
     setFlagNavegar(true);
-    navigationMode();
   }, [navigation]);
 
   const endNavigation = () => {
@@ -440,11 +486,24 @@ export default function MapHome() {
 
   const simular = () => {
     setFlagSimular(true);
+    loadUserData();
   };
 
   const navegar = () => {
     setFlagSimular(false);
+    loadUserData();
   };
+
+  // Função para desfocar ao clicar fora
+  const handleOutsidePress = () => {
+    loadUserData();
+    Keyboard.dismiss();
+    if (destinationRef.current?.isFocused)
+      destinationRef.current?.blur(); // Remove o foco do campo
+    if (originRef.current?.isFocused)
+      originRef.current?.blur(); // Remove o foco do campo
+  };
+
   // BUTTON ACTION ----------------------------------------
 
   // MAP VIEW ----------------------------------------
@@ -610,6 +669,12 @@ export default function MapHome() {
         </View>
       )}
 
+      {loading && (
+        <View style={Styles.loadContainer}>
+        <ActivityIndicator size="large" color="#ec6408" />
+        </View>
+      )}
+
       {!flagNavegar && flagSimular && (
         <View style={Styles.simulateButton}>
           <Button
@@ -637,7 +702,7 @@ export default function MapHome() {
                     fontSize: 16,
                   },
                   predefinedPlacesDescription: {
-                    color: "bold",
+                    color: '#ec6408',
                     fontSize: 16,
                   },
                 }}
@@ -651,7 +716,7 @@ export default function MapHome() {
                 fetchDetails={true}
                 minLength={3}
                 enablePoweredByContainer={false}
-                predefinedPlaces={[homePlace, workPlace]}
+                predefinedPlaces={predefinedPlaces}
                 onPress={(data, details = null) => {
                   dispatch(
                     setOrigin({
@@ -666,11 +731,12 @@ export default function MapHome() {
                 onPress={() => {
                   setParkingSpots([]); // Limpa os polígonos
                   dispatch(setOrigin(null)); // Limpa o marcador
-                  originRef.current?.clear(); // Limpa destinationRef
+                  originRef.current?.clear(); // Limpa originRef
+                  originRef.current?.setAddressText("");
                   setFlagRota(false); // Limpa flag de Rota
                   setSelectedSpots([]); // Limpa Vagas
+                  handleOutsidePress();
                 }}
-                disabled={!origin}
               >
                 <MaterialIcons name="close" size={20} color="gray" />
               </TouchableOpacity>
@@ -689,7 +755,7 @@ export default function MapHome() {
                     fontSize: 16,
                   },
                   predefinedPlacesDescription: {
-                    color: "bold",
+                    color: '#ec6408',
                     fontSize: 16,
                   },
                 }}
@@ -703,7 +769,7 @@ export default function MapHome() {
                 fetchDetails={true}
                 minLength={3}
                 enablePoweredByContainer={false}
-                predefinedPlaces={[homePlace, workPlace]}
+                predefinedPlaces={predefinedPlaces}
                 onPress={(data, details = null) => {
                   dispatch(
                     setDestination({
@@ -723,6 +789,7 @@ export default function MapHome() {
                   setFlagRota(false); // Limpa flag de Rota
                   setSelectedSpots([]); // Limpa Vagas
                   destinationRef.current?.setAddressText("");
+                  handleOutsidePress();
                 }}
                 disabled={!destinationRef}
               >

@@ -11,17 +11,30 @@ const api = axios.create({
     },
 });
 
-// Instância do axios para configurar a base URL do ms-parking
+// Instância do axios para configurar a base URL do ms-parking - para uso de ngrok
 const api_parking = axios.create({
-    baseURL: URL_MSPARKING,
+    baseURL: URL_MSPARKING || URL_APIGATEWAY,
     headers: {
         'Content-Type': 'application/json',
     },
 });
 
-
 // (req) Requisições autenticadas
 api.interceptors.request.use(
+    async (config) => {
+        const token = await AsyncStorage.getItem('token');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`; // Adiciona o token ao cabeçalho
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
+// (req) Requisições autenticadas
+api_parking.interceptors.request.use(
     async (config) => {
         const token = await AsyncStorage.getItem('token');
         if (token) {

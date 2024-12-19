@@ -104,6 +104,15 @@ export const Styles = StyleSheet.create({
     marginHorizontal: 20,
   },
 
+  loadContainer: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: "50%",
+    alignItems: "center",
+    zIndex: 2
+  },
+
   travelContainer: {
     position: "absolute",
     left: 0,
@@ -527,8 +536,7 @@ export const Styles = StyleSheet.create({
     padding:5
   },
   buttonContainerFav: {
-    zIndex: 0,
-    marginTop: 60,
+    marginTop: 20,
     flexDirection: "row",
     justifyContent: "space-between",
   },
