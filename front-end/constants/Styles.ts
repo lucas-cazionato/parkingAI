@@ -132,6 +132,18 @@ export const Styles = StyleSheet.create({
     margin: 5,
   },
 
+  simulationTimeBox: {
+    backgroundColor: '#ffffff',
+    borderRadius: 6,
+    textAlign: 'left',
+  },
+
+  simulationTimeText: {
+    margin: 10,
+    fontSize: 16,
+    color: '#5d5d5d'
+  },
+
   input: {
     marginBottom: 20,
     backgroundColor: '#ffffff',

@@ -163,8 +163,9 @@ const AppNavigator = () => {
         }}>
         <Stack.Screen name="Auth" component={AuthStackNavigator} options={{ headerShown: false }} />
         <Stack.Screen name="Main" component={DrawerNavigator} options={{ headerShown: false }} />
-        <Stack.Screen name="Alterar Senha" component={ChangePassword} options={{ headerShown: true }} />
+        <Stack.Screen name="Senha" component={ChangePassword} options={{ headerShown: true }} />
         <Stack.Screen name="Avaliação" component={Review} options={{ headerShown: true }} />
+        <Stack.Screen name="Conta" component={UserAccount} options={{ headerShown: true }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
