@@ -187,9 +187,9 @@ export const sendReview = async (reviewToSend) => {
 };
 
 
-export const getFavorites = async (cpf) => {
+export const getFavorites = async (cpfUsuario) => {
     try {
-        const response = await api.get(`/favoritos/cpf/${cpf}`);
+        const response = await api.get(`/favoritos/cpf/${cpfUsuario}`);
         return response.data;
     } catch (error) {
         console.error('Erro ao buscar favoritos:', error);

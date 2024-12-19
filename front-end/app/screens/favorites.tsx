@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Modal, View, Text, FlatList, TouchableOpacity, Alert, ActivityIndicator, StyleSheet, TextInput, KeyboardAvoidingView  } from 'react-native';
 import { NavigationProp } from '@react-navigation/native';
 import { Surface, Button} from 'react-native-paper';
@@ -9,7 +9,7 @@ import { GOOGLE_MAPS_API_KEY } from '../../config';
 import { Styles } from '../../constants/Styles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getFavorites, deleteFavorite, updateFavorite, addFavorite } from '@/apiService';
-import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+import { GooglePlacesAutocomplete, GooglePlacesAutocompleteRef } from "react-native-google-places-autocomplete";
 
 
 type FavoriteItem = {
@@ -20,8 +20,8 @@ type FavoriteItem = {
   idGoogle: string;
   description: string;
   location: {
-    lat: -25.427,
-    lng: -49.262
+    lat: number,
+    lng: number
   }
 };
 
@@ -32,6 +32,7 @@ type FavoritesProps = {
 const Favorites: React.FC<FavoritesProps> = ({ navigation }) => {
   const [favorites, setFavorites] = useState<FavoriteItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [cpf, setCpf] = useState<string>('');
   const [newFavorite, setNewFavorite] = useState<Partial<FavoriteItem>>({});
   const [isModalOpen, setModalOpen] = useState(false);
   const [userData, setUserData] = useState<any>(null);
@@ -41,32 +42,38 @@ const Favorites: React.FC<FavoritesProps> = ({ navigation }) => {
   useEffect(() => {
     const loadUserData = async () => {
       try {
-        setLoading(true);
-
+        const token = await AsyncStorage.getItem('token');
         const storedUserData = await AsyncStorage.getItem('userData');
-        const parsedUserData = storedUserData ? JSON.parse(storedUserData) : null;
+        const userData = storedUserData ? JSON.parse(storedUserData) : null;
 
-        if (parsedUserData && parsedUserData.cpf) {
-          setUserData(parsedUserData);
-          fetchFavorites(parsedUserData.cpf);
-        } else {
-          console.error('CPF do usuário não encontrado');
+        console.log("userAccount_TOKEN:", token);
+        console.log('userAccount_DADOS USUÁRIO:', userData);
+
+        if (!token || !userData || !userData.cpf) {
+          throw new Error('Informações do usuário não encontradas ou inválidas.');
         }
+
+        setCpf(userData.cpf);
+
+        fetchFavorites(userData.cpf);
       } catch (error) {
-        console.error('Erro ao carregar dados do usuário:', error);
-      } finally {
-        setLoading(false);
+        Alert.alert('Erro', 'Não foi possível carregar os dados do usuário.');
+        console.error(error);
       }
     };
-      loadUserData();
-    }, []);
+
+    loadUserData();
+  }, []);
 
 
- const fetchFavorites = async (cpf: string) => {
+ const fetchFavorites = async (cpfUsuario:string) => {
     try {
-    console.log('CPF do usuário:', cpf);
-      const response = await getFavorites(cpf);
-      const favoriteData: FavoriteItem[] = response.data as FavoriteItem[];
+
+    console.log('CPF do usuário:', cpfUsuario);
+      const response = await getFavorites(cpfUsuario);
+      console.log('Dados de favoritos:', response.data);
+      console.log('response:', response);
+      const favoriteData: FavoriteItem[] = response;
       if (favoriteData.length === 0) {
             Alert.alert('Nenhum favorito encontrado', 'Você ainda não tem favoritos cadastrados.');
       }
@@ -79,7 +86,7 @@ const Favorites: React.FC<FavoritesProps> = ({ navigation }) => {
   };
 
 
-const handleEdit = async (idFavorito: number, updatedData: Partial<FavoriteItem>) => {
+const handleEdit = async (idFavorito: number, idGoogle: string, descricao: string, description: string, location: { lat: number; lng: number; }, updatedData: Partial<FavoriteItem>) => {
     try {
       const response = await updateFavorite(idFavorito, updatedData);
       setFavorites((prevFavorites) =>
@@ -94,7 +101,7 @@ const handleEdit = async (idFavorito: number, updatedData: Partial<FavoriteItem>
     }
   };
 
-const handleDelete = (id: number) => {
+const handleDelete = (idFavorito: number) => {
     Alert.alert(
       'Excluir favorito',
       'Confirma exclusão de endereço favorito?',
@@ -121,22 +128,28 @@ const handleDelete = (id: number) => {
   };
 const handleAddFavorite = async () => {
     try {
-      if (!userData || !userData.cpf) {
+      if (!cpf) {
         Alert.alert('Erro', 'CPF do usuário não encontrado.');
+        console.log('CPF do usuário não encontrado:', cpf);
         return;
       }
 
-      const newFavoriteData = {
-        ...newFavorite,
-        cpfUsuario: userData.cpf,
-      };
+     const newFavoriteData = {
+          descricao: newFavorite.descricao,
+          idGoogle: newFavorite.idGoogle,
+          description: newFavorite.description,
+          location: newFavorite.location,
+          cpfUsuario: userData.cpf,
+        };
+
+      console.log('Dados enviados para API:', newFavoriteData);
 
       const response = await addFavorite(newFavoriteData);
 
       setFavorites((prevFavorites) => [...prevFavorites, response.data]);
       setNewFavorite({});
       Alert.alert('Sucesso', 'Favorito adicionado com sucesso!');
-      setModalOpen(false); // Fecha o modal
+      setModalOpen(false); 
     } catch (error) {
       console.error('Erro ao adicionar favorito:', error);
       Alert.alert('Erro', 'Não foi possível adicionar o favorito.');
@@ -162,7 +175,7 @@ const handleAddFavorite = async () => {
                 <Text style={Styles.itemAddress}>{item.description}</Text>
               </View>
               <View style={Styles.itemActions}>
-                <TouchableOpacity onPress={() => handleEdit(item.idFavorito,em.idGoogle, item.descricao, item.description, item.location)}>
+                <TouchableOpacity onPress={() => handleEdit(item.idFavorito, item.idGoogle, item.descricao, item.description, item.location, {})}>
                   <Icon name="edit" size={24} color="#ec6408" />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => handleDelete(item.idFavorito)}>
@@ -179,14 +192,12 @@ const handleAddFavorite = async () => {
       </TouchableOpacity>
      <Modal visible={isModalOpen} animationType="slide" transparent={true}>
       <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
-         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
              <View style={Styles.modalOverlay}>
                <View style={Styles.modalContent}>
                  <Text style={Styles.modalTitle}>Adicionar Novo Favorito</Text>
                   <TextInput
                    style={Styles.textInputFav}
                    placeholder="Descrição"
-                   mode="outlined"
                    value={newFavorite.descricao || ''}
                    onChangeText={(text) =>
                      setNewFavorite({ ...newFavorite, descricao: text })
@@ -205,15 +216,19 @@ const handleAddFavorite = async () => {
                    minLength={3}
                    enablePoweredByContainer={false}
                    styles={{ textInput: Styles.textInputFav }}
-                   onPress={(data, details = null) => {
-                   dispatch(
-                     setNewFavorite({
-                       ...newFavorite,
-                       idGoogle: details?.place_id,
-                       description: data?.description,
-                       location: details?.geometry?.location,
-                     })
-                   )
+                    onPress={(data, details = null) => {
+                        if (details) {
+                          setNewFavorite({
+                            ...newFavorite,
+                            idGoogle: data.place_id,
+                            description: data.description,
+                            location: {
+                              lat: details.geometry.location.lat,
+                              lng: details.geometry.location.lng,
+                            },
+                          });
+                     console.log('Endereço selecionado:', details?.geometry?.location);
+                   }
                    }}
 
                  />
@@ -228,7 +243,6 @@ const handleAddFavorite = async () => {
                  </View>
                </View>
              </View>
-            </ScrollView>
            </KeyboardAvoidingView>
           </Modal>
          </View>
