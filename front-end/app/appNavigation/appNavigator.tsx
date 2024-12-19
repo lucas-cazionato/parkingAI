@@ -69,6 +69,7 @@ function AuthStackNavigator() {
       />
       <Stack.Screen name="ChangePassword" component={ChangePassword} options={{ headerShown: false }} />
       <Stack.Screen name="Map" component={MapHome} options={{ headerShown: false }} />
+      <Stack.Screen name="Ajuda" component={Help} options={{ headerShown: true }} />
     </Stack.Navigator>
   );
 }
