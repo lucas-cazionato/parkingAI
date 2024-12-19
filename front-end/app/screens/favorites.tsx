@@ -35,6 +35,8 @@ const Favorites: React.FC<FavoritesProps> = ({ navigation }) => {
   const [cpf, setCpf] = useState<string>('');
   const [newFavorite, setNewFavorite] = useState<Partial<FavoriteItem>>({});
   const [isModalOpen, setModalOpen] = useState(false);
+  const [isEditModalOpen, setEditModalOpen] = useState(false);
+  const [editFavorite, setEditFavorite] = useState<Partial<FavoriteItem>>({});
   const [userData, setUserData] = useState<any>(null);
   const destinationRef = useRef<GooglePlacesAutocompleteRef>(null);
 
@@ -53,6 +55,7 @@ const Favorites: React.FC<FavoritesProps> = ({ navigation }) => {
           throw new Error('Informações do usuário não encontradas ou inválidas.');
         }
 
+        setUserData(userData);
         setCpf(userData.cpf);
 
         fetchFavorites(userData.cpf);
@@ -86,15 +89,21 @@ const Favorites: React.FC<FavoritesProps> = ({ navigation }) => {
   };
 
 
-const handleEdit = async (idFavorito: number, idGoogle: string, descricao: string, description: string, location: { lat: number; lng: number; }, updatedData: Partial<FavoriteItem>) => {
+  const handleEdit = (favorite: FavoriteItem) => {
+    setEditFavorite(favorite);
+    setEditModalOpen(true);
+  };
+
+  const handleUpdateFavorite = async () => {
     try {
-      const response = await updateFavorite(idFavorito, updatedData);
+      const response = await updateFavorite(editFavorite.idFavorito, editFavorite);
       setFavorites((prevFavorites) =>
         prevFavorites.map((item) =>
-          item.idFavorito === idFavorito ? { ...item, ...updatedData } : item
+          item.idFavorito === editFavorite.idFavorito ? { ...item, ...editFavorite } : item
         )
       );
       Alert.alert('Sucesso', 'Favorito atualizado com sucesso!');
+      setEditModalOpen(false);
     } catch (error) {
       console.error('Erro ao atualizar favorito:', error);
       Alert.alert('Erro', 'Não foi possível atualizar o favorito.');
@@ -128,6 +137,7 @@ const handleDelete = (idFavorito: number) => {
   };
 const handleAddFavorite = async () => {
     try {
+    console.log('Dados do usuário antes de adicionar favorito:', userData);
       if (!cpf) {
         Alert.alert('Erro', 'CPF do usuário não encontrado.');
         console.log('CPF do usuário não encontrado:', cpf);
@@ -146,7 +156,7 @@ const handleAddFavorite = async () => {
 
       const response = await addFavorite(newFavoriteData);
 
-      setFavorites((prevFavorites) => [...prevFavorites, response.data]);
+      setFavorites((prevFavorites) => [...prevFavorites, response]);
       setNewFavorite({});
       Alert.alert('Sucesso', 'Favorito adicionado com sucesso!');
       setModalOpen(false); 
@@ -175,11 +185,11 @@ const handleAddFavorite = async () => {
                 <Text style={Styles.itemAddress}>{item.description}</Text>
               </View>
               <View style={Styles.itemActions}>
-                <TouchableOpacity onPress={() => handleEdit(item.idFavorito, item.idGoogle, item.descricao, item.description, item.location, {})}>
+                <TouchableOpacity onPress={() => handleEdit(item)}>
                   <Icon name="edit" size={24} color="#ec6408" />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => handleDelete(item.idFavorito)}>
-                  <Icon name="delete" size={24} color="#ec6408" />
+                  <Icon name="delete" size={24} color="#e92c20" />
                 </TouchableOpacity>
               </View>
             </View>
@@ -245,6 +255,58 @@ const handleAddFavorite = async () => {
              </View>
            </KeyboardAvoidingView>
           </Modal>
+          <Modal visible={isEditModalOpen} animationType="slide" transparent={true}>
+        <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
+            <View style={Styles.modalOverlay}>
+              <View style={Styles.modalContent}>
+                <Text style={Styles.modalTitle}>Editar Favorito</Text>
+                <TextInput
+                  style={Styles.textInputFav}
+                  placeholder="Descrição"
+                  value={editFavorite.descricao || ''}
+                  onChangeText={(text) =>
+                    setEditFavorite({ ...editFavorite, descricao: text })
+                  }
+                />
+                <GooglePlacesAutocomplete
+                  placeholder="Pesquisar endereço"
+                  ref={destinationRef}
+                  nearbyPlacesAPI="GooglePlacesSearch"
+                  debounce={400}
+                  query={{
+                    key: GOOGLE_MAPS_API_KEY,
+                    language: 'pt-BR',
+                  }}
+                  fetchDetails={true}
+                  minLength={3}
+                  enablePoweredByContainer={false}
+                  styles={{ textInput: Styles.textInputFav }}
+                  onPress={(data, details = null) => {
+                    if (details) {
+                      setEditFavorite({
+                        ...editFavorite,
+                        idGoogle: data.place_id,
+                        description: data.description,
+                        location: {
+                          lat: details.geometry.location.lat,
+                          lng: details.geometry.location.lng,
+                        },
+                      });
+                    }
+                  }}
+                />
+                <View style={Styles.buttonContainerFav}>
+                  <Button mode="contained" onPress={handleUpdateFavorite} style={Styles.defaultButton}>
+                    Salvar
+                  </Button>
+                  <Button mode="contained" onPress={() => setEditModalOpen(false)} style={Styles.cancelButton}>
+                    Cancelar
+                  </Button>
+                </View>
+              </View>
+            </View>
+        </KeyboardAvoidingView>
+      </Modal>
          </View>
        );
      };

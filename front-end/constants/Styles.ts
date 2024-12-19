@@ -455,6 +455,7 @@ export const Styles = StyleSheet.create({
     padding: 16,
     marginBottom: 16,
     borderRadius: 8,
+    backgroundColor: '#fff',
   },
   itemActions: {
     flexDirection: 'row',
@@ -464,16 +465,18 @@ export const Styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    backgroundColor: '#fff',
+    padding: 8,
   },
   itemContent: {
     flex: 1,
   },
   itemTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
   },
   itemAddress: {
-    fontSize: 14,
+    fontSize: 16,
     color: '#666',
   },
   addFavoriteContainer: {
