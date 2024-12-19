@@ -174,7 +174,7 @@ export const newPassword = async (login) => {
     }
 };
 
-//Enviar avaliação
+
 export const sendReview = async (reviewToSend) => {
     try {
         const response = await api.post('/quest', reviewToSend);
@@ -185,6 +185,47 @@ export const sendReview = async (reviewToSend) => {
         throw error.response?.data?.message || 'Erro ao enviar avaliação';
     }
 };
+
+
+export const getFavorites = async (cpf) => {
+    try {
+        const response = await api.get(`/favoritos/cpf/${cpf}`);
+        return response.data;
+    } catch (error) {
+        console.error('Erro ao buscar favoritos:', error);
+        throw error;
+    }
+};
+
+export const updateFavorite = async (id, favoriteData) => {
+    try {
+        const response = await api.put(`/favoritos/${id}`, favoriteData);
+        return response.data;
+    } catch (error) {
+        console.error('Erro ao atualizar favorito:', error);
+        throw error;
+    }
+};
+
+export const addFavorite = async (favoriteData) => {
+    try {
+        const response = await api.post('/favoritos', favoriteData);
+        return response.data;
+    } catch (error) {
+        console.error('Erro ao adicionar favorito:', error);
+        throw error;
+    }
+};
+
+export async function deleteFavorite(id) {
+    try {
+        console.log(id);
+        await api.delete(`/favoritos/id/${id}`);
+        console.error('Conta excluída com sucesso!');
+    } catch (error) {
+        console.error('Erro ao excluir conta:', error.response?.data || error.message);
+    }
+}
 
 // Chamada API ms_parking com retorno das vagas
 export const fetchParkingSpots = async (destination) => {
@@ -207,4 +248,5 @@ export const fetchParkingSpotsSimulation = async (simulation) => {
         throw error.response?.data?.message || "Erro ao buscar vagas de estacionamento";
     }
 };
+
 export default api;
