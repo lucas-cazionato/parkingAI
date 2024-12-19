@@ -510,7 +510,7 @@ export const Styles = StyleSheet.create({
     alignItems: "center",
   },
   modalContent: {
-
+    flex: 0.5,
     backgroundColor: "#fff",
     padding: 20,
     borderRadius: 10,

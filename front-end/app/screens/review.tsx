@@ -10,6 +10,7 @@ import { sendReview } from '@/apiService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Alert } from 'react-native';
+import * as Location from 'expo-location';
 
 
 type ReviewProps = {
@@ -18,11 +19,13 @@ type ReviewProps = {
 
 interface ExtendedReviewModel extends ReviewModel {
   cpfUsuario: string;
+  location?: { lat: number; lng: number } | null;
 }
 
 export default function Review({ navigation }: ReviewProps) {
   const { control, handleSubmit, formState: { errors } } = useForm<ExtendedReviewModel>();
   const [cpf, setCpf] = useState<string>('');
+  const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [questionario, setQuestionario] = useState<ReviewModel>({
     achouVaga: 'SIM',
     notaGeral: 5,
@@ -47,10 +50,25 @@ export default function Review({ navigation }: ReviewProps) {
         }
 
         setCpf(userData.cpf);
+
       } catch (error) {
         Alert.alert('Erro', 'Não foi possível carregar os dados do usuário.');
         console.error(error);
       }
+
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+          Alert.alert('Permissão negada', 'Permissão para acessar localização foi negada.');
+          return;
+        }
+
+
+        const location = await Location.getCurrentPositionAsync({});
+        setLocation({
+          lat: location.coords.latitude,
+          lng: location.coords.longitude,
+        });
+      
     };
     loadUserData();
   }, []);
@@ -61,13 +79,14 @@ export default function Review({ navigation }: ReviewProps) {
       return;
     }
 
-    const reviewData = { ...data, cpf };
+    const reviewData = { ...data, cpf,location };
 
     const reviewToSend: ExtendedReviewModel = {
       cpfUsuario: reviewData.cpf,
       achouVaga: questionario.achouVaga,
       notaGeral: questionario.notaGeral,
       comentario: questionario.comentario.trim(),
+      location: reviewData.location,
     };
 
     try {

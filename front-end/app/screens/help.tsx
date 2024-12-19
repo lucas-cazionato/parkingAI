@@ -28,7 +28,6 @@ const Help: React.FC<HelpProps> = ({ navigation }) => {
           left={props => <List.Icon {...props} icon="account-plus" />}
         >
           <List.Item
-            title="Como criar uma conta?" // Título da pergunta
             description="Para criar uma conta, clique em 'Registrar' na tela de login e preencha os campos necessários."
           />
         </List.Accordion>
@@ -43,7 +42,6 @@ const Help: React.FC<HelpProps> = ({ navigation }) => {
           left={props => <List.Icon {...props} icon="lock-reset" />}
         >
           <List.Item
-            title="Esqueci minha senha. E agora?" // Título da pergunta
             description="Clique em 'Esqueci minha senha' na tela de login e siga as instruções para redefinir sua senha."
           />
         </List.Accordion>
@@ -58,7 +56,6 @@ const Help: React.FC<HelpProps> = ({ navigation }) => {
           left={props => <List.Icon {...props} icon="star" />}
         >
           <List.Item
-            title="Como avaliar minha experiência?" // Título da pergunta
             description="Após usar o serviço, vá até a seção de avaliações e preencha o formulário de avaliação."
           />
         </List.Accordion>
@@ -73,7 +70,6 @@ const Help: React.FC<HelpProps> = ({ navigation }) => {
           left={props => <List.Icon {...props} icon="email" />}
         >
           <List.Item
-            title="FALE CONOSCO" // Título da pergunta
             description="Para suporte adicional, envie um email para suporte@parkingai.com."
           />
         </List.Accordion>
