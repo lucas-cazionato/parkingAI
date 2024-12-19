@@ -394,6 +394,24 @@ export const Styles = StyleSheet.create({
     marginBottom: 16,
   },
 
+  descriptionText: {
+    fontSize: 15,
+    lineHeight: 20,
+    color: '#555555',
+    paddingHorizontal: 16,
+    paddingVertical: 7,
+  },
+  highlight: {
+    fontWeight: 'bold',
+    color: '#ec6408',
+  },
+
+  accordion: {
+    backgroundColor: '#ffffff',
+    borderRadius: 8,
+    marginVertical: 4,
+  },
+
   containerfav: {
     flex: 1,
     backgroundColor: '#05204b',
