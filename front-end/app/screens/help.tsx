@@ -3,6 +3,7 @@ import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Alert } from 'rea
 import { List, Divider } from 'react-native-paper';
 import { NavigationProp } from '@react-navigation/native';
 import { Styles } from '../../constants/Styles';
+import ColorBar from '@/components/ColorBar';
 
 type HelpProps = {
   navigation: NavigationProp<any>;
@@ -74,6 +75,7 @@ const Help: React.FC<HelpProps> = ({ navigation }) => {
           />
         </List.Accordion>
       </List.Section>
+      <ColorBar></ColorBar>
 
 
 

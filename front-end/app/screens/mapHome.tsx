@@ -242,7 +242,7 @@ export default function MapHome() {
   // Cuidar da data e hora selecionadas
   const handleDateTimeChange = (formattedDate: string) => {
     setSimulationTime(formattedDate);
-  };
+  };  
 
   // CONSTS ----------------------------------------
   // USE EFFECTS ----------------------------------------
@@ -689,7 +689,8 @@ export default function MapHome() {
                     fontSize: 16,
                   },
                   predefinedPlacesDescription: {
-                    color: "#1faadb",
+                    color: "bold",
+                    fontSize: 16,
                   },
                 }}
                 placeholder="Destino:"

@@ -4,6 +4,7 @@ import { View, Button, TouchableOpacity } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { Text } from "react-native-paper";
 import { format } from 'date-fns';
+import { toZonedTime } from 'date-fns-tz';
 
 interface SimulationTimePickerProps {
   onDateTimeChange: (formattedDate: string) => void;
@@ -13,10 +14,15 @@ const SimulationTimePicker: React.FC<SimulationTimePickerProps> = ({ onDateTimeC
   const [isPickerVisible, setIsPickerVisible] = useState(false);
   const [selectedDateTime, setSelectedDateTime] = useState<Date | null>(null);
 
-  const handleConfirm = (date: Date) => {
-    setSelectedDateTime(date);
-    // Formatar a data para o formato ISO 8601
-    const formattedDate = date.toISOString().slice(0, 19); // Formato: "YYYY-MM-DDTHH:mm:ss"
+  const handleConfirm = (selectedDateTime: Date) => {
+    // Ajusta para o fuso horário local
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone; // Obtém o fuso horário local
+    const localDateTime = toZonedTime(selectedDateTime, timeZone); // Converte para o horário local
+
+    setSelectedDateTime(localDateTime);
+
+    // Formatar a data para o formato ISO 8601, mas no fuso horário local
+    const formattedDate = format(localDateTime, "yyyy-MM-dd'T'HH:mm:ssXXX"); // Formato: "YYYY-MM-DDTHH:mm:ssZ"
     onDateTimeChange(formattedDate); // Passa a data formatada para o componente pai
     setIsPickerVisible(false);
   };

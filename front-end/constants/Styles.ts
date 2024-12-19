@@ -527,7 +527,8 @@ export const Styles = StyleSheet.create({
     padding:5
   },
   buttonContainerFav: {
-    marginTop: 20,
+    zIndex: 0,
+    marginTop: 60,
     flexDirection: "row",
     justifyContent: "space-between",
   },
