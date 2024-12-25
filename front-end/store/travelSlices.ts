@@ -1,4 +1,4 @@
-import { TravelState } from "@/type";
+import { TravelState } from "@/app/models/Travel";
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {

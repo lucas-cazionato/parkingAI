@@ -6,13 +6,15 @@ Aplicativo para dispositivos móveis acoplado a um serviço de Inteligência Art
 
 
 # Como rodar a aplicação em Docker 🐳
-
-Para rodar o backend no docker basta executar o seguinte comando (ou rodar o docker na sua GUI)
+(Utilize sistema operacional Linux, pois os scripts de inicialização não são compatíveis com windows.)
+- Importar o repositório do github
+- Para rodar o backend:
+  - No diretório principal /parkingAI executar o seguinte comando (ou rodar o docker na sua GUI):
 ```bash
 docker compose up
 ```
 
-Se tudo deu certo ao usar o comando `docker ps` você verá os contêiners da aplicação todos executando.
+Se tudo deu certo, ao usar o comando `docker ps` você verá os contêiners da aplicação todos executando.
 
 Caso seja a primeira imagem que você está rodando você precisará rodar a importação dos dados dos mapas.
 
@@ -23,7 +25,11 @@ Vá para o diretório `ms-parking/map-data/` e execute o script em bash
 
 Por convenção vamos deixar o arquivo mais atual sempre no `best_map.osm`.
 
-Após isso basta usar a collection do postman que foi disponibilizada
+Para os desenvolvedores:
+- Utilizar a collection do postman que foi disponibilizada para testes.
+- Para testes unitários é possível rodar individualmente cada serviço:
+  - Configurar os bancos de dados
+  - Inserir as informações de configuração no .env a partir do .env.example (read.me do serviço)
 
 ---
 
@@ -43,20 +49,35 @@ Português, exceto para termos específicos como Get, Set, Service, Model, Dto, 
 # Roadmap (O que cada um deve fazer até quando):
 https://docs.google.com/spreadsheets/d/1Z51pzLjw92eJ6kyFrIGz5zpwXeowaTRM/edit?gid=178778627#gid=178778627
 
-# Configuração:
-1. Instalar dependencias
+# Configuração do frontend:
+1. Realizar as configurações e instalações necessárias para uso do React Native:
+   https://reactnative.dev/docs/set-up-your-environment?os=linux
+
+2. Ir para o diretório do frontend `parkingAI/front-end`
+
+3. Instalar dependencias com a opção --legacy-peer-deps
 
    ```bash
-   npm install
+   npm install --legacy-peer-deps
    ```
-2. Adicionar chave da google em config.ts
+4. Adicionar chave da google para uso das APIs "Places API" e "Directions API" em config.ts na variável `GOOGLE_MAPS_API_KEY`
+   A chave pode ser conferida no console da google: https://console.cloud.google.com/google/maps-apis
 
-3. Iniciar o APP
+5. Iniciar o APP
 
    ```bash
     npm start
    ```
-4. Caso faça update, ajustar alguns pacotes para versões mais antigas:
+   ou
+   ```bash
+    npx expo start
+   ```
+
+6. Caso utilize o aplicativo expo para executar o front no celular (› Metro waiting on exp://XXX.XXX.XX.XXX:PPPP), adicionar o IP exibido em config.ts na variável `URL_APIGATEWAY` e apontar a porta do gateway:
+   Exemplo: export const URL_APIGATEWAY = "http://192.168.15.112:3000";
+   Caso utilize o emulador ou uma conexão direta com seu aparelho, utilize o localhost: "http://localhost:3000"
+
+7. OBS.: Caso faça update, cuidar com alguns pacotes que exigem versões mais antigas, exemplo:
     ```bash
     npm install react-native-google-places-autocomplete@2.5.6 --save
     ```

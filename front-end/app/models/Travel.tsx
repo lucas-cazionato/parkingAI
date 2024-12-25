@@ -7,10 +7,6 @@ export interface TravelState {
             };
             description: string;
         } | null;
-        distance: {
-            text: string;
-            value: number;
-        };
         destination: {
             location:{
                 lat: number;
