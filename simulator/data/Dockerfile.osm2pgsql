@@ -1,0 +1,6 @@
+# Use the official osm2pgsql image
+FROM iboates/osm2pgsql
+
+# Define the working directory and copy the map file
+WORKDIR /osmdata
+COPY /map-data/ /osmdata/
