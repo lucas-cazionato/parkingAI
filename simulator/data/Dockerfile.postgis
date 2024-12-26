@@ -1,0 +1,20 @@
+# Use the official Postgres image
+FROM postgres:14
+
+# Install PostGIS
+RUN apt-get update && apt-get install -y postgis postgresql-14-postgis-3
+
+# Add custom configuration to the PostgreSQL config file
+RUN echo "shared_buffers = 1GB" >> /usr/share/postgresql/postgresql.conf.sample && \
+    echo "work_mem = 50MB" >> /usr/share/postgresql/postgresql.conf.sample && \
+    echo "maintenance_work_mem = 10GB" >> /usr/share/postgresql/postgresql.conf.sample && \
+    echo "autovacuum_work_mem = 2GB" >> /usr/share/postgresql/postgresql.conf.sample && \
+    echo "wal_level = minimal" >> /usr/share/postgresql/postgresql.conf.sample && \
+    echo "checkpoint_timeout = 60min" >> /usr/share/postgresql/postgresql.conf.sample && \
+    echo "max_wal_size = 10GB" >> /usr/share/postgresql/postgresql.conf.sample && \
+    echo "checkpoint_completion_target = 0.9" >> /usr/share/postgresql/postgresql.conf.sample && \
+    echo "max_wal_senders = 0" >> /usr/share/postgresql/postgresql.conf.sample && \
+    echo "random_page_cost = 1.0" >> /usr/share/postgresql/postgresql.conf.sample
+
+# Create osmuser, osm database, and enable extensions
+COPY init_postgis.sh /docker-entrypoint-initdb.d/
